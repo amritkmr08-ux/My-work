@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CO Workspace Home · Contract-rooted</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;650&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#fafafa;--panel:#fff;--ink:#111;--muted:#727272;--soft:#9b9b9b;--line:#e9e6df;--line2:#f1eee7;
+  --green:#0b7a3b;--greenBg:#eef8f1;--red:#ad1f1f;--redBg:#fff1f1;--amber:#9a5b00;--amberBg:#fff8e8;
+  --blue:#075985;--blueBg:#eef7ff;--violet:#6d28d9;--violetBg:#f5f0ff;--teal:#0f766e;--tealBg:#ecfdf8;
+}
+html,body{background:var(--bg);color:var(--ink);font-family:'Instrument Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+body{min-height:100vh}.app{display:grid;grid-template-columns:210px minmax(760px,920px) 300px;gap:36px;max-width:1480px;margin:0 auto;padding:54px 42px 80px}
+.sidebar{position:sticky;top:48px;align-self:start}.nav-label{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#aaa;margin:0 0 18px}
+.nav-section{margin-bottom:38px}.nav-item{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 0;color:#777;font-size:15px;cursor:pointer;transition:.15s}.nav-item:hover{color:#222}.nav-item.active{color:#111;font-weight:650}.nav-count{font-family:'DM Mono',monospace;font-size:11px;color:#aaa}.dot{width:8px;height:8px;border-radius:999px;background:#ddd}.nav-left{display:flex;align-items:center;gap:10px}.active .dot{background:var(--green)}
+.main{min-width:0}.contract-kicker{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#aaa;margin-bottom:16px}.contract-head{display:flex;justify-content:space-between;align-items:flex-start;gap:24px;padding-bottom:34px;border-bottom:1px solid var(--line)}
+.avatar{width:48px;height:48px;border-radius:999px;background:#111;color:white;display:grid;place-items:center;font-weight:650;font-size:13px;flex:0 0 auto}.title-row{display:flex;gap:16px;align-items:flex-start}.hgroup h1{font-size:25px;line-height:1.15;letter-spacing:-.03em;font-weight:650}.hgroup p{font-size:15px;color:#666;margin-top:8px;line-height:1.55}.status{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:650;color:var(--green);background:var(--greenBg);padding:5px 9px;border-radius:6px;margin-top:14px}.head-meta{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;min-width:260px}.meta-card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px}.meta-card b{display:block;font-size:15px}.meta-card span{display:block;margin-top:3px;font-size:12px;color:#888}.workspace-hero{padding:38px 0 26px;border-bottom:1px solid var(--line)}
+.workspace-title{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;margin-bottom:22px}.workspace-title h2{font-size:30px;letter-spacing:-.04em;font-weight:650}.workspace-title p{color:#666;font-size:16px;margin-top:6px;line-height:1.55;max-width:620px}.switcher{display:flex;gap:6px;background:#fff;border:1px solid var(--line);border-radius:999px;padding:4px}.switcher button{border:0;background:transparent;border-radius:999px;padding:8px 12px;font:inherit;font-size:13px;color:#777;cursor:pointer}.switcher button.active{background:#111;color:#fff}.signal-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.signal{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px;min-height:110px;cursor:pointer;transition:.15s}.signal:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(0,0,0,.045)}.signal strong{display:block;font-size:31px;line-height:1;letter-spacing:-.04em}.signal span{display:block;margin-top:8px;color:#666;font-size:13px;line-height:1.35}.signal small{display:block;margin-top:14px;color:#aaa;font-family:'DM Mono',monospace;font-size:11px;line-height:1.45}.signal.risk{background:var(--redBg)}.signal.warn{background:var(--amberBg)}.signal.ok{background:var(--greenBg)}
+.block{display:grid;grid-template-columns:140px 1fr;gap:18px;padding:34px 0;border-bottom:1px solid var(--line)}.block label{font-size:15px;color:#777}.queue{display:flex;flex-direction:column;gap:22px}.row{display:grid;grid-template-columns:1fr auto;gap:20px;align-items:start;cursor:pointer}.row h3{font-size:18px;font-weight:650;text-decoration:underline;text-underline-offset:3px;letter-spacing:-.02em}.row p{font-size:15px;color:#666;line-height:1.5;margin-top:5px}.pill{font-family:'DM Mono',monospace;font-size:11px;border:1px solid var(--line);border-radius:999px;padding:5px 8px;color:#777;background:#fff;white-space:nowrap}.pill.red{color:var(--red);background:var(--redBg);border-color:#ffd9d9}.pill.amber{color:var(--amber);background:var(--amberBg);border-color:#ffe8ae}.pill.green{color:var(--green);background:var(--greenBg);border-color:#d9f3df}
+.timeline{background:#fff;border:1px solid var(--line);border-radius:16px;padding:24px 28px}.rail{height:1px;background:#d8d2c7;position:relative;margin:24px 18px 18px}.event{position:absolute;top:-18px;transform:translateX(-50%);text-align:center}.event i{display:block;width:1px;height:31px;background:#c9c0b5;margin:0 auto}.event span{display:inline-block;border:1px solid var(--line);background:#fff;border-radius:8px;padding:4px 8px;font-size:12px;color:#666;white-space:nowrap}.event.hot span{border-color:#111;color:#111}.event.warn span{background:var(--amberBg);color:var(--amber);border-color:#ffe8ae}.event.red span{background:var(--redBg);color:var(--red);border-color:#ffd9d9}.backbone{display:grid;grid-template-columns:1fr 1fr;gap:12px}.back-card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:15px}.back-card b{display:block;font-size:14px}.back-card p{font-size:13px;color:#666;line-height:1.45;margin-top:5px}.right{position:sticky;top:48px;align-self:start}.ai-card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:20px}.ai-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}.ai-top b{font-size:15px}.ai-badge{font-family:'DM Mono',monospace;font-size:10px;color:var(--teal);background:var(--tealBg);padding:4px 7px;border-radius:5px}.ai-card h3{font-size:20px;line-height:1.2;letter-spacing:-.03em;margin-bottom:10px}.ai-card p{font-size:14px;color:#666;line-height:1.6}.ai-section{padding-top:18px;margin-top:18px;border-top:1px solid var(--line2)}.ai-section label{display:block;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#aaa;margin-bottom:10px}.evidence{display:flex;flex-direction:column;gap:8px}.evidence div{border:1px solid var(--line2);background:#fafafa;border-radius:10px;padding:10px 11px;font-size:13px;color:#555;line-height:1.45}.cta{width:100%;border:0;background:#111;color:#fff;border-radius:999px;padding:12px 16px;font:inherit;font-weight:600;margin-top:18px;cursor:pointer}.ghost{width:100%;border:1px solid var(--line);background:#fff;color:#555;border-radius:999px;padding:11px 16px;font:inherit;margin-top:8px;cursor:pointer}.hidden{display:none}
+
+.structure-block{align-items:start}
+.structure-summary{background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.structure-summary-head{display:grid;grid-template-columns:32px 1fr auto;gap:14px;align-items:center;padding:16px;cursor:pointer}
+.structure-summary-head:hover{background:#fffdf9}
+.structure-summary-title b{display:block;font-size:16px;letter-spacing:-.02em}
+.structure-summary-title span{display:block;font-size:13px;color:#777;margin-top:4px;line-height:1.45}
+.structure-summary-metrics{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.structure-summary-body{display:none;border-top:1px solid var(--line2);padding:14px 16px 16px}
+.structure-summary.open .structure-summary-body{display:block}
+.structure-summary.open>.structure-summary-head .chev{transform:rotate(90deg);background:#111;color:#fff;border-color:#111}
+.structure-principle{margin-bottom:14px;padding:12px 14px;border:1px solid var(--line2);border-radius:12px;background:#fafafa;color:#555;font-size:13px;line-height:1.55}
+.structure-principle b{color:#111}
+.structure-wrap{display:flex;flex-direction:column;gap:10px}.structure-root,.structure-node{background:#fff;border:1px solid var(--line);border-radius:14px}.structure-head{display:grid;grid-template-columns:28px 1fr auto;gap:12px;align-items:center;padding:14px 15px;cursor:pointer}.chev{width:24px;height:24px;border:1px solid var(--line);border-radius:8px;background:#fafafa;color:#777;display:grid;place-items:center;font-size:13px;transition:.15s}.structure-head:hover .chev{border-color:#cfc8bd;color:#111}.structure-title b{display:block;font-size:14px}.structure-title span{display:block;font-size:12px;color:#888;margin-top:3px}.structure-meta{display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end}.mini-pill{font-family:'DM Mono',monospace;font-size:10px;border:1px solid var(--line);border-radius:999px;padding:4px 7px;color:#777;background:#fafafa;white-space:nowrap}.mini-pill.red{color:var(--red);background:var(--redBg);border-color:#ffd9d9}.mini-pill.amber{color:var(--amber);background:var(--amberBg);border-color:#ffe8ae}.mini-pill.green{color:var(--green);background:var(--greenBg);border-color:#d9f3df}.children{display:none;border-top:1px solid var(--line2);padding:8px 10px 12px 42px}.structure-node.open>.children,.structure-root.open>.children{display:flex;flex-direction:column;gap:8px}.structure-node.open>.structure-head .chev,.structure-root.open>.structure-head .chev{transform:rotate(90deg);background:#111;color:#fff;border-color:#111}.child-line{position:relative}.child-line:before{content:'';position:absolute;left:-20px;top:24px;width:12px;height:1px;background:#ded8ce}.structure-note{font-size:13px;color:#666;line-height:1.5;margin-top:2px}.structure-actions{display:flex;gap:8px;margin-top:12px}.text-btn{border:1px solid var(--line);background:#fff;border-radius:999px;padding:8px 11px;font:inherit;font-size:13px;color:#555;cursor:pointer}.text-btn:hover{color:#111;border-color:#cfc8bd}
+
+@media(max-width:1180px){.app{grid-template-columns:190px 1fr}.right{display:none}.signal-grid{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="nav-section">
+      <div class="nav-label">Workspaces</div>
+      <div class="nav-item active" data-workspace="obligations"><div class="nav-left"><span class="dot"></span>Obligations</div><span class="nav-count">19</span></div>
+      <div class="nav-item" data-workspace="risk"><div class="nav-left"><span class="dot"></span>Risk</div><span class="nav-count">06</span></div>
+      <div class="nav-item" data-workspace="renewals"><div class="nav-left"><span class="dot"></span>Renewals</div><span class="nav-count">07</span></div>
+      <div class="nav-item" data-workspace="finance"><div class="nav-left"><span class="dot"></span>Finance</div><span class="nav-count">12</span></div>
+      <div class="nav-item" data-workspace="data"><div class="nav-left"><span class="dot"></span>Data</div><span class="nav-count">05</span></div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Contract backbone</div>
+      <div class="nav-item"><div class="nav-left">Relationship context</div></div>
+      <div class="nav-item"><div class="nav-left">Documents</div></div>
+      <div class="nav-item"><div class="nav-left">Activity history</div></div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="contract-kicker">Contract object · CO-04218</div>
+    <section class="contract-head">
+      <div class="title-row">
+        <div class="avatar">MSA</div>
+        <div class="hgroup">
+          <h1>IBM Master Services Agreement</h1>
+          <p>Governs buy-side IT services with Boeing Global. Same contract underneath; each workspace changes the surface.</p>
+          <div class="status">Healthy · monitored</div>
+        </div>
+      </div>
+      <div class="head-meta">
+        <div class="meta-card"><b>42</b><span>agreements connected</span></div>
+        <div class="meta-card"><b>$42.8M</b><span>active value</span></div>
+        <div class="meta-card"><b>12 days</b><span>next renewal window</span></div>
+        <div class="meta-card"><b>2</b><span>amendments active</span></div>
+      </div>
+    </section>
+
+    <section class="workspace-hero">
+      <div class="workspace-title">
+        <div>
+          <h2 id="wsTitle">Obligations Workspace</h2>
+          <p id="wsDesc">A home screen for execution work: what is due, blocked, recoverable, and waiting for acceptance.</p>
+        </div>
+        <div class="switcher">
+          <button class="active">Today</button><button>Pipeline</button><button>Evidence</button>
+        </div>
+      </div>
+      <div class="signal-grid" id="signals"></div>
+    </section>
+
+    <section class="block">
+      <label>Needs attention</label>
+      <div class="queue" id="attention"></div>
+    </section>
+
+    <section class="block">
+      <label>Decision timeline</label>
+      <div class="timeline"><div class="rail" id="timeline"></div></div>
+    </section>
+
+    <section class="block structure-block">
+      <label>Contract structure</label>
+      <div class="structure-summary open" id="contractStructure">
+        <div class="structure-summary-head" onclick="toggleStructureShell()">
+          <div class="chev">›</div>
+          <div class="structure-summary-title">
+            <b>One contract relationship</b>
+            <span>MSA + SOWs + amendments + DPA. Folded by default so the workspace stays object-first.</span>
+          </div>
+          <div class="structure-summary-metrics">
+            <span class="mini-pill green">healthy</span>
+            <span class="mini-pill">42 linked</span>
+            <span class="mini-pill amber">3 signals</span>
+          </div>
+        </div>
+
+        <div class="structure-summary-body">
+          <div class="structure-principle"><b>Object → contract → action.</b> Start from the workspace object, open the contract thread only when context is needed, then return to action without losing the path.</div>
+
+          <div class="structure-wrap">
+            <div class="structure-root open">
+              <div class="structure-head" onclick="toggleStructure(this)">
+                <div class="chev">›</div>
+                <div class="structure-title"><b>IBM Master Services Agreement</b><span>Root contract · governs the active contract family</span></div>
+                <div class="structure-meta"><span class="mini-pill green">root</span><span class="mini-pill">governs all</span></div>
+              </div>
+              <div class="children">
+                <div class="structure-node child-line">
+                  <div class="structure-head" onclick="toggleStructure(this)">
+                    <div class="chev">›</div>
+                    <div class="structure-title"><b>6 Statements of Work</b><span>Delivery scopes inheriting MSA terms</span></div>
+                    <div class="structure-meta"><span class="mini-pill amber">3 need review</span></div>
+                  </div>
+                  <div class="children">
+                    <div class="structure-node child-line">
+                      <div class="structure-head" onclick="toggleStructure(this)">
+                        <div class="chev">›</div>
+                        <div class="structure-title"><b>Berlin Infrastructure SOW</b><span>SLA breach active · credit eligible</span></div>
+                        <div class="structure-meta"><span class="mini-pill red">breach</span><span class="mini-pill green">$82K</span></div>
+                      </div>
+                      <div class="children"><p class="structure-note">SLA clause creates the recoverable credit. Linked to Obligations and Finance workspace actions.</p></div>
+                    </div>
+                    <div class="structure-node child-line">
+                      <div class="structure-head" onclick="toggleStructure(this)">
+                        <div class="chev">›</div>
+                        <div class="structure-title"><b>Tokyo Cloud Support SOW</b><span>Acceptance pending · payment terms modified</span></div>
+                        <div class="structure-meta"><span class="mini-pill amber">pending</span></div>
+                      </div>
+                      <div class="children"><p class="structure-note">Amendment 03 changes net-30 to net-45. Acceptance task blocks milestone closure.</p></div>
+                    </div>
+                    <div class="structure-node child-line">
+                      <div class="structure-head" onclick="toggleStructure(this)">
+                        <div class="chev">›</div>
+                        <div class="structure-title"><b>+ 4 more SOWs</b><span>No urgent signal · monitored by agent</span></div>
+                        <div class="structure-meta"><span class="mini-pill green">no action</span></div>
+                      </div>
+                      <div class="children"><p class="structure-note">Kept collapsed to protect focus. Expand only when the user asks “why is this here?”</p></div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="structure-node child-line">
+                  <div class="structure-head" onclick="toggleStructure(this)">
+                    <div class="chev">›</div>
+                    <div class="structure-title"><b>2 Amendments</b><span>Changed commercial and liability positions</span></div>
+                    <div class="structure-meta"><span class="mini-pill red">1 conflict</span></div>
+                  </div>
+                  <div class="children"><p class="structure-note">Amendment 04 creates a liability conflict. Amendment 03 changes payment terms for Tokyo SOW.</p></div>
+                </div>
+
+                <div class="structure-node child-line">
+                  <div class="structure-head" onclick="toggleStructure(this)">
+                    <div class="chev">›</div>
+                    <div class="structure-title"><b>DPA + Security Attachments</b><span>Controls data flow, SOC 2, breach notice and sub-processors</span></div>
+                    <div class="structure-meta"><span class="mini-pill amber">SOC 2 due</span></div>
+                  </div>
+                  <div class="children"><p class="structure-note">Feeds the Data workspace without forcing security users to browse the full contract tree.</p></div>
+                </div>
+              </div>
+            </div>
+            <div class="structure-actions">
+              <button class="text-btn" onclick="event.stopPropagation();expandAllStructure()">Expand all</button>
+              <button class="text-btn" onclick="event.stopPropagation();collapseAllStructure()">Collapse all</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <aside class="right">
+    <div class="ai-card">
+      <div class="ai-top"><b>AI briefing</b><span class="ai-badge">LIVE</span></div>
+      <h3 id="aiTitle">Execution focus: recover SLA credits before the claim window closes.</h3>
+      <p id="aiBody">The system found two eligible SLA breaches linked to Amendment 02. Estimated recoverable credit is $82K. Evidence is ready for review.</p>
+      <div class="ai-section">
+        <label>Why this is shown</label>
+        <div class="evidence" id="evidence"></div>
+      </div>
+      <button class="cta" id="cta">Review action</button>
+      <button class="ghost">Open relationship context</button>
+    </div>
+  </aside>
+</div>
+
+<script>
+const data={
+ obligations:{title:'Obligations Workspace',desc:'A home screen for execution work: what is due, blocked, recoverable, and waiting for acceptance.',signals:[['14','obligations due this week','5 owner missing','warn'],['2','SLA credits eligible','$82K recoverable','ok'],['3','acceptance tasks pending','blocks milestone closure',''],['5','vendor deliverables late','2 have escalation paths','risk']],attention:[['14 obligations due this week','5 owner missing · 4 vendor deliverables · 2 acceptance pending','review'],['2 SLA breaches may trigger credits','Triggered by updated SLA clause · Amendment 02 · estimated credit $82K','recover'],['Milestone acceptance pending','Tokyo Cloud Support SOW needs business acceptance by Friday','pending']],events:[['SLA breach',18,'red'],['Acceptance',45,'hot'],['Renewal',72,''],['Audit',96,'']],ai:['Execution focus: recover SLA credits before the claim window closes.','The system found two eligible SLA breaches linked to Amendment 02. Estimated recoverable credit is $82K. Evidence is ready for review.',['SLA clause updated by Amendment 02','Berlin Infrastructure SOW breach logs matched','Credit calculation uses current rate card v4.2'],'Prepare SLA claim']},
+ risk:{title:'Risk Workspace',desc:'A legal control room for exposure, disputes, cure windows, surviving clauses, and enforceability changes.',signals:[['3','exposure changes','liability + indemnity moved','risk'],['1','liability conflict','MSA §11.2 vs Amend 04','risk'],['2','cure windows open','notices due in 5 days','warn'],['8','surviving clauses active','audit + confidentiality','']],attention:[['Liability cap conflict needs review','Amendment 04 conflicts with MSA §11.2 across 6 SOWs','conflict'],['Cure notice window closes in 5 days','Vendor missed service restoration timeline twice this month','notice'],['Dispute risk increasing','Invoice delay and service tickets show repeated pattern','watch']],events:[['Conflict',20,'red'],['Cure notice',48,'hot'],['Dispute review',70,'warn'],['Survival check',94,'']],ai:['Risk focus: Amendment 04 may weaken enforceability across active SOWs.','The conflicting liability language applies to six downstream SOWs. Legal review is recommended before any renewal decision is approved.',['Amendment 04 modifies IBM MSA','Conflict detected against MSA §11.2','6 active SOWs inherit the changed position'],'Review risk position']},
+ renewals:{title:'Renewals Workspace',desc:'A renewal decision surface: what renews, what value is exposed, where pricing changed, and when action is required.',signals:[['7','renewal decisions','3 affected by amendments','warn'],['2','auto-renewals','notice window closing','risk'],['$6.4M','value exposed','next 45 days','warn'],['12%','price uplift risk','benchmark variance','risk']],attention:[['7 contracts need renewal decision','3 impacted by recent amendments · 2 auto-renewal · $6.4M exposed','decide'],['Auto-renewal notice window closing','Berlin Infrastructure SOW renews in 12 days unless stopped','urgent'],['Benchmark variance above threshold','Vendor uplift is 12% higher than market band','negotiate']],events:[['Notice window',18,'red'],['Benchmark',38,'warn'],['Decision',58,'hot'],['Renewal date',88,'']],ai:['Renewal focus: stop silent auto-renewal before value leaks.','Two contracts will auto-renew unless notice is issued. One renewal is tied to unresolved SLA credit and should not be approved as-is.',['Renewal clause notice period: 30 days','2 auto-renewals detected','SLA credit unresolved on linked SOW'],'Start renewal decision']},
+ finance:{title:'Finance Workspace',desc:'A money control surface: invoice mismatches, credits recoverable, revenue recognition, accruals, and dispute reserves.',signals:[['$82K','credits recoverable','SLA claims not filed','ok'],['2','invoice mismatches','old rate card used','warn'],['24','line items repriced','rate card v4.2 applied',''],['1','reserve needed','dispute exposure open','risk']],attention:[['$82K SLA credit recoverable','Claim is eligible but not yet submitted to vendor','recover'],['2 invoices use old rates','Rate Card v4.2 applied but SAP invoices still use v4.1','reconcile'],['Dispute reserve needs confirmation','Open service dispute may require finance reserve','reserve']],events:[['Invoice run',16,'warn'],['Credit claim',42,'hot'],['Accrual close',66,''],['Disclosure',91,'']],ai:['Finance focus: recover credits and reconcile old-rate invoices.','The contract shows eligible credits and repriced line items, but finance systems still show two invoices using the older rate card.',['Rate Card v4.2 updated 3 days ago','2 invoices matched to older pricing','SLA breach credit estimated at $82K'],'Reconcile finance items']},
+ data:{title:'Data Workspace',desc:'A compliance and access surface: SOC 2 refresh, sub-processors, breach timers, data flow, and suspension rights.',signals:[['1','SOC 2 refresh due','expires in 9 days','warn'],['4','sub-processors changed','DPA review needed','warn'],['1','breach timer active','72-hour SLA running','risk'],['3','access reviews pending','high-risk systems','']],attention:[['SOC 2 refresh due','Vendor certificate expires in 9 days; audit evidence not refreshed','refresh'],['Sub-processor list changed','4 new processors added after DPA execution','review'],['Breach notification timer active','Incident reported; 72-hour contractual SLA is running','urgent']],events:[['Incident',14,'red'],['DPA review',38,'warn'],['SOC 2 due',62,'hot'],['Access check',88,'']],ai:['Data focus: breach timer and SOC 2 evidence need action.','The workspace detected an active breach notification timer and an expiring SOC 2 certificate. Both link back to the same DPA and service SOW.',['DPA controls data flow for this MSA','SOC 2 evidence expires in 9 days','Breach SLA timer started from incident timestamp'],'Review data controls']}
+};
+const signals=document.getElementById('signals'),attention=document.getElementById('attention'),timeline=document.getElementById('timeline'),evidence=document.getElementById('evidence');
+function render(k){const d=data[k];document.getElementById('wsTitle').textContent=d.title;document.getElementById('wsDesc').textContent=d.desc;signals.innerHTML=d.signals.map(s=>`<div class="signal ${s[3]||''}"><strong>${s[0]}</strong><span>${s[1]}</span><small>${s[2]}</small></div>`).join('');attention.innerHTML=d.attention.map(r=>`<div class="row"><div><h3>${r[0]}</h3><p>${r[1]}</p></div><span class="pill ${r[2]=='urgent'||r[2]=='conflict'?'red':r[2]=='recover'?'green':'amber'}">${r[2]}</span></div>`).join('');timeline.innerHTML=d.events.map(e=>`<div class="event ${e[2]||''}" style="left:${e[1]}%"><span>${e[0]}</span><i></i></div>`).join('');document.getElementById('aiTitle').textContent=d.ai[0];document.getElementById('aiBody').textContent=d.ai[1];evidence.innerHTML=d.ai[2].map(x=>`<div>${x}</div>`).join('');document.getElementById('cta').textContent=d.ai[3];}
+document.querySelectorAll('.nav-item[data-workspace]').forEach(item=>{item.addEventListener('click',()=>{document.querySelectorAll('.nav-item[data-workspace]').forEach(i=>i.classList.remove('active'));item.classList.add('active');render(item.dataset.workspace);});});
+
+function toggleStructureShell(){document.getElementById('contractStructure').classList.toggle('open');}
+function toggleStructure(head){head.parentElement.classList.toggle('open');}
+function expandAllStructure(){document.querySelectorAll('.structure-root,.structure-node').forEach(n=>n.classList.add('open'));}
+function collapseAllStructure(){document.querySelectorAll('.structure-node').forEach(n=>n.classList.remove('open'));document.querySelector('.structure-root')?.classList.add('open');}
+render('obligations');
+</script>
+</body>
+</html>
