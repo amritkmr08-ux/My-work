@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>The Restaurant Mirror</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+
+:root {
+  --white:    #ffffff;
+  --off:      #f7f5f1;
+  --border:   #e8e2d8;
+  --ink:      #1a1208;
+  --ink2:     #3d3428;
+  --ink3:     #8a7e6e;
+  --accent:   #c8622a;
+  --accent2:  #e8956a;
+  --good:     #1a6640;
+  --warn:     #a04a10;
+  --bad:      #921a1a;
+  --good-bg:  #edf7f1;
+  --warn-bg:  #fdf3ec;
+  --bad-bg:   #fdefef;
+  --max:      800px;
+  --safe-b:   env(safe-area-inset-bottom, 0px);
+}
+
+html, body {
+  height: 100%; overflow: hidden;
+  font-family: 'Inter', system-ui, sans-serif;
+  background: var(--white); color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  touch-action: manipulation;
+}
+
+/* ── SCREEN ENGINE ── */
+.scr {
+  position: fixed; inset: 0;
+  display: flex; flex-direction: column;
+  align-items: center;
+  transform: translateX(100%);
+  transition: transform .3s cubic-bezier(.4,0,.2,1);
+  overflow: hidden; will-change: transform;
+  background: var(--white);
+}
+.scr.active { transform: translateX(0); }
+.scr.out    { transform: translateX(-100%); }
+
+/* ── CENTERED CONTAINER ── */
+.ctr {
+  width: 100%; max-width: var(--max);
+  padding: 0 1.5rem;
+  display: flex; flex-direction: column;
+  height: 100%;
+}
+
+/* ── PROGRESS BAR ── */
+#pgbar {
+  position: fixed; top: 0; left: 0; right: 0;
+  height: 3px; background: var(--border);
+  z-index: 999; display: none;
+}
+#pgfill {
+  height: 100%; background: var(--accent);
+  width: 0; transition: width .4s cubic-bezier(.4,0,.2,1);
+}
+
+/* ── PROGRESS STEPS ── */
+.step-row {
+  display: flex; gap: 3px;
+  padding: 1rem 0 0;
+  flex-shrink: 0;
+}
+.step { flex: 1; height: 2px; border-radius: 2px; background: var(--border); transition: background .3s; }
+.step {
+  flex: 1; height: 3px; border-radius: 2px;
+  background: var(--border); transition: background .3s;
+}
+.step.done { background: var(--accent); }
+.step.cur  { background: var(--accent); opacity: .5; }
+
+/* ── HOOK ── */
+#s-hook {
+  background: var(--ink);
+  justify-content: center; align-items: center;
+}
+.hook-inner {
+  width: 100%; max-width: var(--max);
+  padding: 2rem 1.5rem;
+  text-align: center;
+}
+.hook-eyebrow {
+  font-size: 11px; letter-spacing: .18em;
+  text-transform: uppercase; color: rgba(255,255,255,.3);
+  margin-bottom: 2rem; display: block;
+}
+.hook-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2.4rem, 6vw, 4rem);
+  line-height: 1.1; letter-spacing: -.02em;
+  color: #fff; margin-bottom: .75rem;
+}
+.hook-title em { font-style: italic; color: var(--accent2); display: block; }
+.hook-sub {
+  font-size: 15px; color: rgba(255,255,255,.4);
+  line-height: 1.7; max-width: 340px;
+  margin: 1.25rem auto 2.5rem;
+}
+.hook-btn {
+  display: block; width: 100%; max-width: 340px;
+  background: var(--accent); color: #fff; border: none;
+  padding: 16px; font-family: 'Inter', sans-serif;
+  font-size: 15px; font-weight: 600; letter-spacing: .02em;
+  cursor: pointer; border-radius: 8px; margin: 0 auto;
+  transition: background .2s, transform .15s;
+}
+.hook-btn:hover  { background: #b5561f; }
+.hook-btn:active { transform: scale(.98); }
+.hook-note { font-size: 12px; color: rgba(255,255,255,.18); margin-top: 1rem; }
+
+/* ── SETUP ── */
+#s-setup { background: var(--off); }
+.setup-inner {
+  width: 100%; max-width: var(--max);
+  padding: 3rem 1.75rem; margin: auto;
+}
+.label {
+  font-size: 11px; font-weight: 600;
+  letter-spacing: .14em; text-transform: uppercase;
+  color: var(--accent);
+}
+.setup-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.4rem, 3.5vw, 1.8rem);
+  color: var(--ink); line-height: 1.25;
+  margin: .75rem 0 1.75rem;
+}
+.setup-items { display: flex; flex-direction: column; gap: 1rem; margin-bottom: 2.5rem; }
+.setup-item  { display: flex; gap: 12px; align-items: flex-start; }
+.si-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); flex-shrink: 0; margin-top: 6px; }
+.si-txt { font-size: 15px; color: var(--ink2); line-height: 1.6; }
+.si-txt strong { color: var(--ink); font-weight: 600; }
+.btn-primary {
+  display: block; width: 100%; max-width: 340px;
+  background: var(--ink); color: #fff; border: none;
+  padding: 16px; font-family: 'Inter', sans-serif;
+  font-size: 15px; font-weight: 600; cursor: pointer;
+  border-radius: 8px; transition: background .2s, transform .15s;
+}
+.btn-primary:hover  { background: #2d2418; }
+.btn-primary:active { transform: scale(.98); }
+
+/* ── QUESTION SCREEN ── */
+.scr-q { background: var(--white); }
+.q-ctr {
+  width: 100%; max-width: var(--max);
+  padding: 0 1.5rem;
+  display: flex; flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  margin: 0 auto;
+}
+
+.q-head {
+  padding-top: 1.25rem;
+  flex-shrink: 0;
+}
+.q-num { margin-bottom: .875rem; }
+.q-text {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.05rem, 4vw, 1.4rem);
+  line-height: 1.5; color: var(--ink);
+  font-style: italic; padding-bottom: 1.1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.q-opts {
+  flex: 1; overflow-y: auto;
+  padding: .875rem 0 .5rem;
+  display: flex; flex-direction: column;
+  gap: 8px;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+.opt {
+  border: 1.5px solid var(--border);
+  border-radius: 10px; padding: 14px 16px;
+  cursor: pointer; display: flex;
+  align-items: flex-start; gap: 12px;
+  background: var(--white);
+  transition: border-color .15s, background .15s;
+  min-height: 52px;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+.opt:hover  { border-color: #c4b49a; background: var(--off); }
+.opt.sel    { border-color: var(--accent); background: #fff8f3; }
+.opt-radio {
+  width: 20px; height: 20px; border-radius: 50%;
+  border: 2px solid var(--border); flex-shrink: 0;
+  margin-top: 1px; transition: all .15s;
+  display: flex; align-items: center;
+  justify-content: center; background: var(--white);
+}
+.opt.sel .opt-radio { background: var(--accent); border-color: var(--accent); }
+.opt.sel .opt-radio::after { content: ''; width: 7px; height: 7px; border-radius: 50%; background: white; }
+.opt-text { font-size: 15px; color: var(--ink2); line-height: 1.5; flex: 1; }
+.opt.sel .opt-text { color: var(--ink); font-weight: 500; }
+@media (max-width: 400px) {
+  .opt-text { font-size: 14px; }
+}
+
+/* ── NAV FOOTER ── */
+.q-nav {
+  flex-shrink: 0;
+  display: flex; justify-content: space-between;
+  align-items: center;
+  padding: .75rem 0;
+  padding-bottom: max(.75rem, var(--safe-b));
+  border-top: 1px solid var(--border);
+  gap: 10px;
+}
+.btn-nav {
+  font-family: 'Inter', sans-serif;
+  font-size: 14px; font-weight: 500; cursor: pointer;
+  border-radius: 8px; transition: all .15s;
+  min-height: 44px; display: flex; align-items: center;
+  gap: 6px; padding: 10px 16px;
+}
+.btn-nav.ghost {
+  background: transparent; border: 1px solid var(--border);
+  color: var(--ink3); font-size: 13px;
+  padding: 10px 14px;
+}
+.btn-nav.ghost:hover { border-color: var(--ink3); color: var(--ink2); }
+.btn-nav.solid {
+  background: transparent; border: 1px solid var(--ink);
+  color: var(--ink); flex: 1; justify-content: center;
+  font-size: 13px; font-weight: 500;
+}
+.btn-nav.solid:hover  { background: var(--off); }
+.btn-nav.solid:active { transform: scale(.98); }
+.btn-nav.accent { background: var(--accent); border: none; color: white; flex: 1; justify-content: center; }
+.btn-nav.accent:hover { background: #b5561f; }
+.btn-nav.solid.dim { opacity: .3; pointer-events: none; }
+
+/* ── REVEAL SCREEN ── */
+.scr-r { background: var(--off); overflow-y: auto; }
+.r-ctr {
+  width: 100%; max-width: var(--max);
+  padding: 1.5rem 1.25rem max(2rem, var(--safe-b));
+  margin: 0 auto;
+  display: flex; flex-direction: column; gap: .875rem;
+}
+
+.r-verdict {
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: 12px; padding: 1.25rem 1.25rem 1rem;
+}
+.r-v-label { font-size: 11px; color: var(--ink3); letter-spacing: .04em; margin-bottom: .5rem; text-transform: uppercase; }
+.r-v-text  { font-size: 15px; font-weight: 500; color: var(--ink); line-height: 1.55; }
+.r-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 12px; font-weight: 600; padding: 5px 12px;
+  border-radius: 20px; margin-top: .875rem;
+}
+.badge-g { background: var(--good-bg); color: var(--good); }
+.badge-w { background: var(--warn-bg); color: var(--warn); }
+.badge-b { background: var(--bad-bg);  color: var(--bad); }
+.bdot { width: 6px; height: 6px; border-radius: 50%; }
+.dg { background: var(--good); } .dw { background: var(--warn); } .db { background: var(--bad); }
+
+.r-obs {
+  background: var(--ink); border-radius: 12px;
+  padding: 1.5rem;
+}
+.r-obs-label { font-size: 11px; color: rgba(255,255,255,.3); letter-spacing: .1em; text-transform: uppercase; margin-bottom: .875rem; }
+.r-obs-text  {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(.95rem, 4vw, 1.1rem);
+  color: #ede5d4; line-height: 1.75; font-style: italic;
+}
+.r-obs-text em { color: var(--accent2); font-style: normal; }
+
+.r-stat {
+  border-left: 3px solid var(--accent);
+  padding-left: 1rem;
+  background: var(--white); border-radius: 0 8px 8px 0;
+  padding: .875rem .875rem .875rem 1rem;
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+}
+.r-stat-text { font-size: 14px; color: var(--ink2); line-height: 1.65; }
+
+.r-nav {
+  display: flex; gap: 10px;
+  padding-bottom: max(.5rem, var(--safe-b));
+}
+
+/* ── SCORE ── */
+#s-score {
+  background: var(--ink);
+  justify-content: center; align-items: center;
+}
+.score-inner {
+  width: 100%; max-width: var(--max);
+  padding: 2.5rem 1.75rem;
+  text-align: center;
+}
+.score-ey { display: block; font-size: 11px; letter-spacing: .15em; text-transform: uppercase; color: rgba(255,255,255,.3); margin-bottom: 2rem; }
+.ring-wrap { width: 120px; height: 120px; position: relative; margin: 0 auto 2rem; }
+.ring-svg  { position: absolute; inset: 0; transform: rotate(-90deg); }
+.ring-track { fill: none; stroke: rgba(255,255,255,.08); stroke-width: 2; }
+.ring-fill  {
+  fill: none; stroke: var(--accent); stroke-width: 2;
+  stroke-linecap: round;
+  stroke-dasharray: 301.6; stroke-dashoffset: 301.6;
+  transition: stroke-dashoffset 1.8s cubic-bezier(.4,0,.2,1) .4s;
+}
+.ring-inner { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.ring-num   { font-family: 'Playfair Display', serif; font-size: 2.6rem; color: #fff; line-height: 1; opacity: 0; transition: opacity .4s .8s; }
+.ring-den   { font-size: 11px; color: rgba(255,255,255,.3); margin-top: 4px; opacity: 0; transition: opacity .3s 1s; }
+.arch-name  { font-family: 'Playfair Display', serif; font-size: clamp(1.3rem, 4vw, 1.7rem); color: #fff; line-height: 1.25; min-height: 2.5rem; margin-bottom: .75rem; }
+.arch-sub   { font-size: 14px; color: rgba(255,255,255,.4); line-height: 1.7; max-width: 380px; margin: 0 auto 2rem; opacity: 0; transition: opacity .5s; }
+.score-cta  { opacity: 0; transition: opacity .4s; }
+.sa .ring-num, .sa .ring-den, .sa .arch-sub, .sa .score-cta { opacity: 1; }
+
+/* ── WOUND ── */
+#s-wound { background: var(--off); justify-content: center; align-items: center; }
+.wound-inner { max-width: var(--max); padding: 2.5rem 1.75rem; text-align: center; }
+.wound-l1 { font-family: 'Playfair Display', serif; font-size: clamp(1.3rem, 3.5vw, 1.7rem); color: var(--ink); line-height: 1.35; margin-bottom: 1rem; opacity: 0; transition: opacity .5s .2s; }
+.wound-l1 em { color: var(--accent); font-style: italic; }
+.wound-l2 { font-size: 15px; color: var(--ink2); line-height: 1.7; margin-bottom: 2.5rem; max-width: 420px; margin-left: auto; margin-right: auto; opacity: 0; transition: opacity .5s .7s; }
+.wound-cta { opacity: 0; transition: opacity .4s 1.2s; }
+.wa .wound-l1, .wa .wound-l2, .wa .wound-cta { opacity: 1; }
+
+/* ── FINDINGS ── */
+#s-findings { background: var(--off); flex-direction: column; overflow-y: auto; align-items: center; }
+.findings-hd { position: sticky; top: 0; z-index: 10; background: var(--white); width: 100%; border-bottom: 1px solid var(--border); }
+.findings-hd-inner { max-width: var(--max); margin: 0 auto; padding: 1.25rem 1.5rem; }
+.findings-hd-title { font-family: 'Playfair Display', serif; font-size: 1.15rem; color: var(--ink); margin-top: .25rem; }
+.findings-body { width: 100%; max-width: var(--max); padding: 1.25rem 1.5rem; display: flex; flex-direction: column; gap: 10px; }
+
+.fcard { background: var(--white); border: 1px solid var(--border); border-radius: 10px; padding: 1rem 1.1rem; opacity: 0; transform: translateY(8px); transition: all .35s ease; }
+.fcard.in { opacity: 1; transform: translateY(0); }
+.fcard.fg { border-left: 3px solid var(--good); }
+.fcard.fw { border-left: 3px solid var(--warn); }
+.fcard.fb { border-left: 3px solid var(--bad); }
+.fc-head { display: flex; align-items: center; gap: 8px; margin-bottom: .4rem; }
+.fc-num  { font-size: 11px; color: var(--ink3); letter-spacing: .06em; }
+.fc-badge { font-size: 11px; padding: 2px 10px; border-radius: 20px; font-weight: 600; }
+.fbg { background: var(--good-bg); color: var(--good); }
+.fbw { background: var(--warn-bg); color: var(--warn); }
+.fbb { background: var(--bad-bg);  color: var(--bad); }
+.fc-txt { font-size: 14px; color: var(--ink2); line-height: 1.6; }
+
+.truths-block { background: var(--white); border: 1px solid var(--border); border-radius: 10px; padding: 1.25rem; }
+.truths-title { font-family: 'Playfair Display', serif; font-size: 1rem; color: var(--ink); margin-bottom: 1rem; }
+.truth-item { display: flex; gap: 10px; font-size: 14px; color: var(--ink2); padding: 9px 0; border-bottom: 1px solid var(--border); line-height: 1.55; }
+.truth-item:last-child { border-bottom: none; }
+.truth-item::before { content: '→'; color: var(--accent); flex-shrink: 0; }
+
+/* ── PAYWALL ── */
+#s-paywall { background: var(--white); flex-direction: column; overflow-y: auto; align-items: center; }
+.pw-inner { width: 100%; max-width: var(--max); padding: 2.5rem 1.5rem max(3rem, var(--safe-b)); }
+.pw-ey { display: block; margin-bottom: 1.25rem; }
+.pw-title { font-family: 'Playfair Display', serif; font-size: clamp(1.2rem, 3vw, 1.5rem); color: var(--ink); line-height: 1.3; margin-bottom: .875rem; }
+.pw-sub { font-size: 14px; color: var(--ink2); line-height: 1.7; margin-bottom: 1.75rem; }
+.pw-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 2rem; }
+.pwi { font-size: 14px; color: var(--ink2); display: flex; gap: 10px; line-height: 1.55; }
+.pwi::before { content: '✓'; color: var(--good); flex-shrink: 0; font-weight: 700; }
+.pw-divider { height: 1px; background: var(--border); margin: 1.5rem 0; }
+.pw-price { display: flex; align-items: baseline; gap: 10px; margin-bottom: 1.5rem; }
+.pw-amt { font-family: 'Playfair Display', serif; font-size: 2.6rem; color: var(--ink); }
+.pw-note { font-size: 13px; color: var(--ink3); }
+.btn-buy { display: block; width: 100%; background: var(--accent); color: white; border: none; padding: 17px; font-family: 'Inter', sans-serif; font-size: 16px; font-weight: 600; cursor: pointer; border-radius: 8px; transition: background .2s, transform .15s; margin-bottom: .875rem; }
+.btn-buy:hover { background: #b5561f; }
+.btn-buy:active { transform: scale(.98); }
+.pw-trust { font-size: 13px; color: var(--ink3); text-align: center; line-height: 1.6; }
+
+/* ── MOBILE SPECIFIC ── */
+@media (max-width: 480px) {
+  .hook-title { font-size: 2.4rem; }
+  .hook-sub { font-size: 14px; }
+  .setup-title { font-size: 1.4rem; }
+  .si-txt { font-size: 14px; }
+  .q-text { font-size: 1.05rem; }
+  .r-v-text { font-size: 14px; }
+  .r-obs-text { font-size: .95rem; }
+  .r-stat-text { font-size: 13px; }
+  .fc-txt { font-size: 13px; }
+  .truth-item { font-size: 13px; }
+  .pw-sub { font-size: 13px; }
+  .pwi { font-size: 13px; }
+  .score-inner { padding: 2rem 1.25rem; }
+  .wound-inner { padding: 2rem 1.25rem; }
+  .findings-body { padding: 1rem 1.25rem; }
+  .pw-inner { padding: 2rem 1.25rem max(2.5rem, var(--safe-b)); }
+}
+
+@media (max-height: 680px) {
+  .q-head { padding-top: .875rem; }
+  .q-num { margin-bottom: .5rem; }
+  .q-text { font-size: 1rem; padding-bottom: .875rem; }
+  .q-opts { padding: .625rem 0 .25rem; gap: 6px; }
+  .opt { padding: 12px 14px; min-height: 46px; }
+  .step-row { padding: .75rem 0 0; }
+  .q-nav { padding: .625rem 0; }
+}
+</style>
+</head>
+<body>
+
+<div id="pgbar"><div id="pgfill"></div></div>
+
+<!-- HOOK -->
+<div class="scr active" id="s-hook">
+  <div class="hook-inner">
+    <span class="hook-eyebrow">The Restaurant Mirror</span>
+    <h1 class="hook-title">What your customers see —<em>but never say</em></h1>
+    <p class="hook-sub">Answer 8 questions. Get a free personalised diagnosis of your restaurant's customer experience.</p>
+    <button class="hook-btn" onclick="go('s-setup')">Start free diagnosis →</button>
+    <p class="hook-note">Free · 3 minutes · For restaurant owners in India</p>
+  </div>
+</div>
+
+<!-- SETUP -->
+<div class="scr" id="s-setup">
+  <div class="setup-inner">
+    <div class="label">Before you begin</div>
+    <h2 class="setup-title">This is a diagnosis —<br>not a quiz.</h2>
+    <div class="setup-items">
+      <div class="setup-item"><div class="si-dot"></div><div class="si-txt">8 questions — each reveals <strong>what customers see but never say</strong></div></div>
+      <div class="setup-item"><div class="si-dot"></div><div class="si-txt">After each answer — see <strong>exactly what it means</strong> for your restaurant</div></div>
+      <div class="setup-item"><div class="si-dot"></div><div class="si-txt">At the end — a <strong>personalised result</strong> with your specific gaps</div></div>
+    </div>
+    <button class="btn-primary" onclick="startDiagnosis()">Begin the diagnosis →</button>
+  </div>
+</div>
+
+<!-- Q SCREENS — JS generated -->
+
+<!-- SCORE -->
+<div class="scr" id="s-score">
+  <div class="score-inner">
+    <span class="score-ey">Your Restaurant Mirror</span>
+    <div class="ring-wrap">
+      <svg class="ring-svg" viewBox="0 0 110 110">
+        <circle class="ring-track" cx="55" cy="55" r="48"/>
+        <circle class="ring-fill" id="ringFill" cx="55" cy="55" r="48"/>
+      </svg>
+      <div class="ring-inner">
+        <div class="ring-num" id="ringNum">—</div>
+        <div class="ring-den">/ 24</div>
+      </div>
+    </div>
+    <div class="arch-name" id="archName"></div>
+    <div class="arch-sub" id="archSub"></div>
+    <div class="score-cta">
+      <button class="btn-nav accent" style="max-width:340px;margin:0 auto;width:100%" onclick="go('s-wound');trigWound()">See your full diagnosis →</button>
+    </div>
+  </div>
+</div>
+
+<!-- WOUND -->
+<div class="scr" id="s-wound">
+  <div class="wound-inner">
+    <div class="wound-l1">"You've just seen your restaurant through your <em>customers' eyes.</em>"</div>
+    <div class="wound-l2">Most owners never get this view. The full report shows you what each customer experienced — and what to fix first.</div>
+    <div class="wound-cta">
+      <button class="btn-primary" onclick="go('s-findings');trigFindings()">Read the findings →</button>
+    </div>
+  </div>
+</div>
+
+<!-- FINDINGS -->
+<div class="scr" id="s-findings">
+  <div class="findings-hd">
+    <div class="findings-hd-inner">
+      <div class="label">Your diagnosis</div>
+      <div class="findings-hd-title">What the mirror found</div>
+    </div>
+  </div>
+  <div class="findings-body" id="findBody">
+    <div class="truths-block">
+      <div class="truths-title">What customers notice — but never say</div>
+      <div class="truth-item">Customers don't remember menus. They remember one specific moment.</div>
+      <div class="truth-item">An empty-looking restaurant makes new customers feel they chose wrong — before they even sit down.</div>
+      <div class="truth-item">A menu with 50+ items signals the kitchen has no clear identity.</div>
+      <div class="truth-item">Delivery packaging is the entire brand experience for that order.</div>
+      <div class="truth-item">One inconsistent visit makes every previous good visit feel unreliable.</div>
+    </div>
+    <button class="btn-nav accent" onclick="go('s-paywall')" style="width:100%">Get the full report →</button>
+  </div>
+</div>
+
+<!-- PAYWALL -->
+<div class="scr" id="s-paywall">
+  <div class="pw-inner">
+    <span class="label pw-ey">The Restaurant Mirror — Full Report</span>
+    <h3 class="pw-title">"Why your restaurant is forgettable — and what your customers never told you."</h3>
+    <p class="pw-sub">A 20-page design audit. Not tips. Not a checklist. Restaurant psychology decoded — with visual comparisons and fixes specific to your diagnosis.</p>
+    <div class="pw-list">
+      <div class="pwi">The 7-second perception test — what customers decide before sitting down</div>
+      <div class="pwi">Menu psychology — why your menu might be quietly reducing trust</div>
+      <div class="pwi">The signature moment formula — why some restaurants become "my spot"</div>
+      <div class="pwi">Before/after visual comparisons — weak vs strong</div>
+      <div class="pwi">First-week fixes specific to your archetype</div>
+    </div>
+    <div class="pw-divider"></div>
+    <div class="pw-price">
+      <div class="pw-amt">₹149</div>
+      <div class="pw-note">One-time · Instant PDF</div>
+    </div>
+    <button class="btn-buy">Get The Full Report →</button>
+    <p class="pw-trust">Less than the cost of one dinner out.<br>No subscription. No upsell.</p>
+  </div>
+</div>
+
+<script>
+const QS = [
+  {
+    q: "If a customer describes your restaurant to a friend tonight — what is the one thing they would say?",
+    obs: "I once watched a waiter place a small piece of jaggery on the table after a meal. No announcement. Just jaggery — the way your mother used to after lunch. I didn't remember the dal. I remembered the jaggery. One small ritual made the restaurant unforgettable.",
+    stat: "Word of mouth only travels when it carries something specific. 'Nice place' stays in the room. A ritual, a dish, a feeling — that travels.",
+    opts: [
+      { t:"They'd say one specific thing — a dish, a ritual, a feeling only my restaurant has", v:"You have a signature. That's the single most powerful marketing asset a restaurant can own — and most never build one.", bt:"g", sc:3 },
+      { t:"Something vague — 'good food' or 'nice place'. Positive but nothing specific", v:"Customers enjoyed it — but nothing specific stuck. 'Nice place' doesn't bring the next customer through your door.", bt:"w", sc:1 },
+      { t:"Honestly — I'm not sure. Different customers say different things", v:"Without a clear identity, there's nothing specific for memory to hold on to — and nothing to pass on.", bt:"b", sc:0 }
+    ]
+  },
+  {
+    q: "When a customer drives or walks past your restaurant for the first time — what makes them decide to stop?",
+    obs: "Before I read a single word of the menu, I've already decided. Is the entrance clean? Are people nearby? If I see even two or three people outside, it signals something is working. If the banner looks cared for, I assume the kitchen is too. We judge hygiene by the signage. We judge quality by the crowd.",
+    stat: "55% of dining decisions are made based on first visual impression — before a single word of the menu is read.",
+    opts: [
+      { t:"Clear signage, easy to stop, visible interior — the approach feels clean and intentional", v:"Your restaurant communicates confidence before a customer reads a single word. That first impression compounds over every visit.", bt:"g", sc:3 },
+      { t:"Signage exists but nothing eye-catching — functional but nothing pulls you in", v:"Visible but forgettable. A quiet hesitation is being created that you're unaware of — customers never report it.", bt:"w", sc:1 },
+      { t:"Hard to notice, unclear parking, dusty or chaotic — requires effort to stop", v:"The approach experience is silently repelling customers before they reach your door. They don't complain. They just don't stop.", bt:"b", sc:0 }
+    ]
+  },
+  {
+    q: "What does a customer feel in the first 30 seconds after walking through your door?",
+    obs: "The most uncomfortable restaurant experiences I've had weren't from bad food — they were from confused interiors. When a restaurant tries to look premium but seats people like a canteen, both promises break at once. Cramped seating signals the business is struggling. A struggling business cannot give you their best.",
+    stat: "Customers form brand expectations within 7–12 seconds of entering. That impression colours the food, the price, and the service — before a single bite.",
+    opts: [
+      { t:"Welcomed immediately, clear where to go — the space communicates what kind of restaurant this is", v:"Entry experience is working. Emotional expectation is set before the first bite — this is rare and valuable.", bt:"g", sc:3 },
+      { t:"Someone eventually notices them. Average ambience. Functional but not memorable", v:"Functional but creating no positive impression. The meal starts at zero instead of a positive.", bt:"w", sc:1 },
+      { t:"Confusing entry, no clear direction — feels chaotic, empty, or visually contradictory", v:"The first 30 seconds are setting a negative emotional template for the entire meal that follows.", bt:"b", sc:0 }
+    ]
+  },
+  {
+    q: "Can a first-time customer decide what to order within 60 seconds of seeing your menu?",
+    obs: "A restaurant starts with a few dishes, those don't sell enough, so they keep adding more to attract more people. But more items don't attract more people. They destroy kitchen organisation — and customers feel that disorder in the food, even when they can't name it. A menu with 60 items doesn't say 'we have more.' It says 'we couldn't decide what we are.'",
+    stat: "When a menu exceeds 40 items, customers experience decision fatigue. They default to the cheapest or most familiar option — not the best one for your restaurant.",
+    opts: [
+      { t:"Under 25 items, bestsellers marked — can decide within 60 seconds confidently", v:"Menu focus signals mastery. Customers decide quickly, trust their choice, and order your better dishes.", bt:"g", sc:3 },
+      { t:"25–45 items, some structure — takes a few minutes but manageable", v:"Approaching decision fatigue territory. A focused menu review could meaningfully improve average order value.", bt:"w", sc:1 },
+      { t:"50+ items — something for everyone, no single clear identity", v:"Menu length is causing paralysis and communicating that the kitchen has no clear identity.", bt:"b", sc:0 }
+    ]
+  },
+  {
+    q: "When someone orders delivery from your restaurant — what is the last thing they physically touch?",
+    obs: "When food arrives at your door, the restaurant has already disappeared. No interior. No staff. No aroma. Just a box. If it feels careless — a leaking bag, a generic container, no name — I don't think 'bad packaging.' I think 'they don't care.' And if they don't care about what I'm holding, I wonder what they didn't care about in the kitchen.",
+    stat: "In a delivery transaction, packaging is the only physical brand interaction the customer has. Most local restaurants treat this as logistics. It is actually a memory decision.",
+    opts: [
+      { t:"Branded packaging — name, logo, consistent look. Feels intentional", v:"Delivery packaging extends your brand beyond the kitchen. Every order ends with a positive last touch.", bt:"g", sc:3 },
+      { t:"Generic containers, sometimes a sticker. Functional but forgettable", v:"A missed brand moment. The experience ends before the customer finishes eating.", bt:"w", sc:1 },
+      { t:"Whatever containers are available. The food is what matters", v:"Every delivery order ends with a careless last impression — the only physical brand experience that customer had.", bt:"b", sc:0 }
+    ]
+  },
+  {
+    q: "When a new customer searches your restaurant online before visiting — what do they find?",
+    obs: "Before visiting anywhere new, I search. I'm not looking for information — I'm looking for signals. Are the photos real? Do the reviews sound like actual people? One genuine photo of a half-eaten thali builds more trust than ten professional food shots. Wrong hours or no replies to reviews? I think 'something to hide.'",
+    stat: "80% of customers check a restaurant's online presence before their first visit. An outdated profile is a locked door — losing customers you never knew were looking.",
+    opts: [
+      { t:"Updated photos, correct hours, replied reviews — the digital matches the physical", v:"Digital presence is earning visits. New customers arrive with confidence instead of doubt.", bt:"g", sc:3 },
+      { t:"Listed but not maintained — old photos, mixed reviews, unanswered queries", v:"Inconsistent online presence is creating doubt before customers leave home.", bt:"w", sc:1 },
+      { t:"Not sure / not updated in over a year / never really thought about it", v:"You are invisible to most new customers researching where to eat. They find doubt — and choose somewhere else.", bt:"b", sc:0 }
+    ]
+  },
+  {
+    q: "If a customer loved their visit and came back two weeks later — would they get the exact same experience?",
+    obs: "I stopped visiting a restaurant I loved after one visit where something felt different. Same dishes. Same table. But the taste had shifted — the chef had changed. Nobody told me. The restaurant assumed I wouldn't notice. I never went back. One visible inconsistency and I assumed everything else had shifted too.",
+    stat: "Customers don't return for food. They return for a feeling they want to recreate. When that feeling becomes unpredictable — the food becomes untrustworthy by association.",
+    opts: [
+      { t:"Yes — same taste, same greeting, same standard regardless of who's working", v:"Consistency is building trust that compounds. Customers return knowing exactly what to expect.", bt:"g", sc:3 },
+      { t:"Mostly — but it depends on who's there or the time of day", v:"Staff-dependent experience creates loyalty that can't be relied on. One off day can end a regular.", bt:"w", sc:1 },
+      { t:"Honestly — it varies quite a bit. Some days great, some disappoint", v:"Inconsistency is the silent reason customers who loved their first visit don't become regulars.", bt:"b", sc:0 }
+    ]
+  },
+  {
+    q: "Does your restaurant create one moment a customer still remembers after leaving?",
+    obs: "The most memorable restaurant I've visited had no branding, no designer, no Instagram page. A roadside dhaba on the Jaipur highway. The cook walked to the backyard, picked vegetables from the garden, and cooked them in front of you. In that moment I wasn't in a restaurant. I was in my mother's kitchen in the 1990s. The dhaba didn't create a memory. It unlocked one I already had.",
+    stat: "Restaurants that customers call 'my spot' have one thing in common — a moment the customer owns in their memory. Not the whole meal. One moment.",
+    opts: [
+      { t:"Yes — customers mention a specific moment, ritual, or detail. We know what it is", v:"You have a signature moment — the most powerful and least copyable asset a restaurant can own.", bt:"g", sc:3 },
+      { t:"We think so — but we're not sure exactly what customers remember most", v:"A moment likely exists but hasn't been identified or deliberately strengthened yet.", bt:"w", sc:1 },
+      { t:"We focus on quality and service. We haven't thought about a specific memorable moment", v:"Customers leave satisfied but not moved. Satisfaction fades. A signature moment doesn't.", bt:"b", sc:0 }
+    ]
+  }
+];
+
+const ARCHS = [
+  { min:0,  max:6,  name:"The Invisible Restaurant",              sub:"Your restaurant exists — but it doesn't communicate. Customers pass by and don't stop. Visit and don't return. The food may be excellent. Food alone doesn't build a restaurant that survives." },
+  { min:7,  max:12, name:"The Almost Restaurant",                 sub:"You're closer than you think. Customers enjoy the experience and some return. But 2–3 invisible gaps are quietly costing you new customers every week and regulars every month." },
+  { min:13, max:18, name:"The Solid Restaurant Missing a Memory", sub:"You've built something real. The experience works. But you haven't created the one thing that makes customers say 'you have to go there.' Without that — growth plateaus." },
+  { min:19, max:24, name:"The Restaurant People Call Their Own",   sub:"Customers call you 'my spot.' They bring people. They feel ownership. You've done the hard part — now it's about protecting and sharpening what's working." }
+];
+
+/* ── STATE ── */
+let answers = new Array(QS.length).fill(null);
+let cur     = 0;
+let built   = false;
+
+/* ── NAV ── */
+function go(id) {
+  const active = document.querySelector('.scr.active');
+  const next   = document.getElementById(id);
+  if (!next || active === next) return;
+  active.classList.add('out');
+  active.classList.remove('active');
+  next.classList.add('active');
+  setTimeout(() => active.classList.remove('out'), 320);
+}
+
+function setProgress(qi) {
+  document.getElementById('pgbar').style.display = 'block';
+  document.getElementById('pgfill').style.width = ((qi) / QS.length * 100) + '%';
+  /* update step bars */
+  document.querySelectorAll('.step').forEach((s, i) => {
+    s.className = 'step' + (i < qi ? ' done' : i === qi ? ' cur' : '');
+  });
+}
+
+/* ── BUILD ── */
+function buildScreens() {
+  QS.forEach((q, qi) => {
+    const isLast = qi === QS.length - 1;
+
+    /* Question screen */
+    const sQ = document.createElement('div');
+    sQ.className = 'scr scr-q';
+    sQ.id = 'sq' + qi;
+
+    /* Step bars */
+    const steps = QS.map((_, i) => `<div class="step${i < qi ? ' done' : i === qi ? ' cur' : ''}"></div>`).join('');
+
+    sQ.innerHTML = `
+      <div class="q-ctr">
+        <div class="q-head">
+          <div class="step-row">${steps}</div>
+          <div class="label q-num" style="margin-top:1.25rem">Question ${qi+1} of ${QS.length}</div>
+          <div class="q-text" style="font-family:'Playfair Display',serif;font-style:italic;margin-top:.75rem">"${q.q}"</div>
+        </div>
+        <div class="q-opts" id="qopts${qi}">
+          ${q.opts.map((o, oi) => `
+            <div class="opt${answers[qi]?.oi === oi ? ' sel' : ''}" id="opt${qi}_${oi}" onclick="pick(${qi},${oi})">
+              <div class="opt-radio"></div>
+              <div class="opt-text">${o.t}</div>
+            </div>`).join('')}
+        </div>
+        <div class="q-nav">
+          <button class="btn-nav ghost" onclick="navBack(${qi})" style="min-width:80px">← Back</button>
+          <button class="btn-nav ${answers[qi] ? 'solid' : 'solid dim'}" id="bn${qi}" onclick="navNext(${qi})">
+            ${isLast ? 'See my diagnosis' : 'Next'} →
+          </button>
+        </div>
+      </div>`;
+    document.body.appendChild(sQ);
+
+    /* Reveal screen */
+    const sR = document.createElement('div');
+    sR.className = 'scr scr-r';
+    sR.id = 'sr' + qi;
+    sR.innerHTML = `
+      <div class="r-ctr">
+        <div class="label">What this reveals</div>
+
+        <div class="r-verdict">
+          <div class="r-v-label">About your restaurant</div>
+          <div class="r-v-text" id="rv${qi}">—</div>
+          <div class="r-badge" id="rb${qi}">
+            <div class="bdot" id="rbd${qi}"></div>
+            <span id="rbt${qi}"></span>
+          </div>
+        </div>
+
+        <div class="r-obs">
+          <div class="r-obs-label">Field observation</div>
+          <div class="r-obs-text" style="font-family:'Playfair Display',serif;font-style:italic">${q.obs}</div>
+        </div>
+
+        <div class="r-stat">
+          <div class="r-stat-text">${q.stat}</div>
+        </div>
+
+        <div class="r-nav">
+          <button class="btn-nav ghost" style="min-width:80px" onclick="go('sq${qi}')">← Back</button>
+          <button class="btn-nav ${isLast ? 'accent' : 'solid'}" onclick="${isLast ? 'showResult()' : "goToQ("+(qi+1)+")"}">
+            ${isLast ? 'See my diagnosis →' : 'Next question →'}
+          </button>
+        </div>
+      </div>`;
+    document.body.appendChild(sR);
+  });
+}
+
+/* ── INTERACTIONS ── */
+function startDiagnosis() {
+  if (!built) { buildScreens(); built = true; }
+  cur = 0;
+  setProgress(0);
+  go('sq0');
+}
+
+function pick(qi, oi) {
+  answers[qi] = { oi, sc: QS[qi].opts[oi].sc, bt: QS[qi].opts[oi].bt, v: QS[qi].opts[oi].v };
+  /* update UI */
+  document.querySelectorAll(`#qopts${qi} .opt`).forEach(c => c.classList.remove('sel'));
+  document.getElementById(`opt${qi}_${oi}`).classList.add('sel');
+  /* enable next */
+  const bn = document.getElementById('bn'+qi);
+  if (bn) bn.classList.remove('dim');
+  /* auto-advance after short delay */
+  clearTimeout(window._autoAdv);
+  window._autoAdv = setTimeout(() => navNext(qi), 600);
+}
+
+function navBack(qi) {
+  if (qi === 0) { go('s-setup'); return; }
+  goToQ(qi - 1);
+}
+
+function navNext(qi) {
+  if (!answers[qi]) return;
+  /* show reveal */
+  const ans  = answers[qi];
+  const cls  = ans.bt==='g' ? 'badge-g' : ans.bt==='w' ? 'badge-w' : 'badge-b';
+  const dcls = ans.bt==='g' ? 'dg'      : ans.bt==='w' ? 'dw'      : 'db';
+  const lbl  = ans.bt==='g' ? 'Working well' : ans.bt==='w' ? 'Needs attention' : 'Critical gap';
+  document.getElementById('rv'+qi).textContent = ans.v;
+  const badge = document.getElementById('rb'+qi);
+  badge.className = 'r-badge ' + cls;
+  document.getElementById('rbd'+qi).className = 'bdot ' + dcls;
+  document.getElementById('rbt'+qi).textContent = lbl;
+  go('sr'+qi);
+  setProgress(qi + 1);
+}
+
+function goToQ(qi) {
+  cur = qi;
+  /* rebuild step bars for this Q */
+  const sQ = document.getElementById('sq'+qi);
+  if (sQ) {
+    const stepRow = sQ.querySelector('.step-row');
+    if (stepRow) {
+      stepRow.innerHTML = QS.map((_, i) =>
+        `<div class="step${i < qi ? ' done' : i === qi ? ' cur' : ''}"></div>`
+      ).join('');
+    }
+    /* restore saved answer highlight */
+    if (answers[qi]) {
+      document.querySelectorAll(`#qopts${qi} .opt`).forEach(c => c.classList.remove('sel'));
+      const savedOpt = document.getElementById(`opt${qi}_${answers[qi].oi}`);
+      if (savedOpt) savedOpt.classList.add('sel');
+      const bn = document.getElementById('bn'+qi);
+      if (bn) bn.classList.remove('dim');
+    }
+  }
+  go('sq'+qi);
+  setProgress(qi);
+}
+
+/* ── RESULT ── */
+function showResult() {
+  const total = answers.reduce((s, a) => s + (a?.sc||0), 0);
+  go('s-score');
+  setTimeout(() => {
+    const arch = ARCHS.find(a => total >= a.min && total <= a.max) || ARCHS[1];
+    const c = 2 * Math.PI * 48;
+    document.getElementById('ringFill').style.strokeDasharray  = c;
+    document.getElementById('ringFill').style.strokeDashoffset = c - (c * total / 24);
+    document.getElementById('ringNum').textContent = total;
+    document.getElementById('archSub').textContent = arch.sub;
+    document.getElementById('s-score').classList.add('sa');
+    const el = document.getElementById('archName');
+    el.textContent = '';
+    const full = '"' + arch.name + '"';
+    let i = 0;
+    const t = setInterval(() => { if (i < full.length) el.textContent += full[i++]; else clearInterval(t); }, 42);
+  }, 300);
+}
+
+function trigWound() {
+  setTimeout(() => document.getElementById('s-wound').classList.add('wa'), 150);
+}
+
+function trigFindings() {
+  const body   = document.getElementById('findBody');
+  const truths = body.querySelector('.truths-block');
+  answers.forEach((ans, i) => {
+    if (!ans || i >= QS.length) return;
+    const cls  = ans.bt==='g'?'fg':ans.bt==='w'?'fw':'fb';
+    const bcls = ans.bt==='g'?'fbg':ans.bt==='w'?'fbw':'fbb';
+    const blbl = ans.bt==='g'?'Working well':ans.bt==='w'?'Needs attention':'Critical gap';
+    const card = document.createElement('div');
+    card.className = 'fcard ' + cls;
+    card.dataset.delay = String(i * 60);
+    card.innerHTML = `
+      <div class="fc-head">
+        <div class="fc-num">Q${String(i+1).padStart(2,'0')}</div>
+        <div class="fc-badge ${bcls}">${blbl}</div>
+      </div>
+      <div class="fc-txt">${ans.v}</div>`;
+    body.insertBefore(card, truths);
+  });
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        setTimeout(() => e.target.classList.add('in'), parseInt(e.target.dataset.delay||0));
+        obs.unobserve(e.target);
+      }
+    });
+  }, { threshold:.08 });
+  document.querySelectorAll('.fcard').forEach(c => obs.observe(c));
+}
+</script>
+</body>
+</html>
