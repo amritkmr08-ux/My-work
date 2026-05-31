@@ -137,7 +137,7 @@ html,body { height:100%; overflow:hidden; font-family:'Inter',system-ui,sans-ser
 /* ── HOOK ── */
 #s-hook {
   background:#f7f4ef;
-  justify-content:flex-end;
+  justify-content:center;
   align-items:center;
   overflow:hidden;
 }
@@ -169,7 +169,7 @@ html,body { height:100%; overflow:hidden; font-family:'Inter',system-ui,sans-ser
 }
 .hook-pg {
   width:100%; max-width:var(--max);
-  padding:0 1.75rem 3rem;
+  padding:2rem 1.75rem;
   position:relative; z-index:1;
 }
 .hook-tag {
@@ -1024,6 +1024,860 @@ html,body { height:100%; overflow:hidden; font-family:'Inter',system-ui,sans-ser
 .plan-price strong { font-size:2.3rem; color:var(--ink); }
 .plan-price span { font-size:13px; color:var(--ink3); }
 
+
+
+/* ── RESULT PAGE COMPACT FIX — prevents the revenue section from feeling buried ── */
+#s-share .result-pg{
+  max-width:760px;
+  padding-top:1.25rem !important;
+  padding-left:1.25rem;
+  padding-right:1.25rem;
+}
+#s-share .res-type-lbl{ margin-top:0; margin-bottom:.35rem; }
+#s-share .res-arch{
+  font-size:clamp(2.05rem,6vw,3.15rem);
+  line-height:.98;
+  margin-bottom:.25rem;
+}
+#s-share .res-tagline{
+  margin-bottom:.85rem;
+  font-size:15px;
+}
+#s-share .res-radar-wrap{
+  max-width:310px;
+  margin:.2rem auto 1.1rem;
+}
+#s-share .res-insight{
+  margin-bottom:1rem;
+  padding:1rem 1.1rem;
+}
+#s-share .res-section{
+  margin:1rem 0 1.15rem;
+}
+#s-share .res-section-title{
+  font-size:clamp(1.45rem,4.8vw,2rem);
+  margin-bottom:.35rem;
+}
+#s-share .res-section-sub{
+  margin-bottom:.85rem;
+}
+#s-share .res-footfall{
+  gap:9px;
+}
+#s-share .res-footfall .ff-opt{
+  padding:14px 16px;
+  min-height:54px;
+}
+#s-share .res-footfall.compact{
+  margin-bottom:.85rem;
+}
+#s-share .res-footfall.compact .ff-opt:not(.sel){
+  display:none;
+}
+#s-share .res-footfall.compact .ff-opt.sel{
+  background:#fff8f5;
+  border-color:var(--accent);
+  box-shadow:0 8px 22px rgba(200,98,42,.08);
+}
+#s-share .res-footfall.compact .ff-opt.sel::after{
+  content:"Change";
+  margin-left:auto;
+  font-size:12px;
+  color:var(--accent);
+  font-weight:700;
+}
+#s-share .res-projection.show{
+  animation:softReveal .28s ease-out both;
+}
+@keyframes softReveal{
+  from{opacity:0; transform:translateY(8px);}
+  to{opacity:1; transform:translateY(0);}
+}
+#s-share .res-gap-mini{
+  padding:1.05rem 1.1rem;
+  margin-bottom:.85rem;
+}
+#s-share .res-gap-loss{
+  font-size:clamp(1.35rem,4.5vw,1.85rem);
+}
+
+@media(min-width:720px){
+  #s-share .result-pg{
+    padding-top:1.75rem !important;
+  }
+  #s-share .res-footfall{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+  }
+  #s-share .res-footfall.compact{
+    display:flex;
+  }
+  #s-share .res-footfall .ff-opt{
+    align-items:flex-start;
+    min-height:74px;
+  }
+  #s-share .res-footfall.compact .ff-opt.sel{
+    width:100%;
+    min-height:56px;
+    align-items:center;
+  }
+}
+
+@media(max-width:420px){
+  #s-share .res-radar-wrap{ max-width:280px; }
+  #s-share .res-arch{ font-size:2.35rem; }
+}
+
+
+/* ── HOMEPAGE CENTER FIX ── */
+#s-hook .hook-pg{
+  transform:translateY(0);
+}
+@media(min-width:720px){
+  #s-hook .hook-pg{
+    max-width:720px;
+  }
+  #s-hook .hook-title{
+    font-size:clamp(4rem,7vw,5.8rem);
+    max-width:700px;
+  }
+  #s-hook .hook-sub{
+    max-width:520px;
+  }
+}
+@media(max-height:700px){
+  #s-hook{
+    justify-content:center;
+  }
+  #s-hook .hook-tag{
+    margin-bottom:1.75rem;
+  }
+  #s-hook .hook-sub{
+    margin-bottom:1.75rem;
+  }
+}
+
+
+/* ── QUESTION SCREEN CENTER FIX ── */
+.scr-q{
+  justify-content:center;
+}
+.q-pg{
+  justify-content:center;
+  padding-top:1.25rem;
+  padding-bottom:1.25rem;
+}
+.steps{
+  position:absolute;
+  top:1.4rem;
+  left:50%;
+  transform:translateX(-50%);
+  width:min(640px, calc(100% - 3rem));
+  padding-top:0;
+  margin-bottom:0;
+}
+.q-lbl{
+  margin-top:2.25rem;
+}
+.q-opts{
+  flex:0 0 auto;
+  overflow:visible;
+  padding:1.35rem 0 1rem;
+}
+.q-nav{
+  position:absolute;
+  bottom:max(1rem,var(--safe));
+  left:50%;
+  transform:translateX(-50%);
+  width:min(640px, calc(100% - 3rem));
+  background:var(--bg);
+}
+
+@media(max-height:720px){
+  .q-pg{
+    justify-content:flex-start;
+    padding-top:4.25rem;
+  }
+  .q-lbl{ margin-top:0; }
+  .q-opts{
+    overflow-y:auto;
+    flex:1;
+  }
+}
+
+
+/* ── RESULT PAGE VISUAL REDESIGN ── */
+#s-share{
+  background:
+    radial-gradient(circle at top left, rgba(200,98,42,.06), transparent 28%),
+    radial-gradient(circle at top right, rgba(0,0,0,.02), transparent 24%),
+    var(--bg);
+}
+#s-share .result-pg{
+  max-width: 860px !important;
+  padding: 1.4rem 1.25rem 120px !important;
+}
+#s-share .res-hero-card{
+  background: linear-gradient(180deg, #fffdfa 0%, #fcfaf7 100%);
+  border: 1px solid rgba(30,24,20,.08);
+  border-radius: 28px;
+  box-shadow: 0 18px 60px rgba(22,14,8,.06);
+  padding: 1.35rem;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+#s-share .res-hero-copy{
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+}
+#s-share .res-type-lbl{
+  font-size: 12px;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-weight: 800;
+  margin-bottom: .55rem;
+}
+#s-share .res-arch{
+  font-size: clamp(2.3rem, 6vw, 4.25rem);
+  line-height: .96;
+  letter-spacing: -.045em;
+  font-weight: 900;
+  color: var(--ink);
+  max-width: 10ch;
+  margin-bottom: .5rem;
+}
+#s-share .res-tagline{
+  font-size: clamp(1rem, 2vw, 1.2rem);
+  line-height: 1.5;
+  color: var(--ink3);
+  margin-bottom: 1rem;
+  max-width: 32rem;
+}
+#s-share .res-insight{
+  background: #ffffff;
+  border: 1px solid rgba(30,24,20,.08);
+  border-radius: 20px;
+  padding: 1.05rem 1.15rem;
+  font-size: clamp(1.02rem, 1.5vw, 1.18rem);
+  line-height: 1.7;
+  color: #4c4038;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.9);
+}
+#s-share .res-hero-visual{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+#s-share .res-radar-shell{
+  width:100%;
+  max-width: 360px;
+  background: #fff;
+  border: 1px solid rgba(30,24,20,.08);
+  border-radius: 24px;
+  padding: 1rem 1rem .9rem;
+  box-shadow: 0 10px 30px rgba(22,14,8,.04);
+}
+#s-share .res-radar-wrap{
+  max-width: 320px;
+  margin: 0 auto .65rem;
+}
+#s-share .res-radar-caption{
+  text-align:center;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--ink3);
+  max-width: 28ch;
+  margin: 0 auto;
+}
+#s-share .rr-lbl{ font-size: 11px; fill: #988a7f; font-weight: 700; }
+#s-share .rr-ring{ stroke:#eadfD3; fill:none; stroke-width:1.5; }
+#s-share .rr-axis{ stroke:#eadfD3; stroke-width:1.25; }
+#s-share .rr-data{ fill:rgba(200,98,42,.12); stroke:var(--accent); stroke-width:3; }
+
+#s-share .res-surface{
+  background: #fffdfa;
+  border: 1px solid rgba(30,24,20,.08);
+  border-radius: 24px;
+  box-shadow: 0 12px 38px rgba(22,14,8,.05);
+  padding: 1.2rem;
+  margin: 0 0 1rem;
+}
+#s-share .res-section-label{
+  font-size: 12px;
+  letter-spacing: .16em;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: .55rem;
+}
+#s-share .res-section-title{
+  font-size: clamp(1.75rem, 4vw, 2.45rem);
+  line-height: 1.08;
+  letter-spacing: -.04em;
+  font-weight: 900;
+  color: var(--ink);
+  margin-bottom: .5rem;
+  max-width: 14ch;
+}
+#s-share .res-section-sub{
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--ink3);
+  max-width: 48rem;
+  margin-bottom: 1rem;
+}
+#s-share .res-footfall{
+  display:grid;
+  grid-template-columns:1fr;
+  gap: 10px;
+  margin-bottom: 1rem;
+}
+#s-share .res-footfall .ff-opt{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  background:#fff;
+  border:1px solid #e8ddd1;
+  border-radius:18px;
+  padding: 16px 16px;
+  min-height: 62px;
+  transition: all .22s ease;
+  box-shadow: 0 4px 14px rgba(22,14,8,.02);
+}
+#s-share .res-footfall .ff-opt:hover{
+  transform: translateY(-1px);
+  border-color: #d7bea8;
+  box-shadow: 0 8px 24px rgba(22,14,8,.05);
+}
+#s-share .res-footfall .ff-opt.sel{
+  border-color: var(--accent);
+  background: #fff8f3;
+  box-shadow: 0 10px 28px rgba(200,98,42,.10);
+}
+#s-share .ff-opt-r{
+  width: 20px; height:20px; border-radius:999px; border:2px solid #d8cabd; flex:0 0 20px;
+  position:relative;
+}
+#s-share .ff-opt.sel .ff-opt-r{
+  border-color: var(--accent);
+}
+#s-share .ff-opt.sel .ff-opt-r::after{
+  content:'';
+  position:absolute; inset:4px;
+  border-radius:999px;
+  background: var(--accent);
+}
+#s-share .ff-opt-txt{
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink);
+}
+#s-share .res-gap-mini{
+  background: linear-gradient(180deg, #fff2e7 0%, #fbece0 100%);
+  border: 1px solid #efcfb8;
+  border-radius: 20px;
+  padding: 1rem 1rem .95rem;
+  margin-bottom: .95rem;
+}
+#s-share .res-gap-loss{
+  font-size: clamp(1.5rem, 4.5vw, 2.3rem);
+  line-height: 1.12;
+  letter-spacing: -.04em;
+  font-weight: 900;
+  color: #af571f;
+  margin-bottom: .35rem;
+}
+#s-share .res-gap-sub{
+  font-size: 14px;
+  line-height: 1.65;
+  color: #6f5f54;
+}
+#s-share .bars{
+  background:#fff;
+  border:1px solid rgba(30,24,20,.06);
+  border-radius:18px;
+  padding: 1rem;
+}
+#s-share .bar-row{
+  display:grid;
+  grid-template-columns: 88px 1fr auto;
+  gap: 10px;
+  align-items:center;
+  margin-bottom: .8rem;
+}
+#s-share .bar-row:last-child{ margin-bottom:0; }
+#s-share .bar-label, #s-share .bar-val{
+  font-size: 13px;
+  color: var(--ink2);
+  font-weight: 700;
+}
+#s-share .bar-track{
+  height: 8px;
+  background: #efe5db;
+  border-radius:999px;
+  overflow:hidden;
+}
+#s-share .bar-fill{
+  height:100%;
+  border-radius:999px;
+}
+#s-share .bar-now{ background:#9f907d; }
+#s-share .bar-fix{ background:#2f8d59; }
+#s-share .proj-note{
+  margin-top:.75rem;
+  font-size: 13px;
+  line-height: 1.65;
+  color: var(--ink3);
+}
+
+#s-share .res-free-card{
+  background: linear-gradient(180deg, #fff 0%, #fffcfa 100%);
+  border:1px solid #e5d7c8;
+  border-left:4px solid var(--accent);
+  border-radius: 20px;
+  padding: 1.1rem 1.15rem;
+  box-shadow: 0 8px 26px rgba(22,14,8,.03);
+}
+#s-share .res-free-tag{
+  font-size: 11px;
+  letter-spacing:.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-weight: 800;
+  margin-bottom:.6rem;
+}
+#s-share .res-free-title{
+  font-size: clamp(1.1rem, 2vw, 1.35rem);
+  line-height:1.25;
+  font-weight:900;
+  letter-spacing:-.03em;
+  color: var(--ink);
+  margin-bottom:.5rem;
+}
+#s-share .res-free-desc{
+  font-size: 15px;
+  line-height:1.7;
+  color: var(--ink2);
+  margin-bottom:.65rem;
+}
+#s-share .res-free-cost{
+  font-size: 13px;
+  color: var(--ink3);
+}
+#s-share .res-locked{
+  background: linear-gradient(180deg, #f8f4ef 0%, #f4efea 100%);
+  border:1px solid rgba(30,24,20,.08);
+  border-radius:20px;
+  padding: 1rem 1.05rem;
+  margin-top: .95rem;
+}
+#s-share .res-locked-title{
+  font-size: 12px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  font-weight: 800;
+  color: #95887d;
+  margin-bottom: .6rem;
+}
+#s-share .res-locked-item{
+  padding: 11px 0;
+  font-size: 14px;
+  color: #9a8f85;
+  border-bottom:1px solid rgba(30,24,20,.07);
+  filter: blur(2.6px);
+  opacity: .72;
+}
+#s-share .res-locked-item:last-child{ border-bottom:none; }
+
+#s-share .res-bottom-row{
+  display:flex;
+  flex-direction:column;
+  gap:.6rem;
+  align-items:flex-start;
+  justify-content:space-between;
+  padding: .1rem .15rem 0;
+}
+#s-share .res-verified{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  background: rgba(255,255,255,.65);
+  border: 1px solid rgba(30,24,20,.06);
+  border-radius:999px;
+  padding: 9px 12px;
+  font-size: 13px;
+  color: var(--ink2);
+}
+#s-share .res-dot{
+  width:8px; height:8px; border-radius:999px; background:#2f8d59;
+}
+#s-share .res-secondary{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:8px;
+  margin-bottom:0 !important;
+}
+#s-share .res-sec-btn{
+  background:none;
+  border:none;
+  padding:0;
+  font-size: 14px;
+  font-weight: 700;
+  color: #7a6d62;
+}
+#s-share .res-sec-btn:hover{ color: var(--ink); }
+#s-share .res-sec-dot{ color:#c8b8a8; }
+
+#s-share .res-sticky-cta{
+  background: rgba(247,244,239,.88);
+  border-top:1px solid rgba(30,24,20,.08);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  padding: .9rem 1.2rem max(1rem,var(--safe));
+}
+#s-share .res-sticky-inner{
+  max-width:860px;
+  margin:0 auto;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+#s-share .res-cta{
+  width:100%;
+  max-width: 420px;
+  min-height: 58px;
+  border:none;
+  border-radius: 18px;
+  background: linear-gradient(180deg, #17110d 0%, #0f0b08 100%);
+  box-shadow: 0 18px 34px rgba(16,11,8,.18);
+  color:#fff;
+  font-size: 18px;
+  font-weight: 900;
+  letter-spacing: -.02em;
+}
+#s-share .res-cta:hover{ transform: translateY(-1px); }
+
+@media (min-width: 860px){
+  #s-share .res-hero-card{
+    grid-template-columns: 1.1fr .9fr;
+    align-items: center;
+    gap: 1.4rem;
+    padding: 1.5rem;
+  }
+  #s-share .res-section-title{
+    max-width: 18ch;
+  }
+  #s-share .res-footfall{
+    grid-template-columns: repeat(3,1fr);
+  }
+  #s-share .res-bottom-row{
+    flex-direction:row;
+    align-items:center;
+  }
+}
+@media (max-width: 640px){
+  #s-share .result-pg{
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+  #s-share .res-hero-card,
+  #s-share .res-surface{
+    border-radius: 22px;
+    padding: 1rem;
+  }
+  #s-share .bar-row{
+    grid-template-columns: 72px 1fr auto;
+  }
+  #s-share .res-arch{
+    max-width: 100%;
+  }
+}
+
+
+/* ── QUESTION PAGE SIZE + POSITION REFINEMENT ── */
+.scr-q{
+  justify-content:flex-start !important;
+}
+.q-pg{
+  justify-content:flex-start !important;
+  max-width:620px;
+  padding-top:15vh !important;
+  padding-bottom:6rem !important;
+}
+.steps{
+  top:1.25rem !important;
+  width:min(620px, calc(100% - 3rem)) !important;
+}
+.q-lbl{
+  margin-top:0 !important;
+  font-size:10px !important;
+  letter-spacing:.16em !important;
+  margin-bottom:.65rem !important;
+}
+.q-txt{
+  font-size:clamp(1.55rem, 3.2vw, 2.15rem) !important;
+  line-height:1.18 !important;
+  letter-spacing:-.035em !important;
+  padding-bottom:.9rem !important;
+  border-bottom:2px solid rgba(28,23,18,.9) !important;
+  max-width:620px !important;
+}
+.q-help{
+  font-size:14px !important;
+  line-height:1.55 !important;
+  margin-top:.75rem !important;
+  color:#6b5e52 !important;
+}
+.q-opts{
+  flex:0 0 auto !important;
+  padding:1.35rem 0 .75rem !important;
+  max-width:620px !important;
+}
+.opt{
+  padding:12px 0 !important;
+  gap:13px !important;
+}
+.opt-r{
+  width:18px !important;
+  height:18px !important;
+  margin-top:4px !important;
+  border-width:2px !important;
+}
+.opt.sel .opt-r::after{
+  width:7px !important;
+  height:7px !important;
+}
+.opt-txt{
+  font-size:16px !important;
+  line-height:1.42 !important;
+}
+.q-nav{
+  width:min(620px, calc(100% - 3rem)) !important;
+  min-height:58px !important;
+}
+.btn-next{
+  padding:11px 22px !important;
+  font-size:13px !important;
+  border-radius:8px !important;
+}
+.btn-ghost{
+  font-size:13px !important;
+}
+
+/* desktop: lift the content slightly above exact center */
+@media(min-width:760px){
+  .q-pg{
+    padding-top:18vh !important;
+  }
+}
+
+/* shorter screens: avoid overflow */
+@media(max-height:760px){
+  .q-pg{
+    padding-top:4.6rem !important;
+  }
+  .q-txt{
+    font-size:clamp(1.28rem, 3vw, 1.65rem) !important;
+    line-height:1.2 !important;
+  }
+  .q-help{
+    font-size:13px !important;
+  }
+  .opt{
+    padding:9px 0 !important;
+  }
+  .opt-txt{
+    font-size:15px !important;
+  }
+  .q-opts{
+    overflow-y:auto !important;
+    flex:1 1 auto !important;
+  }
+}
+
+@media(max-width:480px){
+  .q-pg{
+    padding-top:5.25rem !important;
+    padding-left:1.25rem !important;
+    padding-right:1.25rem !important;
+  }
+  .q-txt{
+    font-size:clamp(1.35rem, 7vw, 1.75rem) !important;
+  }
+  .opt-txt{
+    font-size:15px !important;
+  }
+}
+
+
+/* ── RESULT PAGE FONT SCALE REFINEMENT ── */
+#s-share .result-pg{
+  max-width:760px !important;
+}
+#s-share .res-hero-card{
+  padding:1.15rem !important;
+  border-radius:24px !important;
+}
+#s-share .res-type-lbl,
+#s-share .res-section-label{
+  font-size:10px !important;
+  letter-spacing:.18em !important;
+}
+#s-share .res-arch{
+  font-size:clamp(2rem, 4.2vw, 3.25rem) !important;
+  line-height:1 !important;
+  letter-spacing:-.04em !important;
+  max-width:12ch !important;
+}
+#s-share .res-tagline{
+  font-size:14px !important;
+  line-height:1.45 !important;
+  margin-bottom:.8rem !important;
+}
+#s-share .res-insight{
+  font-size:15px !important;
+  line-height:1.65 !important;
+  padding:.9rem 1rem !important;
+  border-radius:16px !important;
+}
+#s-share .res-radar-shell{
+  max-width:300px !important;
+  padding:.85rem .85rem .75rem !important;
+  border-radius:20px !important;
+}
+#s-share .res-radar-wrap{
+  max-width:250px !important;
+}
+#s-share .res-radar-caption{
+  font-size:11px !important;
+  line-height:1.45 !important;
+}
+#s-share .rr-lbl{
+  font-size:9.5px !important;
+}
+
+#s-share .res-surface{
+  padding:1rem !important;
+  border-radius:22px !important;
+}
+#s-share .res-section-title{
+  font-size:clamp(1.45rem, 3.2vw, 2rem) !important;
+  line-height:1.12 !important;
+  max-width:20ch !important;
+}
+#s-share .res-section-sub{
+  font-size:13.5px !important;
+  line-height:1.6 !important;
+  margin-bottom:.85rem !important;
+}
+#s-share .res-footfall .ff-opt{
+  min-height:52px !important;
+  padding:13px 14px !important;
+  border-radius:15px !important;
+}
+#s-share .ff-opt-txt{
+  font-size:14px !important;
+}
+#s-share .res-gap-mini{
+  padding:.9rem 1rem !important;
+  border-radius:16px !important;
+}
+#s-share .res-gap-loss{
+  font-size:clamp(1.35rem, 3.4vw, 1.9rem) !important;
+  line-height:1.15 !important;
+}
+#s-share .res-gap-sub{
+  font-size:12.5px !important;
+  line-height:1.55 !important;
+}
+#s-share .bars{
+  padding:.85rem !important;
+  border-radius:15px !important;
+}
+#s-share .bar-label,
+#s-share .bar-val{
+  font-size:12px !important;
+}
+#s-share .proj-note{
+  font-size:12px !important;
+  line-height:1.55 !important;
+}
+
+#s-share .res-free-card{
+  padding:.95rem 1rem !important;
+  border-radius:16px !important;
+}
+#s-share .res-free-tag{
+  font-size:10px !important;
+}
+#s-share .res-free-title{
+  font-size:clamp(1rem, 1.7vw, 1.18rem) !important;
+}
+#s-share .res-free-desc{
+  font-size:13.5px !important;
+  line-height:1.6 !important;
+}
+#s-share .res-free-cost{
+  font-size:12px !important;
+}
+#s-share .res-locked{
+  border-radius:16px !important;
+  padding:.85rem .95rem !important;
+}
+#s-share .res-locked-title{
+  font-size:10px !important;
+}
+#s-share .res-locked-item{
+  font-size:12.5px !important;
+  padding:8px 0 !important;
+}
+#s-share .res-cta{
+  max-width:360px !important;
+  min-height:52px !important;
+  border-radius:15px !important;
+  font-size:15px !important;
+}
+
+@media(min-width:860px){
+  #s-share .res-hero-card{
+    grid-template-columns:1.05fr .75fr !important;
+  }
+}
+@media(max-width:640px){
+  #s-share .res-arch{
+    font-size:2.25rem !important;
+  }
+  #s-share .res-section-title{
+    font-size:1.55rem !important;
+  }
+}
+
+
+/* ── COPY + SELECTOR FIX ── */
+#s-share .res-footfall.compact .ff-opt:not(.sel){
+  display:flex !important;
+}
+#s-share .res-footfall.compact .ff-opt.sel::after{
+  content:none !important;
+}
+#s-share .res-footfall .ff-opt{
+  cursor:pointer;
+}
+#s-share .res-projection{
+  margin-top:.75rem;
+}
+#s-share .res-section-title{
+  max-width:24ch !important;
+}
+#s-share .res-gap-loss{
+  max-width:100%;
+}
+
 </style>
 </head>
 <body>
@@ -1049,7 +1903,7 @@ html,body { height:100%; overflow:hidden; font-family:'Inter',system-ui,sans-ser
   <div class="hook-pg">
     <span class="hook-tag">The Restaurant Mirror · Free</span>
     <h1 class="hook-title">What type is<em>your restaurant?</em></h1>
-    <p class="hook-sub">3 minutes. Find out what your customers notice — and what it's quietly costing you.</p>
+    <p class="hook-sub">3 minutes. See what customers notice, remember, and may ignore.</p>
     <div class="hook-cta-row">
       <button class="btn-accent-inv" onclick="go('s-setup')">Find out now →</button>
       <span class="hook-note">Free · No signup · For restaurant owners in India</span>
@@ -1061,11 +1915,11 @@ html,body { height:100%; overflow:hidden; font-family:'Inter',system-ui,sans-ser
 <div class="scr" id="s-setup">
   <div class="setup-pg">
     <span class="setup-eyebrow">Before you begin</span>
-    <h2 class="setup-title">8 questions. Your restaurant type. What to change first.</h2>
+    <h2 class="setup-title">8 questions. One restaurant type. One clear next step.</h2>
     <div class="setup-list">
-      <div class="si"><div class="si-n">1</div><div class="si-t">Each question reflects <strong>what a real customer notices</strong> at your restaurant</div></div>
-      <div class="si"><div class="si-n">2</div><div class="si-t">After each answer a panel shows <strong>what customers may be feeling</strong></div></div>
-      <div class="si"><div class="si-n">3</div><div class="si-t">At the end — your <strong>restaurant type</strong> and one specific action to start this week</div></div>
+      <div class="si"><div class="si-n">1</div><div class="si-t">Each question shows <strong>what customers may notice</strong> before, during, and after eating</div></div>
+      <div class="si"><div class="si-n">2</div><div class="si-t">After each answer, you see <strong>what that answer may mean</strong></div></div>
+      <div class="si"><div class="si-n">3</div><div class="si-t">At the end, you get <strong>your restaurant type</strong> and one action to start this week</div></div>
     </div>
     <button class="btn-dark" onclick="startDiagnosis()">Begin →</button>
   </div>
@@ -1200,42 +2054,50 @@ html,body { height:100%; overflow:hidden; font-family:'Inter',system-ui,sans-ser
 <div class="scr" id="s-share">
   <div class="result-pg">
 
-    <div class="res-type-lbl">Your restaurant type</div>
-    <div class="res-arch" id="scArch"></div>
-    <div class="res-tagline" id="scTagline"></div>
+    <section class="res-hero-card">
+      <div class="res-hero-copy">
+        <div class="res-type-lbl">Your restaurant type</div>
+        <div class="res-arch" id="scArch"></div>
+        <div class="res-tagline" id="scTagline"></div>
+        <div class="res-insight" id="scInsight"></div>
+      </div>
 
-    <div class="res-radar-wrap">
-      <svg class="res-radar-svg" id="resultRadar" viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg">
-        <polygon class="rr-ring" points="120,36 172,60 196,120 172,180 120,204 68,180 44,120 68,60"/>
-        <polygon class="rr-ring" points="120,60 156,78 168,120 156,162 120,180 84,162 72,120 84,78"/>
-        <polygon class="rr-ring rr-sm" points="120,84 140,96 148,120 140,144 120,156 100,144 92,120 100,96"/>
-        <line class="rr-axis" x1="120" y1="120" x2="120" y2="34"/>
-        <line class="rr-axis" x1="120" y1="120" x2="174" y2="58"/>
-        <line class="rr-axis" x1="120" y1="120" x2="198" y2="120"/>
-        <line class="rr-axis" x1="120" y1="120" x2="174" y2="182"/>
-        <line class="rr-axis" x1="120" y1="120" x2="120" y2="206"/>
-        <line class="rr-axis" x1="120" y1="120" x2="66" y2="182"/>
-        <line class="rr-axis" x1="120" y1="120" x2="42" y2="120"/>
-        <line class="rr-axis" x1="120" y1="120" x2="66" y2="58"/>
-        <polygon class="rr-data" id="resultRadarData" points="120,120"/>
-        <text class="rr-lbl" x="120" y="26" text-anchor="middle">Memory</text>
-        <text class="rr-lbl" x="180" y="54" text-anchor="start">Storefront</text>
-        <text class="rr-lbl" x="205" y="124" text-anchor="start">Entry</text>
-        <text class="rr-lbl" x="180" y="194" text-anchor="start">Menu</text>
-        <text class="rr-lbl" x="120" y="220" text-anchor="middle">Trust</text>
-        <text class="rr-lbl" x="60" y="194" text-anchor="end">Delivery</text>
-        <text class="rr-lbl" x="35" y="124" text-anchor="end">Repeat</text>
-        <text class="rr-lbl" x="60" y="54" text-anchor="end">Moment</text>
-      </svg>
-    </div>
+      <div class="res-hero-visual">
+        <div class="res-radar-shell">
+          <div class="res-radar-wrap">
+            <svg class="res-radar-svg" id="resultRadar" viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg">
+              <polygon class="rr-ring" points="120,36 172,60 196,120 172,180 120,204 68,180 44,120 68,60"/>
+              <polygon class="rr-ring" points="120,60 156,78 168,120 156,162 120,180 84,162 72,120 84,78"/>
+              <polygon class="rr-ring rr-sm" points="120,84 140,96 148,120 140,144 120,156 100,144 92,120 100,96"/>
+              <line class="rr-axis" x1="120" y1="120" x2="120" y2="34"/>
+              <line class="rr-axis" x1="120" y1="120" x2="174" y2="58"/>
+              <line class="rr-axis" x1="120" y1="120" x2="198" y2="120"/>
+              <line class="rr-axis" x1="120" y1="120" x2="174" y2="182"/>
+              <line class="rr-axis" x1="120" y1="120" x2="120" y2="206"/>
+              <line class="rr-axis" x1="120" y1="120" x2="66" y2="182"/>
+              <line class="rr-axis" x1="120" y1="120" x2="42" y2="120"/>
+              <line class="rr-axis" x1="120" y1="120" x2="66" y2="58"/>
+              <polygon class="rr-data" id="resultRadarData" points="120,120"/>
+              <text class="rr-lbl" x="120" y="26" text-anchor="middle">Memory</text>
+              <text class="rr-lbl" x="180" y="54" text-anchor="start">Storefront</text>
+              <text class="rr-lbl" x="205" y="124" text-anchor="start">Entry</text>
+              <text class="rr-lbl" x="180" y="194" text-anchor="start">Menu</text>
+              <text class="rr-lbl" x="120" y="220" text-anchor="middle">Trust</text>
+              <text class="rr-lbl" x="60" y="194" text-anchor="end">Delivery</text>
+              <text class="rr-lbl" x="35" y="124" text-anchor="end">Repeat</text>
+              <text class="rr-lbl" x="60" y="54" text-anchor="end">Moment</text>
+            </svg>
+          </div>
+          <div class="res-radar-caption">A quick view of what is working and what needs attention.</div>
+        </div>
+      </div>
+    </section>
 
-    <div class="res-insight" id="scInsight"></div>
-
-    <div class="res-section">
-      <div class="res-section-label">Your potential revenue gap</div>
-      <h2 class="res-section-title">What this may be quietly costing you</h2>
-      <p class="res-section-sub">Choose your weekly customer range. This is only an estimate, but it makes the hidden leak visible.</p>
-      <div class="res-footfall">
+    <section class="res-section res-surface">
+      <div class="res-section-label" id="resultRevenueLabel">Your potential revenue gap</div>
+      <h2 class="res-section-title" id="resultRevenueTitle">What this may be quietly costing you</h2>
+      <p class="res-section-sub" id="resultRevenueSub">Pick a range. This estimate shows how small customer behaviour changes can affect yearly revenue.</p>
+      <div class="res-footfall" id="resultFootfall">
         <div class="ff-opt" onclick="pickResultFootfall(this,80)"><div class="ff-opt-r"></div><div class="ff-opt-txt">Under 100 customers/week</div></div>
         <div class="ff-opt" onclick="pickResultFootfall(this,200)"><div class="ff-opt-r"></div><div class="ff-opt-txt">100–300 customers/week</div></div>
         <div class="ff-opt" onclick="pickResultFootfall(this,400)"><div class="ff-opt-r"></div><div class="ff-opt-txt">300+ customers/week</div></div>
@@ -1251,12 +2113,12 @@ html,body { height:100%; overflow:hidden; font-family:'Inter',system-ui,sans-ser
         </div>
         <div class="proj-note" id="resultProjNote"></div>
       </div>
-    </div>
+    </section>
 
-    <div class="res-section">
+    <section class="res-section res-surface res-action-card">
       <div class="res-section-label">Your first action</div>
       <h2 class="res-section-title" id="resultFixTitle"></h2>
-      <p class="res-section-sub" id="resultFixSub">One specific thing you can do this week — no consultant, no big spend.</p>
+      <p class="res-section-sub" id="resultFixSub">One simple thing you can do this week — no consultant, no big spend.</p>
       <div class="res-free-card">
         <div class="res-free-tag">Free step · No cost · This week</div>
         <div class="res-free-title" id="resultFcTitle"></div>
@@ -1264,20 +2126,22 @@ html,body { height:100%; overflow:hidden; font-family:'Inter',system-ui,sans-ser
         <div class="res-free-cost" id="resultFcCost"></div>
       </div>
       <div class="res-locked">
-        <div class="res-locked-title">4 more steps inside your plan</div>
-        <div class="res-locked-item">Step 2 · Fix the hidden weak signal</div>
-        <div class="res-locked-item">Step 3 · Improve customer memory</div>
-        <div class="res-locked-item">Step 4 · Staff checklist for consistency</div>
-        <div class="res-locked-item">Step 5 · 7-day plan + repeat system</div>
+        <div class="res-locked-title">4 more steps inside the full plan</div>
+        <div class="res-locked-item">Step 2 · Fix the weakest customer signal</div>
+        <div class="res-locked-item">Step 3 · Make customers remember you</div>
+        <div class="res-locked-item">Step 4 · Staff checklist for daily consistency</div>
+        <div class="res-locked-item">Step 5 · 7-day plan + repeat-customer system</div>
       </div>
-    </div>
+    </section>
 
-    <div class="res-verified"><div class="res-dot"></div><span>Diagnosis complete</span></div>
+    <div class="res-bottom-row">
+      <div class="res-verified"><div class="res-dot"></div><span>Diagnosis complete</span></div>
 
-    <div class="res-secondary" style="margin-bottom:1.2rem;">
-      <button class="res-sec-btn" onclick="shareWa()">Share on WhatsApp</button>
-      <span class="res-sec-dot">·</span>
-      <button class="res-sec-btn" onclick="challengeWa()">Challenge another owner</button>
+      <div class="res-secondary">
+        <button class="res-sec-btn" onclick="shareWa()">Share on WhatsApp</button>
+        <span class="res-sec-dot">·</span>
+        <button class="res-sec-btn" onclick="challengeWa()">Challenge another owner</button>
+      </div>
     </div>
 
   </div>
@@ -1302,7 +2166,7 @@ html,body { height:100%; overflow:hidden; font-family:'Inter',system-ui,sans-ser
       <div class="pwi">7-day action plan one task per day, 30 minutes each</div>
       <div class="pwi">Staff checklist questions to ask your team this week</div>
     </div>
-    <div class="pw-callout">Most restaurant owners spend ₹5,000+ on ads trying to fix a problem that costs ₹99 to understand.</div>
+    <div class="pw-callout">Before spending on ads, understand what customers may be missing. The full plan costs ₹99.</div>
     <div class="pw-rule"></div>
     <div class="pw-price-row">
       <div class="pw-amt">₹99</div>
@@ -1459,7 +2323,7 @@ function getArchetype(answers){
   if(sc[5]===0&&sc.filter((_,i)=>i!==5).reduce((s,v)=>s+v,0)>=11) return{name:"The Delivery Ghost",tagline:"Great dine-in. Forgotten on delivery.",sub:"Dine-in is working. But every delivery order ends in silence. The food arrives in a generic box and the restaurant disappears. No name. No memory. No reason to order again.",insight:"Your physical experience works but every delivery order ends with a forgettable last impression. The box is the entire brand.",waMsg:"My restaurant type is 'The Delivery Ghost' strong dine-in, invisible on delivery. Try this free diagnosis:"};
   if(sc[6]===0&&sc.filter((_,i)=>i!==6).reduce((s,v)=>s+v,0)>=10) return{name:"The One-Time Visit Problem",tagline:"Great first visit. No second one.",sub:"First visits go well. But something changes between then and the next one taste, service, vibe. Customers notice. They just don't say anything. They simply don't come back.",insight:"First impressions are strong but something between visits is breaking the cycle of return.",waMsg:"My restaurant type is 'The One-Time Visit Problem' customers come once, not twice. This diagnosis explained why. Try yours:"};
   if(sc[1]<=1&&sc[0]<=1&&sc[7]<=1&&sc[2]>=1) return{name:"The Hidden Gem",tagline:"Good inside undiscoverable outside.",sub:"The people who've found you love you. But new customers walk past without stopping. And those who do visit once can't quite explain why they should come back.",insight:"Regulars love you but you're invisible to everyone else. Word of mouth isn't spreading.",waMsg:"My restaurant type is 'The Hidden Gem' loved by regulars, undiscoverable to new customers. Free diagnosis:"};
-  if(goods>=5) return{name:"The Local Favourite",tagline:"Trusted, returned to, recommended nearby.",sub:"Most things are working. Customers trust you, return, and recommend you nearby. There's just one thing missing a moment so specific people tell others about it.",insight:"Most areas are working well. One deliberate signature could take you from local favourite to destination.",waMsg:"My restaurant type is 'The Local Favourite' this free diagnosis showed what to sharpen. Try yours:"};
+  if(goods>=5) return{name:"The Local Favourite",tagline:"Trusted by locals. Ready to grow further.",sub:"Most things are working. Customers trust you, return, and recommend you nearby. There's just one thing missing a moment so specific people tell others about it.",insight:"Most things are working. One clear signature can help more people remember and recommend you.",waMsg:"My restaurant type is 'The Local Favourite' this free diagnosis showed what to sharpen. Try yours:"};
   return{name:"The Almost Favourite",tagline:"Liked but not yet someone's go-to.",sub:"Customers enjoy the experience and some return. But 2–3 invisible gaps are quietly costing you new customers every week.",insight:"Your regulars like you. Some come back. But ask them to describe your restaurant to a friend and they struggle. 'Nice place' is all they've got and nice doesn't spread.",waMsg:"My restaurant type is 'The Almost Favourite' surprisingly accurate diagnosis. Try it for your restaurant:"};
 }
 
@@ -1692,28 +2556,142 @@ function buildFix(){
 /* gap→fix handled inline */
 
 /* ── SHARE ── */
+
+function getRevenueFrame(archName){
+  const name = archName || "";
+
+  if(name.includes("Local Favourite") || name.includes("Restaurant People Call Their Own")){
+    return {
+      label:"Your growth opportunity",
+      title:"You are already trusted. Now grow repeat visits.",
+      sub:"Pick a range. This shows how regular customers and referrals can add extra revenue.",
+      lossPrefix:"A small repeat/referral lift could add ",
+      lossSuffix:" per year",
+      note:"This is not a loss estimate. It shows the upside if more happy customers return or refer friends.",
+      mode:"upside",
+      improvement:0.10
+    };
+  }
+
+  if(name.includes("Almost Favourite") || name.includes("Almost Favorite")){
+    return {
+      label:"Your repeat-customer opportunity",
+      title:"People like you. Now make them come back by habit.",
+      sub:"Pick a range. This shows how a small increase in repeat visits can add yearly revenue.",
+      lossPrefix:"A small repeat lift could add ",
+      lossSuffix:" per year",
+      note:"This is an estimate. It shows what can happen when liked customers become regulars.",
+      mode:"opportunity",
+      improvement:0.16
+    };
+  }
+
+  if(name.includes("Delivery Ghost")){
+    return {
+      label:"Your delivery memory gap",
+      title:"The food reaches home. The brand may not.",
+      sub:"Pick a range. This shows what stronger packaging and reorder reminders could improve.",
+      lossPrefix:"Better delivery memory could add ",
+      lossSuffix:" per year",
+      note:"This estimate focuses on repeat delivery behaviour, not total restaurant performance.",
+      mode:"delivery",
+      improvement:0.14
+    };
+  }
+
+  if(name.includes("Confusing Menu")){
+    return {
+      label:"Your menu clarity gap",
+      title:"A confusing menu can reduce orders.",
+      sub:"Pick a range. This shows how clearer choices can improve ordering and repeat visits.",
+      lossPrefix:"Clearer menu choices could recover ",
+      lossSuffix:" per year",
+      note:"This is an estimate. It shows how menu confusion can become revenue friction.",
+      mode:"gap",
+      improvement:0.18
+    };
+  }
+
+  if(name.includes("Hidden Gem") || name.includes("Weak Signal")){
+    return {
+      label:"Your visibility gap",
+      title:"Good food may not be visible enough.",
+      sub:"Pick a range. This shows what stronger photos, signs, and first impression could improve.",
+      lossPrefix:"Better visibility could recover ",
+      lossSuffix:" per year",
+      note:"This is an estimate. It makes the hidden visibility leak visible.",
+      mode:"gap",
+      improvement:0.20
+    };
+  }
+
+  return {
+    label:"Your revenue opportunity",
+    title:"Small customer behaviour changes can add up.",
+    sub:"Pick a range. This shows how small improvements can affect yearly revenue.",
+    lossPrefix:"Small improvements could add ",
+    lossSuffix:" per year",
+    note:"This is an estimate, not a guarantee.",
+    mode:"gap",
+    improvement:0.18
+  };
+}
+
+
+function applyRevenueFrame(){
+  const archName = currentArch ? currentArch.name : "";
+  const frame = getRevenueFrame(archName);
+  const label = document.getElementById('resultRevenueLabel');
+  const title = document.getElementById('resultRevenueTitle');
+  const sub = document.getElementById('resultRevenueSub');
+  if(label) label.textContent = frame.label;
+  if(title) title.textContent = frame.title;
+  if(sub) sub.textContent = frame.sub;
+  return frame;
+}
+
+
 function pickResultFootfall(el, weeklyCustomers){
-  document.querySelectorAll('#s-share .res-footfall .ff-opt').forEach(o=>o.classList.remove('sel'));
+  const group = document.getElementById('resultFootfall') || el.closest('.res-footfall');
+  if(!group) return;
+
+  group.classList.remove('compact');
+  group.querySelectorAll('.ff-opt').forEach(o=>o.classList.remove('sel'));
   el.classList.add('sel');
-  const avgSpend=220;
-  const annualRev=weeklyCustomers*avgSpend*52;
-  const archName=currentArch?currentArch.name:"The Almost Favourite";
-  const improvement=ARCH_IMPROVEMENT[archName]||0.20;
-  const gap=Math.round(annualRev*improvement);
-  const fixedRev=annualRev+gap;
-  const fmt=n=>n>=100000?'₹'+(n/100000).toFixed(1)+'L':'₹'+Math.round(n/1000)+'K';
-  document.getElementById('resultGapLoss').textContent='You may be leaving '+fmt(gap)+' per year behind';
-  document.getElementById('resultGapSub').textContent='Based on '+weeklyCustomers+' customers/week × ₹'+avgSpend+' average spend and your '+archName+' gap.';
-  document.getElementById('resultBarNowVal').textContent=fmt(annualRev);
-  document.getElementById('resultBarFixVal').textContent=fmt(fixedRev);
-  document.getElementById('resultProjNote').textContent='This is not a guarantee. It simply shows how a small perception leak can become a real revenue leak over a year.';
-  const nowPct=68;
-  const fixPct=Math.min(Math.round(nowPct*(1+improvement)),98);
-  document.getElementById('resultProjection').classList.add('show');
-  setTimeout(()=>{
-    document.getElementById('resultBarNow').style.width=nowPct+'%';
-    document.getElementById('resultBarFix').style.width=fixPct+'%';
-  },80);
+
+  const avgSpend = 220;
+  const annualRev = weeklyCustomers * avgSpend * 52;
+  const archName = currentArch ? currentArch.name : "";
+  const frame = applyRevenueFrame();
+  const improvement = frame.improvement || 0.18;
+  const gap = Math.round(annualRev * improvement);
+  const fixedRev = annualRev + gap;
+
+  const fmt = n => n >= 100000 ? '₹' + (n / 100000).toFixed(1) + 'L' : '₹' + Math.round(n / 1000) + 'K';
+
+  const lossEl = document.getElementById('resultGapLoss');
+  const subEl = document.getElementById('resultGapSub');
+  const nowVal = document.getElementById('resultBarNowVal');
+  const fixVal = document.getElementById('resultBarFixVal');
+  const noteEl = document.getElementById('resultProjNote');
+  const projection = document.getElementById('resultProjection');
+
+  if(lossEl) lossEl.textContent = frame.lossPrefix + fmt(gap) + frame.lossSuffix;
+  if(subEl) subEl.textContent = 'Based on ' + weeklyCustomers + ' customers/week × ₹' + avgSpend + ' average spend and your ' + (archName || 'restaurant') + ' pattern.';
+  if(nowVal) nowVal.textContent = fmt(annualRev);
+  if(fixVal) fixVal.textContent = fmt(fixedRev);
+  if(noteEl) noteEl.textContent = frame.note;
+  if(projection) projection.classList.add('show');
+
+  const nowPct = 68;
+  const fixPct = Math.min(Math.round(nowPct * (1 + improvement)), 98);
+
+  window.requestAnimationFrame(() => {
+    const nowBar = document.getElementById('resultBarNow');
+    const fixBar = document.getElementById('resultBarFix');
+    if(nowBar) nowBar.style.width = nowPct + '%';
+    if(fixBar) fixBar.style.width = fixPct + '%';
+  });
 }
 
 function buildResultAction(){
@@ -1727,6 +2705,16 @@ function buildResultAction(){
 
 function buildShare(){
   if(!currentArch)return;
+  const resultScreen = document.getElementById('s-share');
+  if(resultScreen) resultScreen.scrollTop = 0;
+  const ffGroup = document.getElementById('resultFootfall');
+  if(ffGroup){
+    ffGroup.classList.remove('compact');
+    ffGroup.querySelectorAll('.ff-opt').forEach(o=>o.classList.remove('sel'));
+  }
+  const resultProjection = document.getElementById('resultProjection');
+  if(resultProjection) resultProjection.classList.remove('show');
+  applyRevenueFrame();
   document.getElementById('bottomTabs')?.classList.remove('show');
   document.getElementById('resultStickyCta')?.classList.add('show');
   document.getElementById('scArch').textContent   = currentArch.name;
@@ -1748,10 +2736,6 @@ function buildShare(){
     poly.style.opacity='0';
     setTimeout(()=>poly.style.opacity='1',300);
   }
-  setTimeout(()=>{
-    const first=document.querySelector('#s-share .res-footfall .ff-opt');
-    if(first && !document.querySelector('#s-share .res-footfall .ff-opt.sel')) pickResultFootfall(first,80);
-  },250);
 }
 function shareWa(){
   if(!currentArch)return;
@@ -1774,7 +2758,7 @@ function openPlanPopup(){
   const fix=FREE_FIXES[archName]||FREE_FIXES['The Almost Favourite']||FREE_FIXES.default;
   const el=document.getElementById('planOverlay');
   document.getElementById('planPopupTitle').textContent='Your full action plan for '+archName;
-  document.getElementById('planPopupSub').textContent='You already got the first step: '+fix.title+'. The full plan gives the remaining steps, 7-day sequence, and staff checklist so you can apply it without a consultant.';
+  document.getElementById('planPopupSub').textContent='You already got the first step: '+fix.title+'. The full plan gives the remaining steps, a 7-day plan, and a staff checklist you can use without a consultant.';
   el.classList.add('show');
 }
 function closePlanPopup(e){
@@ -1854,13 +2838,13 @@ function pickFootfallPopup(el,weeklyCustomers){
     <h3 class="plan-title" id="planPopupTitle">Your full action plan</h3>
     <p class="plan-sub" id="planPopupSub">The full plan gives you the exact actions to apply this week.</p>
     <div class="plan-list">
-      <div class="plan-li">Your restaurant type explained in plain language</div>
-      <div class="plan-li">3 hidden mistakes this type usually makes</div>
-      <div class="plan-li">5 actions under ₹1,000, written for your type</div>
-      <div class="plan-li">7-day action plan, one small task per day</div>
-      <div class="plan-li">Staff discussion checklist to use with your team</div>
+      <div class="plan-li">Your restaurant type explained simply</div>
+      <div class="plan-li">3 common mistakes this type usually makes</div>
+      <div class="plan-li">5 low-cost actions written for your type</div>
+      <div class="plan-li">7-day plan, one small task per day</div>
+      <div class="plan-li">Staff checklist to discuss with your team</div>
     </div>
-    <div class="pw-callout">Most restaurant owners spend ₹5,000+ on ads trying to fix a problem that costs ₹99 to understand.</div>
+    <div class="pw-callout">Before spending on ads, understand what customers may be missing. The full plan costs ₹99.</div>
     <div class="plan-price"><strong>₹99</strong><span>One-time · Instant PDF/HTML</span></div>
     <button class="btn-buy" onclick="alert('Connect Razorpay or Instamojo here')">Get full plan ₹99 →</button>
     <p style="font-size:12px;color:var(--ink3);text-align:center;margin-top:.6rem">No subscription. No consultation call needed.</p>
@@ -1882,7 +2866,7 @@ function pickFootfallPopup(el,weeklyCustomers){
       <div class="pwi">7-day action plan — one task per day, 30 minutes</div>
       <div class="pwi">Staff checklist — questions to ask your team</div>
     </div>
-    <div class="pw-callout" style="margin-bottom:1.25rem">Most restaurant owners spend ₹5,000+ on ads trying to fix a problem that costs ₹99 to understand.</div>
+    <div class="pw-callout" style="margin-bottom:1.25rem">Before spending on ads, understand what customers may be missing. The full plan costs ₹99.</div>
     <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:1.25rem">
       <span style="font-family:'Playfair Display',Georgia,serif;font-size:2.2rem;font-weight:700;color:var(--ink)">₹99</span>
       <span style="font-size:13px;color:var(--ink3)">One-time · Instant PDF</span>
