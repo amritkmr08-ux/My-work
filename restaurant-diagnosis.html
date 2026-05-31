@@ -3,697 +3,1939 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>The Restaurant Mirror — Free Diagnosis</title>
-<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<title>What type is your restaurant? Free Diagnosis</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  @font-face { font-family:'Inter'; src:local('Georgia');  }
+
+.q-help { font-size:13px; color:var(--ink3); line-height:1.6; margin-top:.5rem; margin-bottom:0;  }
+
+/* ── TOP TABS — pill style ── */
+.top-tabs {
+  position:fixed; top:0; left:0; right:0;
+  z-index:9999; display:none;
+  background:rgba(250,248,245,.96);
+  border-bottom:1px solid var(--border);
+  padding:10px 1.25rem;
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+  box-shadow:0 1px 10px rgba(0,0,0,.05);
+}
+.top-tabs.show {
+  display:flex; align-items:center; justify-content:center;
+}
+.tab-track {
+  display:flex; align-items:center;
+  background:#e4ddd4; border-radius:30px;
+  padding:3px; gap:2px;
+}
+.tab-folder {
+  display:flex; align-items:center; justify-content:center;
+  padding:8px 20px; border-radius:26px;
+  font-family:'Inter',sans-serif;
+  font-size:12px; font-weight:600;
+  letter-spacing:.01em; cursor:pointer; border:none;
+  background:transparent; color:#8a7868;
+  transition:all .2s; min-height:36px;
+  white-space:nowrap; position:relative;
+}
+.tab-folder.active {
+  background:var(--white);
+  color:var(--ink);
+  box-shadow:0 1px 6px rgba(0,0,0,.12);
+  outline:2px solid var(--accent);
+  outline-offset:-1px;
+}
+.tab-folder:hover:not(.active) { color:var(--ink2); }
+.has-tabs { padding-top:62px !important; }
+
+
+/* ── PAYWALL POPUP ── */
+.pw-overlay {
+  position:fixed; inset:0;
+  background:rgba(20,16,10,.6);
+  z-index:8000; display:none;
+  align-items:flex-end; justify-content:center;
+  backdrop-filter:blur(2px);
+  -webkit-backdrop-filter:blur(2px);
+}
+.pw-overlay.show { display:flex; }
+.pw-popup {
+  background:var(--bg);
+  border-radius:20px 20px 0 0;
+  padding:1.5rem 1.5rem max(2rem,var(--safe));
+  width:100%; max-width:600px;
+  max-height:90vh; overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+  transform:translateY(100%);
+  transition:transform .35s cubic-bezier(.34,1.1,.64,1);
+}
+.pw-overlay.show .pw-popup { transform:translateY(0); }
+.pw-drag { width:36px; height:4px; border-radius:2px; background:var(--border); margin:0 auto 1.5rem; }
+
+
+/* ── COST POPUP ── */
+.cost-overlay {
+  position:fixed; inset:0;
+  background:rgba(20,16,10,.6);
+  z-index:8500; display:none;
+  align-items:flex-end; justify-content:center;
+  backdrop-filter:blur(3px);
+  -webkit-backdrop-filter:blur(3px);
+}
+.cost-overlay.show { display:flex; }
+.cost-popup {
+  background:var(--bg);
+  border-radius:20px 20px 0 0;
+  padding:1.5rem 1.5rem max(2rem,var(--safe));
+  width:100%; max-width:600px;
+  max-height:85vh; overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+  transform:translateY(100%);
+  transition:transform .35s cubic-bezier(.34,1.1,.64,1);
+}
+.cost-overlay.show .cost-popup { transform:translateY(0); }
+.cost-drag { width:36px; height:4px; border-radius:2px; background:var(--border); margin:0 auto 1.5rem; }
+.cost-title { font-size:clamp(1.1rem,3vw,1.3rem); font-weight:700; color:var(--ink); margin-bottom:1.5rem; line-height:1.3; }
+.ff-opts-popup { display:flex; flex-direction:column; gap:8px; margin-bottom:1.25rem; }
+.proj-callout { background:var(--warn-bg); border-radius:10px; padding:1.1rem; margin-bottom:1rem; }
+.proj-loss { font-size:clamp(1.1rem,3.5vw,1.35rem); font-weight:700; color:var(--warn); margin-bottom:.3rem; }
+.proj-sub { font-size:13px; color:var(--ink2); line-height:1.5; }
+.bars { display:flex; flex-direction:column; gap:8px; margin-bottom:.875rem; }
+.bar-row { display:flex; align-items:center; gap:10px; }
+.bar-label { font-size:12px; color:var(--ink3); width:120px; flex-shrink:0; }
+.bar-track { flex:1; height:8px; background:var(--border); border-radius:4px; overflow:hidden; }
+.bar-fill { height:100%; border-radius:4px; transition:width 1s cubic-bezier(.4,0,.2,1); width:0; }
+.bar-now { background:var(--ink3); }
+.bar-fix { background:var(--good); }
+.bar-val { font-size:12px; font-weight:600; color:var(--ink); width:52px; text-align:right; flex-shrink:0; }
+.proj-note { font-size:12px; color:var(--ink3); line-height:1.6; margin-bottom:1rem; }
+.proj-highlight { background:var(--ink); border-radius:10px; padding:1rem; margin-bottom:1.25rem; }
+.ph-text { font-size:14px; color:rgba(255,255,255,.65); line-height:1.65; }
+.ph-text strong { color:#fff; }
+.cost-hidden { display:none; }
+.cost-hidden.show { display:block; }
+
+</style>
 <style>
 *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
 :root {
-  --bg:#faf8f5; --white:#ffffff; --ink:#1c1712; --ink2:#4a4035; --ink3:#9a8e7e;
-  --accent:#c8622a; --border:#e8e0d4;
+  --bg:#faf8f5; --white:#fff; --ink:#1c1712; --ink2:#4a4035; --ink3:#9a8e7e;
+  --accent:#c8622a; --accent2:#e8956a; --border:#e8e0d4;
   --good:#1a6640; --warn:#a04a10; --bad:#921a1a;
   --good-bg:#edf7f1; --warn-bg:#fdf3ec; --bad-bg:#fdefef;
   --max:640px; --safe:env(safe-area-inset-bottom,0px);
 }
-html,body { height:100%; overflow:hidden; font-family:'Inter',system-ui,sans-serif; background:var(--bg); color:var(--ink); -webkit-font-smoothing:antialiased; touch-action:manipulation; font-size:16px; }
-.scr { position:fixed; inset:0; display:flex; flex-direction:column; align-items:center; visibility:hidden; opacity:0; transition:opacity .2s ease,visibility 0s .2s; background:var(--bg); overflow:hidden; }
+html,body { height:100%; overflow:hidden; font-family:'Inter',system-ui,sans-serif; background:var(--bg); color:var(--ink); -webkit-font-smoothing:antialiased; touch-action:manipulation; }
+.scr { position:fixed; inset:0; display:flex; flex-direction:column; align-items:center; visibility:hidden; opacity:0; transition:opacity .2s ease,visibility 0s .2s; background:var(--bg); }
 .scr.active { visibility:visible; opacity:1; transition:opacity .2s ease; }
 #pgbar { position:fixed; top:0; left:0; right:0; height:2px; background:var(--border); z-index:999; display:none; }
 #pgfill { height:100%; background:var(--accent); width:0; transition:width .4s ease; }
-.accent-label { font-size:11px; font-weight:500; letter-spacing:.12em; text-transform:uppercase; color:var(--accent); }
+.lora { font-family:'Inter',system-ui,sans-serif; }
+.al { font-size:11px; font-weight:500; letter-spacing:.12em; text-transform:uppercase; color:var(--accent); }
 
-/* HOOK */
-#s-hook { background:var(--ink); justify-content:center; align-items:center; }
-.hook-page { width:100%; max-width:var(--max); padding:2.5rem 1.5rem; }
-.hook-tag { font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:rgba(255,255,255,.3); margin-bottom:2rem; display:block; }
-.hook-title { font-family:'Lora',serif; font-size:clamp(2rem,7vw,3.2rem); line-height:1.15; color:#fff; margin-bottom:1rem; font-weight:600; }
-.hook-title em { font-style:italic; color:var(--accent); font-weight:400; }
-.hook-sub { font-size:16px; color:rgba(255,255,255,.45); line-height:1.7; margin-bottom:2.5rem; max-width:420px; }
-.hook-btn { background:var(--accent); color:#fff; border:none; padding:15px 28px; font-family:'Inter',sans-serif; font-size:15px; font-weight:500; cursor:pointer; border-radius:6px; transition:background .18s; display:inline-block; }
-.hook-btn:hover { background:#b5561f; }
-.hook-note { font-size:12px; color:rgba(255,255,255,.2); margin-top:1rem; }
+/* ── HOOK ── */
+#s-hook {
+  background:#f7f4ef;
+  justify-content:flex-end;
+  align-items:center;
+  overflow:hidden;
+}
+.hook-bg {
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  overflow:hidden;
+}
+/* large decorative circle top-right */
+.hook-bg::before {
+  content:'';
+  position:absolute;
+  top:-120px; right:-80px;
+  width:340px; height:340px;
+  border-radius:50%;
+  background:var(--ink);
+  opacity:1;
+}
+/* accent arc */
+.hook-bg::after {
+  content:'';
+  position:absolute;
+  top:-60px; right:-20px;
+  width:220px; height:220px;
+  border-radius:50%;
+  border:40px solid var(--accent);
+  opacity:.9;
+}
+.hook-pg {
+  width:100%; max-width:var(--max);
+  padding:0 1.75rem 3rem;
+  position:relative; z-index:1;
+}
+.hook-tag {
+  font-size:11px; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--ink3); margin-bottom:3rem; display:block;
+}
+.hook-title {
+  font-family:'Inter',system-ui,sans-serif;
+  font-size:clamp(2.6rem,8vw,4rem);
+  line-height:1.05; color:var(--ink);
+  margin-bottom:1.25rem; font-weight:800;
+  letter-spacing:-.02em;
+}
+.hook-title em { color:var(--accent); font-style:normal; display:block; }
+.hook-sub {
+  font-size:16px; color:var(--ink3);
+  line-height:1.65; margin-bottom:2.5rem;
+  max-width:340px;
+}
+.hook-cta-row {
+  display:flex; flex-direction:column; gap:.75rem;
+}
+.btn-accent-inv {
+  background:var(--ink); color:#fff; border:none;
+  padding:16px 28px; font-family:'Inter',sans-serif;
+  font-size:15px; font-weight:700; cursor:pointer;
+  border-radius:10px; transition:all .18s;
+  display:inline-block; letter-spacing:.01em;
+}
+.btn-accent-inv:hover { background:var(--accent); }
+.hook-note {
+  font-size:12px; color:var(--ink3);
+  letter-spacing:.02em;
+}
 
-/* SETUP */
-#s-setup { justify-content:center; }
-.setup-page { width:100%; max-width:var(--max); padding:2.5rem 1.5rem; }
-.setup-title { font-family:'Lora',serif; font-size:clamp(1.4rem,4vw,1.75rem); line-height:1.3; color:var(--ink); margin:.75rem 0 2rem; font-weight:600; }
-.setup-list { display:flex; flex-direction:column; gap:1.1rem; margin-bottom:2.5rem; }
-.setup-item { display:flex; gap:12px; }
-.si-n { font-size:12px; color:var(--accent); font-weight:600; flex-shrink:0; padding-top:1px; }
+/* ── SETUP ── */
+#s-setup { justify-content:center; align-items:center; background:var(--bg); }
+.setup-pg { width:100%; max-width:var(--max); padding:2.5rem 1.75rem; }
+.setup-eyebrow { font-size:11px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:var(--accent); margin-bottom:.875rem; display:block; }
+.setup-title {
+  font-family:'Inter',system-ui,sans-serif;
+  font-size:clamp(1.4rem,4vw,1.75rem);
+  line-height:1.25; color:var(--ink);
+  margin-bottom:2rem; font-weight:700;
+  letter-spacing:-.01em;
+}
+.setup-list { display:flex; flex-direction:column; gap:.875rem; margin-bottom:2.5rem; }
+.si { display:flex; gap:12px; align-items:flex-start; }
+.si-n {
+  width:22px; height:22px; border-radius:50%;
+  background:var(--ink); color:#fff;
+  font-size:11px; font-weight:700;
+  display:flex; align-items:center; justify-content:center;
+  flex-shrink:0; margin-top:1px;
+}
 .si-t { font-size:15px; color:var(--ink2); line-height:1.6; }
-.si-t strong { color:var(--ink); }
-.btn-dark { background:var(--ink); color:#fff; border:none; padding:15px 28px; font-family:'Inter',sans-serif; font-size:15px; font-weight:500; cursor:pointer; border-radius:6px; transition:background .18s; display:inline-block; }
-.btn-dark:hover { background:#2d2418; }
+.si-t strong { color:var(--ink); font-weight:600; }
+.btn-dark {
+  background:var(--ink); color:#fff; border:none;
+  padding:16px 28px; font-family:'Inter',sans-serif;
+  font-size:15px; font-weight:700; cursor:pointer;
+  border-radius:10px; transition:background .18s;
+  display:inline-block; letter-spacing:.01em;
+}
+.btn-dark:hover { background:var(--accent); }
 
-/* QUESTION */
+/* ── QUESTION SCREEN ── */
 .scr-q { background:var(--bg); }
-.q-page { width:100%; max-width:var(--max); padding:0 1.5rem; display:flex; flex-direction:column; height:100%; }
-.q-top { padding-top:1.25rem; flex-shrink:0; }
-.steps { display:flex; gap:3px; margin-bottom:1.25rem; }
-.step { flex:1; height:2px; border-radius:1px; background:var(--border); transition:background .3s; }
-.step.done { background:var(--accent); opacity:.5; }
-.step.cur { background:var(--accent); }
-.q-label { margin-bottom:.875rem; }
-.q-text { font-family:'Lora',serif; font-size:clamp(1.1rem,3.5vw,1.35rem); line-height:1.5; color:var(--ink); font-weight:400; padding-bottom:1.25rem; border-bottom:1px solid var(--border); }
-.q-opts { flex:1; overflow-y:auto; padding:1rem 0; -webkit-overflow-scrolling:touch; overscroll-behavior:contain; }
-.opt { padding:13px 0; cursor:pointer; display:flex; align-items:flex-start; gap:14px; border-bottom:1px solid var(--border); -webkit-tap-highlight-color:transparent; }
-.opt:last-child { border-bottom:none; }
-.opt-radio { width:20px; height:20px; border-radius:50%; border:2px solid var(--border); flex-shrink:0; margin-top:1px; transition:all .15s; display:flex; align-items:center; justify-content:center; background:var(--white); }
-.opt.sel .opt-radio { background:var(--accent); border-color:var(--accent); }
-.opt.sel .opt-radio::after { content:''; width:7px; height:7px; border-radius:50%; background:white; }
-.opt-text { font-size:16px; color:var(--ink2); line-height:1.55; flex:1; padding-top:1px; }
-.opt.sel .opt-text { color:var(--ink); }
-.q-nav { flex-shrink:0; display:flex; justify-content:space-between; align-items:center; padding:.875rem 0; padding-bottom:max(.875rem,var(--safe)); border-top:1px solid var(--border); gap:10px; }
-.btn-ghost { background:none; border:none; color:var(--ink3); font-family:'Inter',sans-serif; font-size:14px; cursor:pointer; padding:10px 0; min-height:44px; transition:color .15s; }
-.btn-ghost:hover { color:var(--ink2); }
-.btn-outline { background:none; border:1px solid var(--ink2); color:var(--ink); font-family:'Inter',sans-serif; font-size:14px; font-weight:500; cursor:pointer; padding:10px 22px; border-radius:6px; min-height:44px; transition:all .15s; opacity:.3; pointer-events:none; }
-.btn-outline.on { opacity:1; pointer-events:all; }
-.btn-outline.on:hover { background:var(--ink); color:#fff; }
 
-/* REVEAL */
-.scr-r { overflow-y:auto; }
-.r-page { width:100%; max-width:var(--max); padding:2rem 1.5rem max(2.5rem,var(--safe)); display:flex; flex-direction:column; gap:0; }
-.r-label { margin-bottom:1.5rem; }
-.r-verdict-text { font-size:18px; font-weight:500; color:var(--ink); line-height:1.55; margin-bottom:.875rem; }
-.r-badge { display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:600; padding:4px 12px; border-radius:20px; margin-bottom:2rem; }
+.q-pg {
+  width:100%; max-width:var(--max);
+  padding:0 1.5rem;
+  display:flex; flex-direction:column;
+  height:100%; margin:0 auto;
+}
+
+/* progress steps */
+.steps {
+  display:flex; gap:4px;
+  padding-top:1.25rem;
+  margin-bottom:1.25rem;
+  flex-shrink:0;
+}
+.step {
+  flex:1; height:3px; border-radius:2px;
+  background:var(--border); transition:background .3s;
+}
+.step.done { background:var(--accent); opacity:.6; }
+.step.cur  { background:var(--accent); }
+
+/* question number */
+.q-lbl {
+  font-size:11px; font-weight:600;
+  letter-spacing:.12em; text-transform:uppercase;
+  color:var(--accent); margin-bottom:.75rem;
+  flex-shrink:0;
+}
+
+/* the question itself — hero of the screen */
+.q-txt {
+  font-size:clamp(1.4rem,4.5vw,1.85rem);
+  font-weight:800;
+  line-height:1.25;
+  color:var(--ink);
+  letter-spacing:-.02em;
+  padding-bottom:.875rem;
+  border-bottom:2px solid var(--ink);
+  flex-shrink:0;
+}
+
+/* help subtext */
+.q-help {
+  font-size:15px;
+  color:var(--ink2);
+  line-height:1.6;
+  margin-top:.75rem;
+  margin-bottom:0;
+  flex-shrink:0;
+  font-style:italic;
+}
+
+/* options */
+.q-opts {
+  flex:1; overflow-y:auto;
+  padding:.875rem 0;
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior:contain;
+  min-height:0;
+}
+
+.opt {
+  padding:14px 0;
+  cursor:pointer;
+  display:flex;
+  align-items:flex-start;
+  gap:14px;
+  border-bottom:1px solid var(--border);
+  transition:opacity .15s;
+}
+.opt:last-child { border-bottom:none; }
+.opt:active { opacity:.7; }
+
+.opt-r {
+  width:22px; height:22px;
+  border-radius:50%;
+  border:2px solid var(--border);
+  flex-shrink:0; margin-top:1px;
+  transition:all .15s;
+  display:flex; align-items:center;
+  justify-content:center;
+  background:var(--white);
+}
+.opt.sel .opt-r {
+  background:var(--ink);
+  border-color:var(--ink);
+}
+.opt.sel .opt-r::after {
+  content:'';
+  width:8px; height:8px;
+  border-radius:50%;
+  background:white;
+}
+
+.opt-txt {
+  font-size:17px;
+  color:var(--ink2);
+  line-height:1.5;
+  flex:1;
+  padding-top:1px;
+  font-weight:400;
+}
+.opt.sel .opt-txt {
+  color:var(--ink);
+  font-weight:600;
+}
+
+/* nav */
+.q-nav {
+  flex-shrink:0;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:.875rem 0;
+  padding-bottom:max(1rem,var(--safe));
+  border-top:1px solid var(--border);
+  gap:10px;
+  min-height:60px;
+}
+
+.btn-ghost {
+  background:none; border:none;
+  color:var(--ink3);
+  font-family:'Inter',sans-serif;
+  font-size:14px; cursor:pointer;
+  padding:10px 0; min-height:44px;
+  transition:color .15s;
+  font-weight:500;
+}
+.btn-ghost:hover { color:var(--ink); }
+
+.btn-next {
+  background:var(--ink);
+  color:#fff; border:none;
+  padding:12px 24px;
+  font-family:'Inter',sans-serif;
+  font-size:14px; font-weight:600;
+  cursor:pointer; border-radius:8px;
+  min-height:44px;
+  transition:all .15s;
+  opacity:.2; pointer-events:none;
+  letter-spacing:.01em;
+}
+.btn-next.on { opacity:1; pointer-events:all; }
+.btn-next.on:hover { background:var(--accent); }
+
+/* ── REVEAL PANEL ── */
+.reveal-backdrop {
+  position:fixed; inset:0;
+  background:rgba(20,16,10,.65);
+  z-index:200; opacity:0; visibility:hidden;
+  transition:opacity .25s ease, visibility 0s .25s;
+  backdrop-filter:blur(2px);
+  -webkit-backdrop-filter:blur(2px);
+}
+.reveal-backdrop.show {
+  opacity:1; visibility:visible;
+  transition:opacity .25s ease;
+}
+.reveal-panel-wrap {
+  position:fixed; inset:0; z-index:201;
+  display:flex; align-items:center; justify-content:center;
+  padding:1.25rem; pointer-events:none;
+}
+.reveal-panel {
+  background:var(--white);
+  border-radius:16px;
+  padding:1.75rem 1.5rem 1.5rem;
+  width:100%; max-width:520px;
+  max-height:82vh; overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+  transform:translateY(48px);
+  opacity:0;
+  transition:transform .35s cubic-bezier(.34,1.2,.64,1), opacity .25s ease;
+  pointer-events:none;
+  box-shadow:0 32px 80px rgba(0,0,0,.3);
+}
+.reveal-panel.show {
+  transform:translateY(0);
+  opacity:1;
+  pointer-events:all;
+}
+.rp-handle { display:none; }
+.rp-label { margin-bottom:1rem; }
+
+/* verdict score bar */
+.rp-score-bar {
+  display:flex; align-items:center; gap:10px;
+  margin-bottom:1rem; padding:.75rem 1rem;
+  background:var(--bg); border-radius:8px;
+}
+.rp-bar-track {
+  flex:1; height:6px; background:var(--border);
+  border-radius:3px; overflow:hidden;
+}
+.rp-bar-fill {
+  height:100%; border-radius:3px;
+  transition:width .6s cubic-bezier(.4,0,.2,1) .2s;
+  width:0;
+}
+.bar-fill-g { background:var(--good); }
+.bar-fill-w { background:var(--warn); }
+.bar-fill-b { background:var(--bad); }
+.rp-bar-label {
+  font-size:11px; font-weight:600;
+  flex-shrink:0; letter-spacing:.04em;
+}
+
+.rp-verdict {
+  font-size:clamp(1.2rem,3.5vw,1.45rem);
+  font-weight:800; color:var(--ink);
+  line-height:1.25; margin-bottom:.625rem;
+  letter-spacing:-.015em;
+}
+.rp-badge {
+  display:inline-flex; align-items:center; gap:6px;
+  font-size:12px; font-weight:600;
+  padding:4px 12px; border-radius:20px;
+  margin-bottom:.875rem;
+}
 .badge-g { background:var(--good-bg); color:var(--good); }
 .badge-w { background:var(--warn-bg); color:var(--warn); }
 .badge-b { background:var(--bad-bg); color:var(--bad); }
 .bdot { width:5px; height:5px; border-radius:50%; }
-.dg { background:var(--good); } .dw { background:var(--warn); } .db { background:var(--bad); }
-.r-rule { width:32px; height:2px; background:var(--accent); margin-bottom:1.5rem; opacity:.4; }
-.r-obs-label { font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink3); margin-bottom:.875rem; }
-.r-obs-text { font-family:'Lora',serif; font-size:clamp(1rem,3.2vw,1.15rem); color:var(--ink2); line-height:1.85; font-style:italic; margin-bottom:2rem; }
-.r-stat { padding-left:1rem; border-left:2px solid var(--accent); margin-bottom:2.5rem; opacity:.7; }
-.r-stat-text { font-size:14px; color:var(--ink2); line-height:1.7; }
-.r-nav { display:flex; gap:10px; align-items:center; padding-bottom:max(.5rem,var(--safe)); }
-.btn-accent { flex:1; background:var(--accent); color:#fff; border:none; padding:14px 20px; font-family:'Inter',sans-serif; font-size:15px; font-weight:500; cursor:pointer; border-radius:6px; transition:background .18s; min-height:48px; }
-.btn-accent:hover { background:#b5561f; }
-
-/* SCORE */
-#s-score { background:var(--ink); justify-content:center; align-items:center; }
-.score-page { width:100%; max-width:var(--max); padding:2.5rem 1.5rem; text-align:center; }
-.score-tag { display:block; font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:rgba(255,255,255,.3); margin-bottom:2rem; }
-.ring-wrap { width:110px; height:110px; position:relative; margin:0 auto 1.75rem; }
-.ring-svg { position:absolute; inset:0; transform:rotate(-90deg); }
-.ring-track { fill:none; stroke:rgba(255,255,255,.08); stroke-width:2; }
-.ring-fill { fill:none; stroke:var(--accent); stroke-width:2; stroke-linecap:round; stroke-dasharray:283; stroke-dashoffset:283; transition:stroke-dashoffset 1.8s cubic-bezier(.4,0,.2,1) .4s; }
-.ring-inner { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; }
-.ring-num { font-family:'Lora',serif; font-size:2.4rem; color:#fff; line-height:1; opacity:0; transition:opacity .4s .8s; }
-.ring-den { font-size:11px; color:rgba(255,255,255,.3); margin-top:3px; opacity:0; transition:opacity .3s 1s; }
-.arch-name { font-family:'Lora',serif; font-size:clamp(1.2rem,4vw,1.6rem); color:#fff; line-height:1.25; min-height:2.2rem; margin-bottom:.5rem; font-weight:600; }
-.arch-sub { font-size:14px; color:rgba(255,255,255,.45); line-height:1.7; max-width:380px; margin:0 auto 1.75rem; opacity:0; transition:opacity .5s; }
-.score-cta { opacity:0; transition:opacity .4s; display:flex; flex-direction:column; gap:10px; align-items:center; }
-.sa .ring-num,.sa .ring-den,.sa .arch-sub,.sa .score-cta { opacity:1; }
-
-/* SHARE CARD */
-#s-share { background:var(--bg); justify-content:center; align-items:center; overflow-y:auto; }
-.share-page { width:100%; max-width:var(--max); padding:2rem 1.5rem max(2rem,var(--safe)); }
-.share-card {
-  background:var(--ink); border-radius:12px;
-  padding:2rem 1.75rem; margin-bottom:1.5rem;
-  text-align:center; position:relative; overflow:hidden;
+.dg{background:var(--good);} .dw{background:var(--warn);} .db{background:var(--bad);}
+.rp-explain { font-size:16px; color:var(--ink2); line-height:1.65; margin-bottom:1.25rem; }
+.rp-rule { width:28px; height:2px; background:var(--accent); margin-bottom:.875rem; opacity:.4; }
+.rp-obs-lbl {
+  font-size:10px; letter-spacing:.12em;
+  text-transform:uppercase; color:var(--ink3);
+  margin-bottom:.5rem;
 }
-.share-card::before {
-  content:''; position:absolute; top:-40px; right:-40px;
-  width:150px; height:150px; border-radius:50%;
-  border:1px solid rgba(200,98,42,.15);
+.rp-obs {
+  font-size:clamp(1.05rem,3.5vw,1.2rem);
+  color:var(--ink2); line-height:1.75;
+  margin-bottom:1.25rem;
 }
-.sc-tag { font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:rgba(255,255,255,.3); display:block; margin-bottom:1.5rem; }
-.sc-archetype { font-family:'Lora',serif; font-size:clamp(1.3rem,4vw,1.7rem); color:#fff; font-weight:600; line-height:1.2; margin-bottom:.5rem; }
-.sc-tagline { font-size:14px; color:rgba(255,255,255,.5); line-height:1.6; margin-bottom:1.5rem; max-width:320px; margin-left:auto; margin-right:auto; }
-.sc-insight { font-family:'Lora',serif; font-size:15px; color:rgba(255,255,255,.75); font-style:italic; line-height:1.65; padding:1rem 0; border-top:1px solid rgba(255,255,255,.1); border-bottom:1px solid rgba(255,255,255,.1); margin-bottom:1.25rem; }
-.sc-url { font-size:11px; letter-spacing:.08em; color:rgba(255,255,255,.25); }
+.rp-stat {
+  padding:.875rem; border-radius:8px;
+  background:var(--bg); margin-bottom:1.25rem;
+}
+.rp-stat p { font-size:15px; color:var(--ink2); line-height:1.7; }
+.rp-next {
+  display:block; width:100%; background:var(--ink); color:#fff;
+  border:none; padding:14px; font-family:'Inter',sans-serif;
+  font-size:15px; font-weight:700; cursor:pointer;
+  border-radius:8px; transition:background .18s;
+  letter-spacing:.01em;
+}
+.rp-next:hover { background:var(--accent); }
 
-.share-actions { display:flex; flex-direction:column; gap:10px; margin-bottom:1.5rem; }
-.btn-wa { background:#25D366; color:#fff; border:none; padding:15px 20px; font-family:'Inter',sans-serif; font-size:15px; font-weight:600; cursor:pointer; border-radius:8px; display:flex; align-items:center; justify-content:center; gap:10px; min-height:52px; transition:background .18s; }
+/* ── SCORE + RADAR ── */
+#s-score {
+  background:var(--ink);
+  justify-content:center; align-items:center;
+  overflow:hidden; position:relative; z-index:1;
+}
+#s-score::before {
+  content:'';
+  position:absolute;
+  bottom:-120px; right:-120px;
+  width:320px; height:320px;
+  border-radius:50%;
+  border:1px solid rgba(255,255,255,.04);
+}
+.score-pg {
+  width:100%; max-width:460px;
+  padding:2rem 1.75rem;
+  text-align:center;
+  position:relative; z-index:1;
+  display:flex; flex-direction:column;
+  align-items:center;
+}
+.score-tag {
+  font-size:10px; letter-spacing:.18em;
+  text-transform:uppercase;
+  color:rgba(255,255,255,.3);
+  margin-bottom:1rem;
+  font-weight:600;
+}
+
+/* ── RADAR ── */
+.radar-wrap {
+  width:min(320px, 80vw); height:min(320px, 80vw);
+  margin:0 auto .75rem;
+  position:relative;
+}
+.radar-svg { width:100%; height:100%; overflow:visible; }
+.r-ring {
+  fill:none;
+  stroke:rgba(255,255,255,.08);
+  stroke-width:1;
+}
+.r-ring-sm { stroke:rgba(255,255,255,.05); }
+.r-axis {
+  stroke:rgba(255,255,255,.06);
+  stroke-width:1;
+}
+.r-data {
+  fill:rgba(200,98,42,.25);
+  stroke:var(--accent);
+  stroke-width:1.5;
+  stroke-linejoin:round;
+  opacity:0;
+  transition:opacity .6s .3s, points 1s ease;
+}
+.r-lbl {
+  font-family:'Inter',system-ui,sans-serif;
+  font-size:10px;
+  fill:rgba(255,255,255,.45);
+  font-weight:600;
+}
+
+.arch-name {
+  font-size:clamp(1.3rem,4.5vw,1.75rem);
+  font-weight:800; color:#fff;
+  line-height:1.2; min-height:2rem;
+  margin-bottom:.5rem;
+  letter-spacing:-.02em;
+}
+.arch-sub {
+  font-size:14px; color:rgba(255,255,255,.4);
+  line-height:1.65; max-width:340px;
+  margin:0 auto 1.75rem;
+  opacity:0; transition:opacity .5s;
+}
+.score-cta {
+  opacity:0; transition:opacity .4s;
+  display:flex; flex-direction:column;
+  gap:10px; align-items:center; width:100%;
+}
+.sa .arch-sub,.sa .score-cta { opacity:1; }
+
+/* ── REVENUE GAP SCREEN ── */
+#s-gap { justify-content:flex-start; overflow-y:auto; }
+.gap-pg { width:100%; max-width:var(--max); padding:2rem 1.5rem max(3rem,var(--safe)); margin:0 auto; }
+.gap-title { font-family:'Inter',system-ui,sans-serif; font-size:clamp(1.2rem,3.5vw,1.5rem); color:var(--ink); line-height:1.3; margin:.75rem 0 1.5rem; font-weight:700; }
+.footfall-opts { display:flex; flex-direction:column; gap:8px; margin-bottom:1.75rem; }
+.ff-opt { border:1.5px solid var(--border); border-radius:8px; padding:13px 16px; cursor:pointer; display:flex; align-items:center; gap:12px; background:var(--white); transition:all .15s; }
+.ff-opt:hover { border-color:var(--accent); }
+.ff-opt.sel { border-color:var(--accent); background:#fff8f5; }
+.ff-opt-r { width:18px; height:18px; border-radius:50%; border:2px solid var(--border); flex-shrink:0; transition:all .15s; display:flex; align-items:center; justify-content:center; background:var(--white); }
+.ff-opt.sel .ff-opt-r { background:var(--accent); border-color:var(--accent); }
+.ff-opt.sel .ff-opt-r::after { content:''; width:6px; height:6px; border-radius:50%; background:white; }
+.ff-opt-txt { font-size:15px; color:var(--ink2); }
+.ff-opt.sel .ff-opt-txt { color:var(--ink); font-weight:500; }
+
+/* projection */
+.projection { display:none; margin-bottom:1.75rem; }
+.projection.show { display:block; }
+.proj-callout { background:var(--warn-bg); border-radius:8px; padding:1.1rem 1.25rem; margin-bottom:1.25rem; }
+.proj-loss { font-family:'Inter',system-ui,sans-serif; font-size:clamp(1.3rem,4vw,1.6rem); color:var(--warn); font-weight:600; line-height:1.2; margin-bottom:.3rem; }
+.proj-sub { font-size:13px; color:var(--ink2); line-height:1.55; }
+.bars { display:flex; flex-direction:column; gap:10px; margin-bottom:1.1rem; }
+.bar-row { display:flex; align-items:center; gap:10px; }
+.bar-label { font-size:12px; color:var(--ink3); width:110px; flex-shrink:0; line-height:1.3; }
+.bar-track { flex:1; height:10px; background:var(--border); border-radius:5px; overflow:hidden; }
+.bar-fill { height:100%; border-radius:5px; transition:width 1s cubic-bezier(.4,0,.2,1); width:0; }
+.bar-now { background:var(--ink3); }
+.bar-fix { background:var(--good); }
+.bar-val { font-size:12px; font-weight:600; color:var(--ink); width:60px; text-align:right; flex-shrink:0; }
+.proj-note { font-size:12px; color:var(--ink3); line-height:1.6;  }
+.proj-highlight { background:var(--ink); border-radius:8px; padding:1rem 1.25rem; margin-bottom:1.25rem; }
+.ph-text { font-size:14px; color:rgba(255,255,255,.65); line-height:1.65; }
+.ph-text strong { color:#fff; }
+
+/* ── FREE FIX TEASER ── */
+#s-fix { justify-content:flex-start; overflow-y:auto; background:var(--bg); align-items:center; }
+.fix-pg { width:100%; max-width:var(--max); padding:2rem 1.5rem max(2rem,var(--safe)); margin:0 auto; }
+.fix-title { font-size:clamp(1.1rem,3.5vw,1.35rem); font-weight:700; color:var(--ink); line-height:1.3; margin:.625rem 0 .4rem; }
+.fix-sub { font-size:14px; color:var(--ink3); line-height:1.6; margin-bottom:1.25rem; }
+.fix-card { background:var(--white); border:1px solid var(--border); border-radius:12px; padding:1.25rem; margin-bottom:1.25rem; border-left:3px solid var(--accent); }
+.fc-tag { font-size:10px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:var(--accent); margin-bottom:.625rem; }
+.fc-title { font-size:16px; font-weight:700; color:var(--ink); margin-bottom:.5rem; line-height:1.3; }
+.fc-desc { font-size:14px; color:var(--ink2); line-height:1.65; margin-bottom:.625rem; }
+.fc-cost { font-size:12px; color:var(--ink3); }
+.fix-locked { background:var(--bg); border:1px solid var(--border); border-radius:12px; padding:1.1rem 1.25rem; margin-bottom:1.25rem; }
+.fl-top { font-size:13px; font-weight:600; color:var(--ink); margin-bottom:.75rem; }
+.fl-item { font-size:13px; color:var(--ink3); padding:6px 0; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:6px; }
+.fl-item:last-child { border-bottom:none; }
+.fl-item::before { content:"🔒"; font-size:11px; }
+.fl-blur { filter:blur(3px); user-select:none; opacity:.5; }
+.lock-txt strong { color:var(--ink); }
+
+/* ── RESULT PAGE ── */
+#s-share {
+  overflow-y:auto; background:var(--bg);
+  align-items:center; justify-content:flex-start;
+}
+.result-pg {
+  width:100%; max-width:560px;
+  padding:1.75rem 1.25rem max(2rem,var(--safe));
+  margin:0 auto;
+}
+
+.res-meta {
+  display:flex; justify-content:space-between;
+  align-items:center; margin-bottom:1.5rem;
+}
+.res-brand {
+  font-size:10px; font-weight:700;
+  letter-spacing:.14em; text-transform:uppercase;
+  color:var(--ink3);
+}
+.res-date { font-size:11px; color:var(--ink3); }
+
+.res-type-lbl {
+  font-size:11px; font-weight:700;
+  letter-spacing:.12em; text-transform:uppercase;
+  color:var(--accent); margin-bottom:.5rem; margin-top:.25rem;
+}
+.res-arch {
+  font-size:clamp(2rem,6vw,2.8rem);
+  font-weight:800; color:var(--ink);
+  line-height:1.05; letter-spacing:-.03em;
+  margin-bottom:.4rem;
+}
+.res-tagline {
+  font-size:14px; color:var(--ink3);
+  margin-bottom:1.5rem;
+}
+
+/* ── BIG RADAR ── */
+.res-radar-wrap {
+  width:100%;
+  max-width:380px;
+  margin:0 auto 1.5rem;
+  position:relative;
+}
+.res-radar-svg {
+  width:100%; height:auto;
+  overflow:visible;
+}
+.rr-ring { fill:none; stroke:var(--border); stroke-width:1.5; }
+.rr-sm   { stroke:var(--border); opacity:.5; }
+.rr-axis { stroke:var(--border); stroke-width:1; }
+.rr-data {
+  fill:rgba(200,98,42,.12);
+  stroke:var(--accent); stroke-width:2;
+  stroke-linejoin:round;
+  opacity:0; transition:opacity .6s .3s;
+}
+.rr-lbl {
+  font-family:'Inter',system-ui,sans-serif;
+  font-size:10px; fill:var(--ink3);
+  font-weight:600;
+}
+
+/* insight */
+.res-insight {
+  font-size:16px; color:var(--ink2);
+  line-height:1.7; margin-bottom:1.25rem;
+  padding:1.25rem; background:var(--white);
+  border-radius:12px; border:1px solid var(--border);
+}
+
+/* verified */
+.res-verified {
+  display:flex; align-items:center; gap:7px;
+  font-size:12px; color:var(--ink3);
+  margin-bottom:1.5rem; letter-spacing:.03em;
+}
+.res-dot {
+  width:8px; height:8px; border-radius:50%;
+  background:#22c55e; flex-shrink:0;
+  box-shadow:0 0 7px rgba(34,197,94,.45);
+}
+
+/* single CTA */
+.res-cta {
+  display:block; width:100%;
+  background:var(--ink); color:#fff; border:none;
+  padding:17px; font-family:'Inter',sans-serif;
+  font-size:16px; font-weight:700;
+  cursor:pointer; border-radius:12px;
+  letter-spacing:.01em;
+  transition:background .18s, transform .12s;
+  margin-bottom:1rem;
+}
+.res-cta:hover { background:var(--accent); }
+.res-cta:active { transform:scale(.98); }
+
+/* secondary minimal */
+.res-cost-btn {
+  display:block; width:100%; background:transparent;
+  border:1.5px solid var(--border); color:var(--ink2);
+  padding:13px; font-family:'Inter',sans-serif;
+  font-size:14px; font-weight:500; cursor:pointer;
+  border-radius:10px; transition:all .15s;
+  margin-bottom:.75rem;
+}
+.res-cost-btn:hover { border-color:var(--accent); color:var(--accent); }
+
+.res-secondary {
+  display:flex; align-items:center;
+  justify-content:center; gap:.75rem;
+}
+.res-sec-btn {
+  background:none; border:none;
+  font-family:'Inter',sans-serif;
+  font-size:13px; color:var(--ink3);
+  cursor:pointer; padding:4px 0;
+  transition:color .15s;
+  text-decoration:underline;
+  text-underline-offset:3px;
+}
+.res-sec-btn:hover { color:var(--ink); }
+.res-sec-dot { color:var(--border); font-size:14px; }
+
+/* keep these for other screens */
+.btn-wa {
+  background:#25D366; color:#fff; border:none;
+  padding:14px 18px; font-family:'Inter',sans-serif;
+  font-size:14px; font-weight:600; cursor:pointer;
+  border-radius:10px; display:flex; align-items:center;
+  justify-content:center; gap:8px; min-height:50px;
+  transition:background .18s;
+}
 .btn-wa:hover { background:#1fb855; }
-.btn-wa-icon { font-size:20px; }
-.btn-challenge { background:var(--bg); color:var(--ink2); border:1px solid var(--border); padding:13px 20px; font-family:'Inter',sans-serif; font-size:14px; font-weight:500; cursor:pointer; border-radius:8px; display:flex; align-items:center; justify-content:center; gap:8px; min-height:48px; transition:all .18s; }
-.btn-challenge:hover { border-color:var(--accent); color:var(--accent); }
-.share-divider { text-align:center; font-size:12px; color:var(--ink3); margin:.25rem 0; }
-.btn-report { background:var(--accent); color:#fff; border:none; padding:15px 20px; font-family:'Inter',sans-serif; font-size:15px; font-weight:600; cursor:pointer; border-radius:8px; min-height:52px; width:100%; transition:background .18s; }
-.btn-report:hover { background:#b5561f; }
-.share-note { font-size:12px; color:var(--ink3); text-align:center; margin-top:.75rem; line-height:1.5; }
+.btn-chal {
+  background:var(--white); color:var(--ink2);
+  border:1.5px solid var(--border); padding:13px 18px;
+  font-family:'Inter',sans-serif; font-size:14px;
+  font-weight:500; cursor:pointer; border-radius:10px;
+  min-height:48px; transition:all .18s;
+}
+.btn-chal:hover { border-color:var(--accent); color:var(--accent); }
+.btn-buy {
+  display:block; width:100%; background:var(--accent);
+  color:#fff; border:none; padding:15px;
+  font-family:'Inter',sans-serif; font-size:15px;
+  font-weight:600; cursor:pointer; border-radius:10px;
+  transition:background .18s; margin-bottom:.5rem;
+}
+.btn-buy:hover { background:#b5561f; }
+.share-note { font-size:12px; color:var(--ink3); text-align:center; }
 
-/* FINDINGS */
-#s-findings { flex-direction:column; overflow-y:auto; align-items:center; }
-.findings-hd { position:sticky; top:0; z-index:10; background:var(--bg); width:100%; border-bottom:1px solid var(--border); }
-.findings-hd-inner { max-width:var(--max); margin:0 auto; padding:1.25rem 1.5rem; }
-.findings-hd-title { font-family:'Lora',serif; font-size:1.2rem; color:var(--ink); margin-top:.25rem; font-weight:600; }
-.findings-body { width:100%; max-width:var(--max); padding:1.5rem; display:flex; flex-direction:column; gap:0; }
-.fitem { padding:1.1rem 0; border-bottom:1px solid var(--border); opacity:0; transform:translateY(6px); transition:all .3s ease; }
-.fitem.in { opacity:1; transform:translateY(0); }
-.fitem:last-of-type { border-bottom:none; }
-.fi-head { display:flex; align-items:center; gap:8px; margin-bottom:.35rem; }
-.fi-num { font-size:11px; color:var(--ink3); letter-spacing:.06em; }
-.fi-badge { font-size:11px; padding:2px 9px; border-radius:20px; font-weight:600; }
-.fbg { background:var(--good-bg); color:var(--good); }
-.fbw { background:var(--warn-bg); color:var(--warn); }
-.fbb { background:var(--bad-bg); color:var(--bad); }
-.fi-txt { font-size:14px; color:var(--ink2); line-height:1.6; }
-.truths-section { padding:1.5rem 0 0; margin-top:.5rem; }
-.truths-title { font-family:'Lora',serif; font-size:1rem; color:var(--ink); margin-bottom:1rem; font-weight:600; }
-.truth-item { font-size:14px; color:var(--ink2); padding:8px 0; border-bottom:1px solid var(--border); line-height:1.55; display:flex; gap:10px; }
-.truth-item:last-child { border-bottom:none; }
-.truth-item::before { content:'→'; color:var(--accent); flex-shrink:0; }
-.findings-cta { padding:1.5rem 0 max(1.5rem,var(--safe)); }
+/* ── FREE ACTION STEP ── */
+.share-actions { display:flex; flex-direction:column; gap:8px; margin-bottom:1rem; }
+.btn-wa {
+  background:#25D366; color:#fff; border:none;
+  padding:14px 18px; font-family:'Inter',sans-serif;
+  font-size:14px; font-weight:600; cursor:pointer;
+  border-radius:10px; display:flex; align-items:center;
+  justify-content:center; gap:8px; min-height:50px;
+  transition:background .18s;
+}
+.btn-wa:hover { background:#1fb855; }
+.btn-chal {
+  background:var(--white); color:var(--ink2);
+  border:1.5px solid var(--border); padding:13px 18px;
+  font-family:'Inter',sans-serif; font-size:14px;
+  font-weight:500; cursor:pointer; border-radius:10px;
+  min-height:48px; transition:all .18s;
+}
+.btn-chal:hover { border-color:var(--accent); color:var(--accent); }
+.share-sep {
+  text-align:center; position:relative;
+  margin:.75rem 0 1rem;
+}
+.share-sep span {
+  font-size:12px; color:var(--ink3);
+  background:var(--bg); padding:0 .75rem;
+  position:relative; z-index:1;
+}
+.share-sep::before {
+  content:''; position:absolute; top:50%;
+  left:0; right:0; height:1px; background:var(--border);
+}
+.btn-buy {
+  display:block; width:100%;
+  background:var(--accent); color:#fff; border:none;
+  padding:15px; font-family:'Inter',sans-serif;
+  font-size:15px; font-weight:600; cursor:pointer;
+  border-radius:10px; transition:background .18s;
+  margin-bottom:.75rem;
+}
+.btn-buy:hover { background:#b5561f; }
+.share-note {
+  font-size:12px; color:var(--ink3);
+  text-align:center; line-height:1.55;
+}
 
-/* PAYWALL */
-#s-paywall { overflow-y:auto; align-items:center; }
-.pw-page { width:100%; max-width:var(--max); padding:2rem 1.5rem max(2.5rem,var(--safe)); }
+/* ── FREE ACTION STEP ── */
+#s-fix { justify-content:flex-start; overflow-y:auto; background:var(--bg); align-items:center; }
+.fix-pg { width:100%; max-width:var(--max); padding:1.75rem 1.25rem max(2rem,var(--safe)); margin:0 auto; }
+.fix-title { font-size:clamp(1.1rem,3.5vw,1.35rem); font-weight:700; color:var(--ink); line-height:1.3; margin:.5rem 0 .35rem; }
+.fix-sub { font-size:13px; color:var(--ink3); line-height:1.6; margin-bottom:1.25rem; }
+.fix-card {
+  background:var(--white); border:1px solid var(--border);
+  border-radius:12px; padding:1.25rem;
+  margin-bottom:1rem; border-left:3px solid var(--accent);
+}
+.fc-tag { font-size:10px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:var(--accent); margin-bottom:.5rem; }
+.fc-title { font-size:15px; font-weight:700; color:var(--ink); margin-bottom:.4rem; line-height:1.3; }
+.fc-desc { font-size:14px; color:var(--ink2); line-height:1.65; margin-bottom:.5rem; }
+.fc-cost { font-size:12px; color:var(--ink3); }
+.fix-locked {
+  background:#f7f5f1; border:1px solid var(--border);
+  border-radius:12px; padding:1rem 1.1rem;
+  margin-bottom:1.25rem;
+}
+.fl-top { font-size:12px; font-weight:600; color:var(--ink3); margin-bottom:.625rem; letter-spacing:.04em; text-transform:uppercase; }
+.fl-item {
+  font-size:13px; color:var(--ink2);
+  padding:5px 0; border-bottom:1px solid var(--border);
+  display:flex; align-items:center; gap:8px;
+}
+.fl-item:last-child { border-bottom:none; }
+.fl-item::before { content:"🔒"; font-size:10px; opacity:.5; }
+.fl-blur { filter:blur(3px); user-select:none; color:var(--ink3); }
+
+/* ── PAYWALL ── */
+#s-paywall { overflow-y:auto; align-items:center; justify-content:flex-start; }
+.pw-pg { width:100%; max-width:var(--max); padding:1.75rem 1.5rem max(2.5rem,var(--safe)); }
 .pw-tag { display:block; margin-bottom:1.25rem; }
-.pw-title { font-family:'Lora',serif; font-size:clamp(1.2rem,3.5vw,1.5rem); color:var(--ink); line-height:1.35; margin-bottom:.875rem; font-weight:600; }
+.pw-title { font-family:'Inter',system-ui,sans-serif; font-size:clamp(1.15rem,3.2vw,1.45rem); color:var(--ink); line-height:1.3; margin-bottom:.875rem; font-weight:600; }
 .pw-sub { font-size:15px; color:var(--ink2); line-height:1.7; margin-bottom:1.75rem; }
-.pw-list { display:flex; flex-direction:column; gap:0; margin-bottom:2rem; }
-.pwi { font-size:15px; color:var(--ink2); display:flex; gap:10px; line-height:1.55; padding:8px 0; border-bottom:1px solid var(--border); }
+.pw-list { display:flex; flex-direction:column; gap:0; margin-bottom:1.75rem; }
+.pwi { font-size:15px; color:var(--ink2); display:flex; gap:10px; line-height:1.55; padding:9px 0; border-bottom:1px solid var(--border); }
 .pwi:last-child { border-bottom:none; }
 .pwi::before { content:'✓'; color:var(--good); flex-shrink:0; font-weight:700; }
-.pw-rule { height:1px; background:var(--border); margin:1.5rem 0; }
+.pw-callout { background:var(--warn-bg); border-radius:8px; padding:1rem 1.1rem; margin-bottom:1.5rem; font-size:13px; color:var(--warn); line-height:1.65; }
 .pw-price-row { display:flex; align-items:baseline; gap:10px; margin-bottom:1.5rem; }
-.pw-amt { font-family:'Lora',serif; font-size:2.4rem; color:var(--ink); font-weight:600; }
+.pw-amt { font-family:'Inter',system-ui,sans-serif; font-size:2.4rem; color:var(--ink); font-weight:600; }
 .pw-note { font-size:13px; color:var(--ink3); }
-.pw-trust { font-size:13px; color:var(--ink3); margin-top:.875rem; line-height:1.6; }
+.pw-trust { font-size:13px; color:var(--ink3); margin-top:.875rem; line-height:1.6; text-align:center; }
+.pw-rule { height:1px; background:var(--border); margin:1.5rem 0; }
 
-@media (max-height:680px) {
-  .q-top { padding-top:.875rem; }
-  .steps { margin-bottom:.875rem; }
-  .q-text { font-size:1rem; padding-bottom:1rem; }
-  .opt { padding:10px 0; }
-  .opt-text { font-size:15px; }
+@media(max-height:680px){.q-top{padding-top:.875rem}.q-txt{font-size:1rem;padding-bottom:.875rem}.opt{padding:10px 0}.opt-txt{font-size:15px}}
+@media(max-width:380px){.q-txt{font-size:1rem}.opt-txt{font-size:15px}.rp-verdict{font-size:16px}}
+
+/* ── TOP TABS — pill style ── */
+.top-tabs {
+  position:fixed; top:0; left:0; right:0;
+  z-index:9999; display:none;
+  background:rgba(250,248,245,.96);
+  border-bottom:1px solid var(--border);
+  padding:10px 1.25rem;
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+  box-shadow:0 1px 10px rgba(0,0,0,.05);
 }
-@media (max-width:380px) {
-  .q-text { font-size:1.05rem; }
-  .opt-text { font-size:15px; }
-  .r-verdict-text { font-size:16px; }
+.top-tabs.show {
+  display:flex; align-items:center; justify-content:center;
 }
+.tab-track {
+  display:flex; align-items:center;
+  background:#e4ddd4; border-radius:30px;
+  padding:3px; gap:2px;
+}
+.tab-folder {
+  display:flex; align-items:center; justify-content:center;
+  padding:8px 20px; border-radius:26px;
+  font-family:'Inter',sans-serif;
+  font-size:12px; font-weight:600;
+  letter-spacing:.01em; cursor:pointer; border:none;
+  background:transparent; color:#8a7868;
+  transition:all .2s; min-height:36px;
+  white-space:nowrap; position:relative;
+}
+.tab-folder.active {
+  background:var(--white);
+  color:var(--ink);
+  box-shadow:0 1px 6px rgba(0,0,0,.12);
+  outline:2px solid var(--accent);
+  outline-offset:-1px;
+}
+.tab-folder:hover:not(.active) { color:var(--ink2); }
+.has-tabs { padding-top:62px !important; }
+
+
+/* ── PAYWALL POPUP ── */
+.pw-overlay {
+  position:fixed; inset:0;
+  background:rgba(20,16,10,.6);
+  z-index:8000; display:none;
+  align-items:flex-end; justify-content:center;
+  backdrop-filter:blur(2px);
+  -webkit-backdrop-filter:blur(2px);
+}
+.pw-overlay.show { display:flex; }
+.pw-popup {
+  background:var(--bg);
+  border-radius:20px 20px 0 0;
+  padding:1.5rem 1.5rem max(2rem,var(--safe));
+  width:100%; max-width:600px;
+  max-height:90vh; overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+  transform:translateY(100%);
+  transition:transform .35s cubic-bezier(.34,1.1,.64,1);
+}
+.pw-overlay.show .pw-popup { transform:translateY(0); }
+.pw-drag { width:36px; height:4px; border-radius:2px; background:var(--border); margin:0 auto 1.5rem; }
+
+
+/* ── COST POPUP ── */
+.cost-overlay {
+  position:fixed; inset:0;
+  background:rgba(20,16,10,.6);
+  z-index:8500; display:none;
+  align-items:flex-end; justify-content:center;
+  backdrop-filter:blur(3px);
+  -webkit-backdrop-filter:blur(3px);
+}
+.cost-overlay.show { display:flex; }
+.cost-popup {
+  background:var(--bg);
+  border-radius:20px 20px 0 0;
+  padding:1.5rem 1.5rem max(2rem,var(--safe));
+  width:100%; max-width:600px;
+  max-height:85vh; overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+  transform:translateY(100%);
+  transition:transform .35s cubic-bezier(.34,1.1,.64,1);
+}
+.cost-overlay.show .cost-popup { transform:translateY(0); }
+.cost-drag { width:36px; height:4px; border-radius:2px; background:var(--border); margin:0 auto 1.5rem; }
+.cost-title { font-size:clamp(1.1rem,3vw,1.3rem); font-weight:700; color:var(--ink); margin-bottom:1.5rem; line-height:1.3; }
+.ff-opts-popup { display:flex; flex-direction:column; gap:8px; margin-bottom:1.25rem; }
+.proj-callout { background:var(--warn-bg); border-radius:10px; padding:1.1rem; margin-bottom:1rem; }
+.proj-loss { font-size:clamp(1.1rem,3.5vw,1.35rem); font-weight:700; color:var(--warn); margin-bottom:.3rem; }
+.proj-sub { font-size:13px; color:var(--ink2); line-height:1.5; }
+.bars { display:flex; flex-direction:column; gap:8px; margin-bottom:.875rem; }
+.bar-row { display:flex; align-items:center; gap:10px; }
+.bar-label { font-size:12px; color:var(--ink3); width:120px; flex-shrink:0; }
+.bar-track { flex:1; height:8px; background:var(--border); border-radius:4px; overflow:hidden; }
+.bar-fill { height:100%; border-radius:4px; transition:width 1s cubic-bezier(.4,0,.2,1); width:0; }
+.bar-now { background:var(--ink3); }
+.bar-fix { background:var(--good); }
+.bar-val { font-size:12px; font-weight:600; color:var(--ink); width:52px; text-align:right; flex-shrink:0; }
+.proj-note { font-size:12px; color:var(--ink3); line-height:1.6; margin-bottom:1rem; }
+.proj-highlight { background:var(--ink); border-radius:10px; padding:1rem; margin-bottom:1.25rem; }
+.ph-text { font-size:14px; color:rgba(255,255,255,.65); line-height:1.65; }
+.ph-text strong { color:#fff; }
+.cost-hidden { display:none; }
+.cost-hidden.show { display:block; }
+
+
+
+/* ── RESULT SCROLL UPDATE ── */
+.top-tabs { display:none !important; }
+.has-tabs { padding-top:0 !important; }
+#s-share { overflow-y:auto; padding-bottom:0; }
+.result-pg { padding-bottom:110px !important; }
+.res-section { margin:1.15rem 0 1.35rem; }
+.res-section-label { font-size:11px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--accent); margin-bottom:.5rem; }
+.res-section-title { font-size:clamp(1.2rem,4vw,1.55rem); font-weight:800; line-height:1.2; letter-spacing:-.025em; color:var(--ink); margin-bottom:.45rem; }
+.res-section-sub { font-size:14px; color:var(--ink3); line-height:1.65; margin-bottom:1rem; }
+.res-card { background:var(--white); border:1px solid var(--border); border-radius:14px; padding:1.15rem; }
+.res-free-card { background:var(--white); border:1px solid var(--border); border-left:3px solid var(--accent); border-radius:14px; padding:1.15rem; }
+.res-free-tag { font-size:10px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--accent); margin-bottom:.55rem; }
+.res-free-title { font-size:16px; font-weight:800; color:var(--ink); line-height:1.35; margin-bottom:.4rem; }
+.res-free-desc { font-size:14px; color:var(--ink2); line-height:1.65; margin-bottom:.55rem; }
+.res-free-cost { font-size:12px; color:var(--ink3); }
+.res-locked { background:#f4f1ec; border:1px solid var(--border); border-radius:14px; padding:1rem 1.1rem; margin-top:1rem; }
+.res-locked-title { font-size:12px; font-weight:800; color:var(--ink3); letter-spacing:.07em; text-transform:uppercase; margin-bottom:.65rem; }
+.res-locked-item { font-size:13px; color:var(--ink3); padding:7px 0; border-bottom:1px solid var(--border); filter:blur(2.5px); user-select:none; opacity:.65; }
+.res-locked-item:last-child { border-bottom:none; }
+.res-sticky-cta { position:fixed; left:0; right:0; bottom:0; z-index:1000; padding:.85rem 1.25rem max(.95rem,var(--safe)); background:rgba(250,248,245,.96); border-top:1px solid var(--border); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); display:none; }
+.res-sticky-cta.show { display:block; }
+.res-sticky-inner { max-width:560px; margin:0 auto; }
+.res-sticky-inner .res-cta { margin-bottom:0; }
+.res-gap-mini { background:var(--warn-bg); border-radius:12px; padding:1rem; margin-bottom:1rem; }
+.res-gap-loss { font-size:clamp(1.25rem,4vw,1.55rem); font-weight:800; color:var(--warn); line-height:1.2; margin-bottom:.25rem; }
+.res-gap-sub { font-size:13px; color:var(--ink2); line-height:1.55; }
+.res-footfall { display:flex; flex-direction:column; gap:8px; margin-bottom:1rem; }
+.res-footfall .ff-opt { background:var(--white); }
+.res-projection { display:none; }
+.res-projection.show { display:block; }
+.plan-overlay { position:fixed; inset:0; background:rgba(20,16,10,.62); z-index:9000; display:none; align-items:flex-end; justify-content:center; backdrop-filter:blur(3px); -webkit-backdrop-filter:blur(3px); }
+.plan-overlay.show { display:flex; }
+.plan-popup { background:var(--bg); border-radius:22px 22px 0 0; width:100%; max-width:600px; max-height:88vh; overflow-y:auto; -webkit-overflow-scrolling:touch; padding:1.5rem 1.5rem max(2rem,var(--safe)); transform:translateY(100%); transition:transform .35s cubic-bezier(.34,1.1,.64,1); }
+.plan-overlay.show .plan-popup { transform:translateY(0); }
+.plan-drag { width:38px; height:4px; border-radius:4px; background:var(--border); margin:0 auto 1.35rem; }
+.plan-title { font-size:clamp(1.25rem,4vw,1.55rem); line-height:1.25; font-weight:800; color:var(--ink); margin:.4rem 0 .7rem; letter-spacing:-.02em; }
+.plan-sub { font-size:14px; color:var(--ink2); line-height:1.7; margin-bottom:1.2rem; }
+.plan-list { display:flex; flex-direction:column; gap:0; margin:1rem 0 1.35rem; }
+.plan-li { display:flex; gap:10px; padding:9px 0; border-bottom:1px solid var(--border); font-size:14px; color:var(--ink2); line-height:1.55; }
+.plan-li:last-child { border-bottom:none; }
+.plan-li:before { content:'✓'; color:var(--good); font-weight:800; flex-shrink:0; }
+.plan-price { display:flex; align-items:baseline; gap:10px; margin:1rem 0; }
+.plan-price strong { font-size:2.3rem; color:var(--ink); }
+.plan-price span { font-size:13px; color:var(--ink3); }
+
 </style>
 </head>
 <body>
 <div id="pgbar"><div id="pgfill"></div></div>
+<div class="reveal-backdrop" id="backdrop" onclick="closePanel()"></div>
+<div class="reveal-panel-wrap" id="revealWrap">
+  <div class="reveal-panel" id="revealPanel" onclick="event.stopPropagation()">
+    <div class="al rp-label">What this reveals</div>
+    <div class="rp-verdict" id="rpVerdict"></div>
+    <div class="rp-badge" id="rpBadge"><div class="bdot" id="rpDot"></div><span id="rpBadgeTxt"></span></div>
+    <div class="rp-explain" id="rpExplain"></div>
+    <div class="rp-rule"></div>
+    <div class="rp-obs-lbl">Field observation</div>
+    <div class="rp-obs" id="rpObs"></div>
+    <div class="rp-stat"><p id="rpStat"></p></div>
+    <button class="rp-next" id="rpNext">Next question →</button>
+  </div>
+</div>
 
 <!-- HOOK -->
 <div class="scr active" id="s-hook">
-  <div class="hook-page">
-    <span class="hook-tag">The Restaurant Mirror</span>
-    <h1 class="hook-title">What your customers see —<em>but never say</em></h1>
-    <p class="hook-sub">8 questions. A free personalised diagnosis of what customers actually experience at your restaurant.</p>
-    <button class="hook-btn" onclick="go('s-setup')">Start free diagnosis →</button>
-    <p class="hook-note">Free · 3 minutes · For restaurant owners in India</p>
+  <div class="hook-bg"></div>
+  <div class="hook-pg">
+    <span class="hook-tag">The Restaurant Mirror · Free</span>
+    <h1 class="hook-title">What type is<em>your restaurant?</em></h1>
+    <p class="hook-sub">3 minutes. Find out what your customers notice — and what it's quietly costing you.</p>
+    <div class="hook-cta-row">
+      <button class="btn-accent-inv" onclick="go('s-setup')">Find out now →</button>
+      <span class="hook-note">Free · No signup · For restaurant owners in India</span>
+    </div>
   </div>
 </div>
 
 <!-- SETUP -->
 <div class="scr" id="s-setup">
-  <div class="setup-page">
-    <div class="accent-label">Before you begin</div>
-    <h2 class="setup-title">This is a diagnosis — not a quiz.</h2>
+  <div class="setup-pg">
+    <span class="setup-eyebrow">Before you begin</span>
+    <h2 class="setup-title">8 questions. Your restaurant type. What to change first.</h2>
     <div class="setup-list">
-      <div class="setup-item"><div class="si-n">1.</div><div class="si-t">Each question reflects <strong>what a real customer feels, notices, or remembers</strong></div></div>
-      <div class="setup-item"><div class="si-n">2.</div><div class="si-t">Answer honestly — after each one, you'll see <strong>what it reveals</strong> about your restaurant</div></div>
-      <div class="setup-item"><div class="si-n">3.</div><div class="si-t">At the end — your <strong>restaurant type</strong> and what to fix first</div></div>
+      <div class="si"><div class="si-n">1</div><div class="si-t">Each question reflects <strong>what a real customer notices</strong> at your restaurant</div></div>
+      <div class="si"><div class="si-n">2</div><div class="si-t">After each answer a panel shows <strong>what customers may be feeling</strong></div></div>
+      <div class="si"><div class="si-n">3</div><div class="si-t">At the end — your <strong>restaurant type</strong> and one specific action to start this week</div></div>
     </div>
-    <button class="btn-dark" onclick="startDiagnosis()">Begin the diagnosis →</button>
+    <button class="btn-dark" onclick="startDiagnosis()">Begin →</button>
   </div>
 </div>
+
+<!-- Q screens via JS -->
 
 <!-- SCORE -->
 <div class="scr" id="s-score">
-  <div class="score-page">
-    <span class="score-tag">Your Restaurant Mirror</span>
-    <div class="ring-wrap">
-      <svg class="ring-svg" viewBox="0 0 100 100">
-        <circle class="ring-track" cx="50" cy="50" r="45"/>
-        <circle class="ring-fill" id="ringFill" cx="50" cy="50" r="45"/>
+  <div class="score-pg">
+
+    <!-- small label -->
+    <div class="score-tag" id="scoreTag">Your restaurant type is</div>
+
+    <!-- RADAR VISUAL — 8 dimensions as a spider -->
+    <div class="radar-wrap">
+      <svg class="radar-svg" id="radarSvg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <!-- grid rings -->
+        <polygon class="r-ring" points="100,60 132,72 144,100 132,128 100,140 68,128 56,100 68,72"/>
+        <polygon class="r-ring" points="100,75 122,83 130,100 122,117 100,125 78,117 70,100 78,83"/>
+        <polygon class="r-ring r-ring-sm" points="100,88 114,93 118,100 114,107 100,112 86,107 82,100 86,93"/>
+        <!-- axis lines -->
+        <line class="r-axis" x1="100" y1="100" x2="100" y2="55"/>
+        <line class="r-axis" x1="100" y1="100" x2="136" y2="70"/>
+        <line class="r-axis" x1="100" y1="100" x2="148" y2="100"/>
+        <line class="r-axis" x1="100" y1="100" x2="136" y2="130"/>
+        <line class="r-axis" x1="100" y1="100" x2="100" y2="145"/>
+        <line class="r-axis" x1="100" y1="100" x2="64" y2="130"/>
+        <line class="r-axis" x1="100" y1="100" x2="52" y2="100"/>
+        <line class="r-axis" x1="100" y1="100" x2="64" y2="70"/>
+        <!-- data polygon — filled by JS -->
+        <polygon class="r-data" id="radarData" points="100,100"/>
+        <!-- axis labels -->
+        <text class="r-lbl" x="100" y="48" text-anchor="middle">Memory</text>
+        <text class="r-lbl" x="143" y="67" text-anchor="start">Storefront</text>
+        <text class="r-lbl" x="155" y="102" text-anchor="start">Entry</text>
+        <text class="r-lbl" x="143" y="138" text-anchor="start">Menu</text>
+        <text class="r-lbl" x="100" y="156" text-anchor="middle">Trust</text>
+        <text class="r-lbl" x="57" y="138" text-anchor="end">Delivery</text>
+        <text class="r-lbl" x="42" y="102" text-anchor="end">Repeat</text>
+        <text class="r-lbl" x="57" y="67" text-anchor="end">Moment</text>
       </svg>
-      <div class="ring-inner">
-        <div class="ring-num" id="ringNum">—</div>
-        <div class="ring-den">/ 24</div>
-      </div>
     </div>
+
+    <!-- archetype name — typewriter -->
     <div class="arch-name" id="archName"></div>
     <div class="arch-sub" id="archSub"></div>
+
     <div class="score-cta">
-      <button class="btn-accent" style="max-width:320px;width:100%" onclick="go('s-share');buildShareCard()">See your result card →</button>
-      <button class="btn-challenge" style="max-width:320px;width:100%;background:transparent;border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.5);font-family:Inter,sans-serif;font-size:13px;cursor:pointer;border-radius:6px;padding:10px;transition:all .18s" onclick="go('s-findings');trigFindings()">Read detailed findings</button>
+      <button class="btn-accent-inv" style="max-width:320px;width:100%;background:var(--accent)"
+        onclick="go('s-share');buildShare()">See my result →</button>
+      <button style="background:transparent;border:none;color:rgba(255,255,255,.3);font-family:Inter,sans-serif;font-size:13px;cursor:pointer;padding:6px"
+        onclick="go('s-share');buildShare()">Skip to result card</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- REVENUE GAP -->
+<div class="scr" id="s-gap">
+  <div class="gap-pg">
+    <div class="al">Your potential revenue gap</div>
+    <h2 class="gap-title">How many customers visit your restaurant per week?</h2>
+    <div class="footfall-opts">
+      <div class="ff-opt" onclick="pickFootfall(this,80,'low')">
+        <div class="ff-opt-r"></div>
+        <div class="ff-opt-txt">Under 100 customers/week</div>
+      </div>
+      <div class="ff-opt" onclick="pickFootfall(this,200,'mid')">
+        <div class="ff-opt-r"></div>
+        <div class="ff-opt-txt">100–300 customers/week</div>
+      </div>
+      <div class="ff-opt" onclick="pickFootfall(this,400,'high')">
+        <div class="ff-opt-r"></div>
+        <div class="ff-opt-txt">300+ customers/week</div>
+      </div>
+    </div>
+    <div class="projection" id="projection">
+      <div class="proj-callout">
+        <div class="proj-loss" id="projLoss"></div>
+        <div class="proj-sub" id="projSub"></div>
+      </div>
+      <div class="bars">
+        <div class="bar-row">
+          <div class="bar-label">Current trajectory</div>
+          <div class="bar-track"><div class="bar-fill bar-now" id="barNow"></div></div>
+          <div class="bar-val" id="barNowVal"></div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">After fixes</div>
+          <div class="bar-track"><div class="bar-fill bar-fix" id="barFix"></div></div>
+          <div class="bar-val" id="barFixVal"></div>
+        </div>
+      </div>
+      <div class="proj-note" id="projNote"></div>
+      <div class="proj-highlight">
+        <div class="ph-text">Most restaurant owners spend <strong>₹5,000+ on ads</strong> trying to fix a problem that costs <strong>₹99 to understand.</strong></div>
+      </div>
+      <button class="btn-dark" style="width:100%;border-radius:8px" onclick="goToFix()">See your first action step →</button>
     </div>
   </div>
 </div>
 
-<!-- SHARE CARD SCREEN -->
+<!-- FREE FIX TEASER -->
+<div class="scr" id="s-fix">
+  <div class="fix-pg has-tabs">
+    <div class="al">Your first action</div>
+    <h2 class="fix-title" id="fixTitle"></h2>
+    <p class="fix-sub" id="fixSub"></p>
+    <div class="fix-card">
+      <div class="fc-tag">Free step · No cost · This week</div>
+      <div class="fc-title" id="fcTitle"></div>
+      <div class="fc-desc" id="fcDesc"></div>
+      <div class="fc-cost" id="fcCostTime"></div>
+    </div>
+    <div class="fix-locked">
+      <div class="fl-top">4 more steps inside your plan</div>
+      <div class="fl-list">
+        <div class="fl-item fl-blur">Step 2 · ••••••••••••••••••••</div>
+        <div class="fl-item fl-blur">Step 3 · ••••••••••••••••</div>
+        <div class="fl-item fl-blur">Step 4 · ••••••••••••••••••••</div>
+        <div class="fl-item fl-blur">Step 5 · ••••••••••••••</div>
+        <div class="fl-item fl-blur">7 day plan + staff checklist</div>
+      </div>
+    </div>
+    <button class="btn-buy" onclick="openPwPopup()">Get the full plan ₹99</button>
+    <p style="text-align:center;font-size:13px;color:var(--ink3);margin-top:.875rem;cursor:pointer;padding-bottom:1rem" onclick="switchTab('result')">See my result card →</p>
+  </div>
+</div>
+
+<!-- SHARE / RESULT SCROLL -->
 <div class="scr" id="s-share">
-  <div class="share-page">
-    <div class="accent-label" style="margin-bottom:1.25rem">Your result</div>
-    <div class="share-card" id="shareCard">
-      <span class="sc-tag">The Restaurant Mirror · Free Diagnosis</span>
-      <div class="sc-archetype" id="scArch">—</div>
-      <div class="sc-tagline" id="scTagline">—</div>
-      <div class="sc-insight" id="scInsight">—</div>
-      <div class="sc-url">amritkmr08-ux.github.io/My-work/restaurant-diagnosis.html</div>
-    </div>
-    <div class="share-actions">
-      <button class="btn-wa" id="btnWa" onclick="shareWa()">
-        <span class="btn-wa-icon">💬</span>
-        Share on WhatsApp
-      </button>
-      <div class="share-divider">or</div>
-      <button class="btn-challenge" onclick="challengeWa()">
-        🔗 Challenge another restaurant owner
-      </button>
-    </div>
-    <button class="btn-report" onclick="go('s-paywall')">Unlock full report — ₹149 →</button>
-    <p class="share-note">Read the detailed findings first? <span style="color:var(--accent);cursor:pointer;text-decoration:underline" onclick="go('s-findings');trigFindings()">See findings →</span></p>
-  </div>
-</div>
+  <div class="result-pg">
 
-<!-- FINDINGS -->
-<div class="scr" id="s-findings">
-  <div class="findings-hd">
-    <div class="findings-hd-inner">
-      <div class="accent-label">Your diagnosis</div>
-      <div class="findings-hd-title">What the mirror found</div>
+    <div class="res-type-lbl">Your restaurant type</div>
+    <div class="res-arch" id="scArch"></div>
+    <div class="res-tagline" id="scTagline"></div>
+
+    <div class="res-radar-wrap">
+      <svg class="res-radar-svg" id="resultRadar" viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg">
+        <polygon class="rr-ring" points="120,36 172,60 196,120 172,180 120,204 68,180 44,120 68,60"/>
+        <polygon class="rr-ring" points="120,60 156,78 168,120 156,162 120,180 84,162 72,120 84,78"/>
+        <polygon class="rr-ring rr-sm" points="120,84 140,96 148,120 140,144 120,156 100,144 92,120 100,96"/>
+        <line class="rr-axis" x1="120" y1="120" x2="120" y2="34"/>
+        <line class="rr-axis" x1="120" y1="120" x2="174" y2="58"/>
+        <line class="rr-axis" x1="120" y1="120" x2="198" y2="120"/>
+        <line class="rr-axis" x1="120" y1="120" x2="174" y2="182"/>
+        <line class="rr-axis" x1="120" y1="120" x2="120" y2="206"/>
+        <line class="rr-axis" x1="120" y1="120" x2="66" y2="182"/>
+        <line class="rr-axis" x1="120" y1="120" x2="42" y2="120"/>
+        <line class="rr-axis" x1="120" y1="120" x2="66" y2="58"/>
+        <polygon class="rr-data" id="resultRadarData" points="120,120"/>
+        <text class="rr-lbl" x="120" y="26" text-anchor="middle">Memory</text>
+        <text class="rr-lbl" x="180" y="54" text-anchor="start">Storefront</text>
+        <text class="rr-lbl" x="205" y="124" text-anchor="start">Entry</text>
+        <text class="rr-lbl" x="180" y="194" text-anchor="start">Menu</text>
+        <text class="rr-lbl" x="120" y="220" text-anchor="middle">Trust</text>
+        <text class="rr-lbl" x="60" y="194" text-anchor="end">Delivery</text>
+        <text class="rr-lbl" x="35" y="124" text-anchor="end">Repeat</text>
+        <text class="rr-lbl" x="60" y="54" text-anchor="end">Moment</text>
+      </svg>
     </div>
+
+    <div class="res-insight" id="scInsight"></div>
+
+    <div class="res-section">
+      <div class="res-section-label">Your potential revenue gap</div>
+      <h2 class="res-section-title">What this may be quietly costing you</h2>
+      <p class="res-section-sub">Choose your weekly customer range. This is only an estimate, but it makes the hidden leak visible.</p>
+      <div class="res-footfall">
+        <div class="ff-opt" onclick="pickResultFootfall(this,80)"><div class="ff-opt-r"></div><div class="ff-opt-txt">Under 100 customers/week</div></div>
+        <div class="ff-opt" onclick="pickResultFootfall(this,200)"><div class="ff-opt-r"></div><div class="ff-opt-txt">100–300 customers/week</div></div>
+        <div class="ff-opt" onclick="pickResultFootfall(this,400)"><div class="ff-opt-r"></div><div class="ff-opt-txt">300+ customers/week</div></div>
+      </div>
+      <div class="res-projection" id="resultProjection">
+        <div class="res-gap-mini">
+          <div class="res-gap-loss" id="resultGapLoss"></div>
+          <div class="res-gap-sub" id="resultGapSub"></div>
+        </div>
+        <div class="bars">
+          <div class="bar-row"><div class="bar-label">Current</div><div class="bar-track"><div class="bar-fill bar-now" id="resultBarNow"></div></div><div class="bar-val" id="resultBarNowVal"></div></div>
+          <div class="bar-row"><div class="bar-label">After fixes</div><div class="bar-track"><div class="bar-fill bar-fix" id="resultBarFix"></div></div><div class="bar-val" id="resultBarFixVal"></div></div>
+        </div>
+        <div class="proj-note" id="resultProjNote"></div>
+      </div>
+    </div>
+
+    <div class="res-section">
+      <div class="res-section-label">Your first action</div>
+      <h2 class="res-section-title" id="resultFixTitle"></h2>
+      <p class="res-section-sub" id="resultFixSub">One specific thing you can do this week — no consultant, no big spend.</p>
+      <div class="res-free-card">
+        <div class="res-free-tag">Free step · No cost · This week</div>
+        <div class="res-free-title" id="resultFcTitle"></div>
+        <div class="res-free-desc" id="resultFcDesc"></div>
+        <div class="res-free-cost" id="resultFcCost"></div>
+      </div>
+      <div class="res-locked">
+        <div class="res-locked-title">4 more steps inside your plan</div>
+        <div class="res-locked-item">Step 2 · Fix the hidden weak signal</div>
+        <div class="res-locked-item">Step 3 · Improve customer memory</div>
+        <div class="res-locked-item">Step 4 · Staff checklist for consistency</div>
+        <div class="res-locked-item">Step 5 · 7-day plan + repeat system</div>
+      </div>
+    </div>
+
+    <div class="res-verified"><div class="res-dot"></div><span>Diagnosis complete</span></div>
+
+    <div class="res-secondary" style="margin-bottom:1.2rem;">
+      <button class="res-sec-btn" onclick="shareWa()">Share on WhatsApp</button>
+      <span class="res-sec-dot">·</span>
+      <button class="res-sec-btn" onclick="challengeWa()">Challenge another owner</button>
+    </div>
+
   </div>
-  <div class="findings-body" id="findBody">
-    <div class="truths-section">
-      <div class="truths-title">What customers notice — but never say</div>
-      <div class="truth-item">Customers don't remember menus. They remember one specific moment.</div>
-      <div class="truth-item">An empty-looking restaurant makes new customers feel they chose wrong — before they sit down.</div>
-      <div class="truth-item">A menu with 50+ items signals the kitchen has no clear identity.</div>
-      <div class="truth-item">Delivery packaging is the entire brand experience for that order.</div>
-      <div class="truth-item">One inconsistent visit makes every previous good visit feel unreliable.</div>
-    </div>
-    <div class="findings-cta">
-      <button class="btn-accent" onclick="go('s-share');buildShareCard()">Back to result card →</button>
+  <div class="res-sticky-cta" id="resultStickyCta">
+    <div class="res-sticky-inner">
+      <button class="res-cta" onclick="openPlanPopup()">Get full plan ₹99</button>
     </div>
   </div>
 </div>
 
 <!-- PAYWALL -->
 <div class="scr" id="s-paywall">
-  <div class="pw-page">
-    <span class="accent-label pw-tag">The Restaurant Mirror — Full Report</span>
-    <h3 class="pw-title">"Why your restaurant is forgettable — and what your customers never told you."</h3>
-    <p class="pw-sub">A 20-page design audit. Restaurant psychology decoded — with visual comparisons and fixes specific to your diagnosis.</p>
+  <div class="pw-pg has-tabs">
+    <span class="al pw-tag">Your Action Plan ₹99</span>
+    <h3 class="pw-title" id="pwTitle">You now know what type of restaurant you have. This plan shows you exactly what to change.</h3>
+    <p class="pw-sub">Not generic advice. Not a list of tips. A specific 8-page plan written for your restaurant type with actions you can start this week.</p>
     <div class="pw-list">
-      <div class="pwi">The 7-second perception test — what customers decide before sitting down</div>
-      <div class="pwi">Menu psychology — why your menu might be quietly reducing trust</div>
-      <div class="pwi">The signature moment formula — why some restaurants become "my spot"</div>
-      <div class="pwi">Before/after visual comparisons — weak vs strong</div>
-      <div class="pwi">First-week fixes specific to your restaurant type</div>
+      <div class="pwi">What your restaurant type means in plain language</div>
+      <div class="pwi">What customers are feeling at your specific weak points</div>
+      <div class="pwi">The 3 hidden mistakes this restaurant type almost always makes</div>
+      <div class="pwi">5 actions under ₹1,000 specific, this week, no consultant needed</div>
+      <div class="pwi">7-day action plan one task per day, 30 minutes each</div>
+      <div class="pwi">Staff checklist questions to ask your team this week</div>
     </div>
+    <div class="pw-callout">Most restaurant owners spend ₹5,000+ on ads trying to fix a problem that costs ₹99 to understand.</div>
     <div class="pw-rule"></div>
     <div class="pw-price-row">
-      <div class="pw-amt">₹149</div>
-      <div class="pw-note">One-time · Instant PDF</div>
+      <div class="pw-amt">₹99</div>
+      <div class="pw-note">One-time · Instant PDF · Specific to your type</div>
     </div>
-    <button class="btn-accent" onclick="alert('Payment coming soon — connect Razorpay or Instamojo here')">Get The Full Report →</button>
-    <p class="pw-trust">Less than the cost of one dinner out. No subscription. No upsell.</p>
+    <button class="btn-buy" onclick="alert('Connect Razorpay or Instamojo here')">Get my action plan ₹99 →</button>
+    <p class="pw-trust">One time. No subscription. No upsell.</p>
   </div>
 </div>
 
 <script>
-/* ── DATA — customer perception mirror questions ── */
+const SITE_URL = "https://amritkmr08-ux.github.io/My-work/restaurant-diagnosis.html";
+
 const QS = [
   {
-    q: "If a customer describes your restaurant to a friend tonight — what is the one thing they would say?",
-    obs: "I once watched a waiter place a small piece of jaggery on the table after a meal. No announcement. Just jaggery — the way your mother used to after lunch. I didn't remember the dal. I remembered the jaggery. One small ritual made the restaurant unforgettable.",
-    stat: "Word of mouth only travels when it carries something specific. 'Nice place' stays in the room. A ritual, a dish, a feeling — that travels.",
-    opts: [
-      { t:"They'd say one specific thing — a dish, a ritual, a feeling only my restaurant has", v:"You have a signature. That's the single most powerful marketing asset a restaurant can own — and most never build one.", bt:"g", sc:3 },
-      { t:"Something vague — 'good food' or 'nice place'. Positive but nothing specific", v:"Customers enjoyed it — but nothing specific stuck. 'Nice place' doesn't bring the next customer through your door.", bt:"w", sc:1 },
-      { t:"Honestly — I'm not sure. Different customers say different things", v:"Without a clear identity, there's nothing specific for memory to hold on to — and nothing to pass on.", bt:"b", sc:0 }
+    q:"If a customer describes your restaurant to a friend tonight what is the one thing they would say?",
+    obs:"I once watched a waiter place a small piece of jaggery on the table after a meal. No announcement. Just jaggery the way your mother used to after lunch. I didn't remember the dal. I remembered the jaggery. One small ritual made the restaurant unforgettable.",
+    stat:"Word of mouth only travels when it carries something specific. 'Nice place' stays in the room. A ritual, a dish, a feeling that travels.",
+    opts:[
+      {t:"They'd say one specific thing a dish, a ritual, a feeling only my restaurant has",v:"You have a signature. The single most powerful marketing asset a restaurant can own and most never build one.",bt:"g",sc:3},
+      {t:"Something vague 'good food' or 'nice place'. Positive but nothing specific",v:"Customers enjoyed it but nothing specific stuck. 'Nice place' doesn't bring the next customer through your door.",bt:"w",sc:1},
+      {t:"Honestly I'm not sure. Different customers say different things",v:"Without a clear identity, there's nothing specific for memory to hold on to and nothing to pass on.",bt:"b",sc:0}
     ]
   },
   {
-    q: "Before tasting anything — what signal tells a new customer your restaurant is worth entering?",
-    obs: "Before I read a single word of the menu, I've already decided. Is the entrance clean? Are people nearby? If I see two or three people outside, it signals something is working. If the banner looks cared for, I assume the kitchen is too. We judge hygiene by the signage. We judge quality by the crowd.",
-    stat: "55% of dining decisions are made based on first visual impression — before a single word of the menu is read.",
-    opts: [
-      { t:"The entrance is clean, welcoming and easy to access — it communicates trust immediately", v:"Your restaurant communicates confidence before a customer reads a single word. That first impression compounds over every visit.", bt:"g", sc:3 },
-      { t:"It's visible and decent — but nothing specific signals 'this is worth trying'", v:"Visible but forgettable. A quiet hesitation is being created that you're unaware of — customers never report it.", bt:"w", sc:1 },
-      { t:"Honestly — the entrance doesn't make a strong statement either way", v:"The approach experience is silently repelling customers before they reach your door. They don't complain. They just don't stop.", bt:"b", sc:0 }
+    q:"Before tasting anything what signal tells a new customer your restaurant is worth entering?",
+    obs:"Before I read a single word of the menu, I've already decided. Is the entrance clean? Are people nearby? If I see two or three people outside, something is working. If the banner looks cared for, I assume the kitchen is too. We judge hygiene by the signage. We judge quality by the crowd.",
+    stat:"55% of dining decisions are made based on first visual impression before a single word of the menu is read.",
+    opts:[
+      {t:"The entrance is clean, welcoming and easy to access it communicates trust immediately",v:"Your restaurant communicates confidence before a customer reads a single word. That first impression compounds over every visit.",bt:"g",sc:3},
+      {t:"It's visible and decent but nothing specific signals 'this is worth trying'",v:"Visible but forgettable. A quiet hesitation is being created that you're unaware of customers never report it.",bt:"w",sc:1},
+      {t:"Honestly the entrance doesn't make a strong statement either way",v:"The approach experience is silently repelling customers before they reach your door. They don't complain. They just don't stop.",bt:"b",sc:0}
     ]
   },
   {
-    q: "When a customer walks in — do they immediately feel welcomed, guided, and confident they chose right?",
-    obs: "The most uncomfortable restaurant experiences I've had weren't from bad food — they were from confused interiors. When a restaurant tries to look premium but seats people like a canteen, both promises break at once. Cramped seating signals the business is struggling. A struggling business cannot give you their best.",
-    stat: "Customers form brand expectations within 7–12 seconds of entering. That impression colours the food, the price, and the service — before a single bite.",
-    opts: [
-      { t:"Yes — someone acknowledges them immediately and the space clearly communicates what kind of place this is", v:"Entry experience is working. Emotional expectation is set before the first bite — this is rare and valuable.", bt:"g", sc:3 },
-      { t:"Mostly — but it takes a moment, and the space doesn't make a strong first statement", v:"Functional but creating no positive impression. The meal starts at zero instead of a positive.", bt:"w", sc:1 },
-      { t:"Not really — entry feels unclear, chaotic, or like no one expected them", v:"The first 30 seconds are setting a negative emotional template for the entire meal that follows.", bt:"b", sc:0 }
+    q:"When a customer walks in do they immediately feel welcomed, guided, and confident they chose right?",
+    obs:"The most uncomfortable restaurant experiences I've had weren't from bad food they were from confused interiors. When a restaurant tries to look premium but seats people like a canteen, both promises break at once. Cramped seating signals the business is struggling. A struggling business cannot give you their best.",
+    stat:"Customers form brand expectations within 7–12 seconds of entering. That impression colours the food, the price, and the service before a single bite.",
+    opts:[
+      {t:"Yes someone acknowledges them immediately and the space clearly communicates what kind of place this is",v:"Entry experience is working. Emotional expectation is set before the first bite this is rare and valuable.",bt:"g",sc:3},
+      {t:"Mostly but it takes a moment, and the space doesn't make a strong first statement",v:"Functional but creating no positive impression. The meal starts at zero instead of a positive.",bt:"w",sc:1},
+      {t:"Not really entry feels unclear, chaotic, or like no one expected them",v:"The first 30 seconds are setting a negative emotional template for the entire meal that follows.",bt:"b",sc:0}
     ]
   },
   {
-    q: "Can a first-time customer understand what to order within 60 seconds of seeing your menu?",
-    obs: "A restaurant starts with a few dishes, those don't sell enough, so they keep adding more to attract more people. But more items don't attract more people — they destroy kitchen organisation. And customers feel that disorder in the food, even when they can't name it. A menu with 60 items doesn't say 'we have more.' It says 'we couldn't decide what we are.'",
-    stat: "When a menu exceeds 40 items, customers experience decision fatigue. They default to the cheapest or most familiar option — not the best one for your restaurant.",
-    opts: [
-      { t:"Yes — the menu is focused, bestsellers are clear, and decisions come easily", v:"Menu focus signals mastery. Customers decide quickly, trust their choice, and order your better dishes.", bt:"g", sc:3 },
-      { t:"It takes a few minutes — there's a lot to process but it's manageable", v:"Approaching decision fatigue territory. A focused menu review could meaningfully improve average order value.", bt:"w", sc:1 },
-      { t:"Honestly — the menu is large and it's not always clear what the restaurant is best at", v:"Menu length is causing paralysis and communicating that the kitchen has no clear identity.", bt:"b", sc:0 }
+    q:"Can a first-time customer understand what to order within 60 seconds of seeing your menu?",
+    obs:"A restaurant starts with a few dishes, those don't sell enough, so they keep adding more. But more items don't attract more people they destroy kitchen organisation. Customers feel that disorder in the food, even when they can't name it. A menu with 60 items doesn't say 'we have more.' It says 'we couldn't decide what we are.'",
+    stat:"When a menu exceeds 40 items, customers experience decision fatigue. They default to the cheapest or most familiar option not the best one for your restaurant.",
+    opts:[
+      {t:"Yes the menu is focused, bestsellers are clear, and decisions come easily",v:"Menu focus signals mastery. Customers decide quickly, trust their choice, and order your better dishes.",bt:"g",sc:3},
+      {t:"It takes a few minutes there's a lot to process but it's manageable",v:"Approaching decision fatigue territory. A focused menu review could meaningfully improve average order value.",bt:"w",sc:1},
+      {t:"Honestly the menu is large and it's not always clear what the restaurant is best at",v:"Menu length is causing paralysis and communicating that the kitchen has no clear identity.",bt:"b",sc:0}
     ]
   },
   {
-    q: "Before the food arrives — what makes the customer believe your kitchen is clean, fresh, and reliable?",
-    obs: "Trust at a restaurant is built before the food arrives. A visible, active kitchen. A server who knows the ingredients. A table that's set with care. A smell that signals freshness. Customers are constantly reading signals you may not realise you're sending — and forming judgements about your kitchen before they've tasted anything.",
-    stat: "Visible kitchens increase perceived food quality by up to 14%. Customers trust what they can see, hear, or smell — not what they're told.",
-    opts: [
-      { t:"Several things — visible kitchen activity, attentive staff, clean setup — all signal care before the food arrives", v:"Pre-food trust signals are working. The customer is already confident before their first bite — this dramatically improves how the food is perceived.", bt:"g", sc:3 },
-      { t:"Some things — the space is clean but there's nothing particularly reassuring happening before the food comes", v:"Trust is neutral before the food arrives. The food has to do all the work of building confidence — which is harder.", bt:"w", sc:1 },
-      { t:"Not much — customers would mostly have to wait for the food to judge the restaurant", v:"Without pre-food trust signals, the customer arrives at their first bite with doubt instead of confidence. The food has to overcome a deficit.", bt:"b", sc:0 }
+    q:"Before the food arrives what makes the customer believe your kitchen is clean, fresh, and reliable?",
+    obs:"Trust at a restaurant is built before the food arrives. A visible, active kitchen. A server who knows the ingredients. A table set with care. Customers are constantly reading signals you may not realise you're sending and forming judgements about your kitchen before they've tasted anything.",
+    stat:"Visible kitchens increase perceived food quality by up to 14%. Customers trust what they can see, hear, or smell not what they're told.",
+    opts:[
+      {t:"Several things visible kitchen, attentive staff, clean setup all signal care before the food arrives",v:"Pre-food trust signals are working. The customer arrives at their first bite already confident this dramatically improves how food is perceived.",bt:"g",sc:3},
+      {t:"Some things the space is clean but there's nothing particularly reassuring before the food comes",v:"Trust is neutral before the food arrives. The food has to do all the work of building confidence which is harder.",bt:"w",sc:1},
+      {t:"Not much customers mostly have to wait for the food to judge the restaurant",v:"Without pre-food trust signals, the customer arrives at their first bite with doubt instead of confidence. The food has to overcome a deficit.",bt:"b",sc:0}
     ]
   },
   {
-    q: "When a delivery order reaches home — does anything in the package make the customer remember you?",
-    obs: "When food arrives, the restaurant has already disappeared. No interior. No staff. No aroma. Just a box. If it feels careless — a leaking bag, a generic container, no name — I don't think 'bad packaging.' I think 'they don't care.' And if they don't care about what I'm holding, I wonder what they didn't care about in the kitchen.",
-    stat: "In a delivery transaction, packaging is the only physical brand interaction the customer has. Most local restaurants treat this as logistics. It is actually a memory decision.",
-    opts: [
-      { t:"Yes — the packaging has our name or logo and feels intentional, not generic", v:"Delivery packaging extends your brand beyond the kitchen. Every order ends with a positive last touch.", bt:"g", sc:3 },
-      { t:"It's functional — clean enough, but nothing that would make someone remember where it came from", v:"A missed brand moment. The experience ends before the customer finishes eating.", bt:"w", sc:1 },
-      { t:"It's just containers — the focus is on the food, not the packaging", v:"Every delivery order ends with a careless last impression — the only physical brand experience that customer had.", bt:"b", sc:0 }
+    q:"When a delivery order reaches home does anything in the package make the customer remember you?",
+    obs:"When food arrives, the restaurant has already disappeared. No interior. No staff. No aroma. Just a box. If it feels careless a leaking bag, a generic container, no name I don't think 'bad packaging.' I think 'they don't care.' And if they don't care about what I'm holding, I wonder what they didn't care about in the kitchen.",
+    stat:"In a delivery transaction, packaging is the only physical brand interaction the customer has. Most local restaurants treat this as logistics. It is actually a memory decision.",
+    opts:[
+      {t:"Yes the packaging has our name or logo and feels intentional, not generic",v:"Delivery packaging extends your brand beyond the kitchen. Every order ends with a positive last touch.",bt:"g",sc:3},
+      {t:"It's functional clean enough, but nothing that would make someone remember where it came from",v:"A missed brand moment. The experience ends before the customer finishes eating.",bt:"w",sc:1},
+      {t:"It's just containers the focus is on the food, not the packaging",v:"Every delivery order ends with a careless last impression the only physical brand experience that customer had.",bt:"b",sc:0}
     ]
   },
   {
-    q: "If a customer returns after two weeks — will they get the same taste, service, and feeling again?",
-    obs: "I stopped visiting a restaurant I loved after one visit where something felt different. Same dishes. Same table. But the taste had shifted — the chef had changed. Nobody told me. I never went back. One visible inconsistency and I assumed everything else had shifted too.",
-    stat: "Customers don't return for food. They return for a feeling they want to recreate. When that feeling becomes unpredictable — the food becomes untrustworthy by association.",
-    opts: [
-      { t:"Yes — we have strong standards and the experience is consistent regardless of who's working", v:"Consistency is building trust that compounds. Customers return knowing exactly what to expect.", bt:"g", sc:3 },
-      { t:"Mostly — but some variation happens depending on the day or staff", v:"Staff-dependent experience creates loyalty that can't be relied on. One off day can end a regular.", bt:"w", sc:1 },
-      { t:"It varies — some visits are excellent, others less so", v:"Inconsistency is the silent reason customers who loved their first visit don't become regulars.", bt:"b", sc:0 }
+    q:"If a customer returns after two weeks will they get the same taste, service, and feeling again?",
+    obs:"I stopped visiting a restaurant I loved after one visit where something felt different. Same dishes. Same table. But the taste had shifted the chef had changed. Nobody told me. I never went back. One visible inconsistency and I assumed everything else had shifted too.",
+    stat:"Customers don't return for food. They return for a feeling they want to recreate. When that feeling becomes unpredictable the food becomes untrustworthy by association.",
+    opts:[
+      {t:"Yes we have strong standards and the experience is consistent regardless of who's working",v:"Consistency is building trust that compounds. Customers return knowing exactly what to expect.",bt:"g",sc:3},
+      {t:"Mostly but some variation happens depending on the day or staff",v:"Staff-dependent experience creates loyalty that can't be relied on. One off day can end a regular.",bt:"w",sc:1},
+      {t:"It varies some visits are excellent, others less so",v:"Inconsistency is the silent reason customers who loved their first visit don't become regulars.",bt:"b",sc:0}
     ]
   },
   {
-    q: "What small moment makes customers feel — 'this is our place'?",
-    obs: "The most memorable restaurant I've visited had no branding, no designer, no Instagram page. A roadside dhaba on the Jaipur highway. The cook walked to the backyard, picked vegetables from the garden, and cooked them in front of you. In that moment I wasn't in a restaurant. I was in my mother's kitchen in the 1990s. The dhaba didn't create a memory. It unlocked one I already had.",
-    stat: "Restaurants that customers call 'my spot' have one thing in common — a moment the customer owns in their memory. Not the whole meal. One moment.",
-    opts: [
-      { t:"There's a specific moment — a ritual, a detail, a gesture — that customers mention and remember", v:"You have a signature moment — the most powerful and least copyable asset a restaurant can own.", bt:"g", sc:3 },
-      { t:"We think something is working emotionally — but we haven't identified exactly what it is", v:"A moment likely exists but hasn't been identified or deliberately strengthened yet.", bt:"w", sc:1 },
-      { t:"We focus on good food and service — we haven't thought about creating a specific emotional moment", v:"Customers leave satisfied but not moved. Satisfaction fades. A signature moment doesn't.", bt:"b", sc:0 }
+    q:"What small moment makes customers feel 'this is our place'?",
+    obs:"The most memorable restaurant I've visited had no branding, no designer, no Instagram page. A roadside dhaba on the Jaipur highway. The cook walked to the backyard, picked vegetables from the garden, and cooked them in front of you. In that moment I wasn't in a restaurant. I was in my mother's kitchen in the 1990s. The dhaba didn't create a memory. It unlocked one I already had.",
+    stat:"Restaurants that customers call 'my spot' have one thing in common a moment the customer owns in their memory. Not the whole meal. One moment.",
+    opts:[
+      {t:"There's a specific moment a ritual, a detail, a gesture that customers mention and remember",v:"You have a signature moment the most powerful and least copyable asset a restaurant can own.",bt:"g",sc:3},
+      {t:"We think something is working emotionally but we haven't identified exactly what it is",v:"A moment likely exists but hasn't been identified or deliberately strengthened yet.",bt:"w",sc:1},
+      {t:"We focus on good food and service we haven't thought about creating a specific emotional moment",v:"Customers leave satisfied but not moved. Satisfaction fades. A signature moment doesn't.",bt:"b",sc:0}
     ]
   }
 ];
 
-/* ── DIAGNOSTIC ARCHETYPES — based on answer patterns, not score ── */
-/*
-  Q index reference:
-  0 = memory/signature word
-  1 = storefront/first impression
-  2 = entry experience
-  3 = menu clarity
-  4 = pre-food trust
-  5 = delivery packaging
-  6 = consistency/repeatability
-  7 = signature moment
-*/
-
-function getArchetype(answers) {
-  const sc = answers.map(a => a ? a.sc : 0);
-  const bt = answers.map(a => a ? a.bt : 'b');
-
-  const storefront  = sc[1]; // Q2
-  const digital     = sc[4]; // Q5 used as proxy (pre-food trust signals)
-  const memory      = sc[0]; // Q1
-  const menuClarity = sc[3]; // Q4
-  const delivery    = sc[5]; // Q6
-  const repeat      = sc[6]; // Q7
-  const sigMoment   = sc[7]; // Q8
-  const entry       = sc[2]; // Q3
-
-  const total = sc.reduce((s,v)=>s+v,0);
-
-  // count critical gaps
-  const criticals = bt.filter(b=>b==='b').length;
-  const goods     = bt.filter(b=>b==='g').length;
-
-  // RULE 1: Strong Kitchen, Weak Signal
-  // food trust + entry strong BUT storefront + memory weak
-  if (sc[4]===3 && entry===3 && storefront===0 && memory<=1) {
-    return {
-      name:"Strong Kitchen, Weak Signal",
-      tagline:"Great inside — invisible outside.",
-      insight:"Your kitchen and in-person experience are solid. But customers who haven't walked in yet have no reason to. Your storefront, signage, and first impression aren't communicating what's happening inside. You're losing customers before they arrive.",
-      waMsg:"My restaurant type is 'Strong Kitchen, Weak Signal' — good food, but hard to discover. This free diagnosis nailed it. Try yours:"
-    };
+const FREE_FIXES = {
+  default:{
+    title:"Create one signature item and make it impossible to miss",
+    desc:"Pick the dish your regulars order most. Give it a name only your restaurant uses. Put a small hand-drawn mark next to it on the menu no design budget needed. Tell your staff to recommend it to every first-time customer.",
+    cost:"Cost: ₹0",time:"Time: 2 hours this week",
+    lock:"4 more fixes + a 7-day action plan + staff checklist are waiting in your ₹99 report specific to your restaurant type."
+  },
+  "Strong Kitchen, Weak Signal":{
+    title:"Add one visible signal outside your restaurant this week",
+    desc:"Place a small chalkboard or printed card near your entrance with one line: your most-ordered dish and its price. It takes 20 minutes to make. It tells every person walking past exactly what's inside without them having to guess.",
+    cost:"Cost: ₹200–400",time:"Time: 20 minutes",
+    lock:"Your restaurant has a strong kitchen but a weak signal. The other 4 fixes focus specifically on making what's inside visible outside without spending on ads."
+  },
+  "The Confusing Menu Trap":{
+    title:"Pick your 3 bestsellers and mark them clearly today",
+    desc:"Don't redesign your menu. Just add a simple mark a star, a dot, or the word 'Popular' next to your 3 most-ordered dishes. First-time customers will default to these. Your average order value will rise within a week.",
+    cost:"Cost: ₹0",time:"Time: 30 minutes",
+    lock:"The other 4 fixes walk through how to restructure your menu so customers confidently order your best dishes not your cheapest ones."
+  },
+  "The Delivery Ghost":{
+    title:"Write your restaurant name on every delivery container this week",
+    desc:"Get a rubber stamp made with your restaurant name. Cost: ₹150–300. Stamp every container before it goes out. That's it. The customer now knows who made their food and has something to search for next time.",
+    cost:"Cost: ₹150–300 one time",time:"Time: 1 day to get stamp made",
+    lock:"The other 4 fixes show how to turn every delivery order into a brand memory without expensive packaging redesigns."
+  },
+  "The One-Time Visit Problem":{
+    title:"Add one ritual to the end of every meal starting today",
+    desc:"A small mouth freshener. A single piece of jaggery. A handwritten 'thank you' card. One consistent gesture at the end of every meal. It costs ₹10–50 per table. It creates the feeling customers want to return for.",
+    cost:"Cost: ₹10–50 per table",time:"Time: Start today",
+    lock:"The other 4 fixes address consistency across staff, taste, and service the hidden reasons customers who loved their first visit don't come back."
+  },
+  "The Hidden Gem":{
+    title:"Update your Google Maps photos this week",
+    desc:"Take 5 photos on your phone your best dish, the entrance, the seating area, one close-up of something visual. Upload them to your Google Business Profile today. 80% of customers check this before visiting. Right now you may be invisible.",
+    cost:"Cost: ₹0",time:"Time: 45 minutes",
+    lock:"The other 4 fixes show how to make your restaurant discoverable to new customers without spending on ads specific to your situation."
+  },
+  "The Almost Favourite":{
+    title:"Create one signature item and make it impossible to miss",
+    desc:"Pick the dish your regulars order most. Give it a name only your restaurant uses. Put a small mark next to it on the menu. Tell your staff to recommend it to every first-time customer. This is the beginning of your identity.",
+    cost:"Cost: ₹0",time:"Time: 2 hours this week",
+    lock:"4 more fixes + a 7-day action plan + staff checklist are waiting in your ₹99 report specific to your restaurant type."
+  },
+  "The Local Favourite":{
+    title:"Ask your 3 most loyal customers one question this week",
+    desc:"'If you were telling a friend about us, what's the one thing you'd say?' Write down exactly what they say word for word. That's your marketing. That's your signature. That's what your new customers need to hear.",
+    cost:"Cost: ₹0",time:"Time: 3 conversations",
+    lock:"The other 4 fixes show how to amplify what's already working turning loyal regulars into active ambassadors without asking them to do anything awkward."
   }
+};
 
-  // RULE 2: The Confusing Menu Trap
-  // menu is the weakest signal, significantly lower than others
-  if (menuClarity===0 && sc.filter((_,i)=>i!==3).filter(v=>v>0).length >= 4) {
-    return {
-      name:"The Confusing Menu Trap",
-      tagline:"Customers arrive but can't decide.",
-      insight:"Most areas of your restaurant work — but the menu is quietly costing you. When customers can't decide within 60 seconds, they default to the cheapest option, order less, or leave with doubt. One focused menu redesign could change your average order value immediately.",
-      waMsg:"My restaurant type is 'The Confusing Menu Trap' 😅 The diagnosis was accurate. Try this free test for your restaurant:"
-    };
-  }
-
-  // RULE 3: The Delivery Ghost
-  // delivery is the sole or dominant weak point
-  if (delivery===0 && sc.filter((_,i)=>i!==5).reduce((s,v)=>s+v,0) >= 12) {
-    return {
-      name:"The Delivery Ghost",
-      tagline:"Great dine-in. Invisible on delivery.",
-      insight:"Your physical restaurant experience is working — but every delivery order ends with a forgettable last impression. The box, the bag, the packaging — that's the entire restaurant for a delivery customer. Right now it's communicating nothing.",
-      waMsg:"My restaurant type is 'The Delivery Ghost' — strong dine-in, weak delivery brand. This free diagnosis was eye-opening. Check yours:"
-    };
-  }
-
-  // RULE 4: The One-Time Wonder
-  // consistency is the weakest — people come once but don't return
-  if (repeat===0 && sc.filter((_,i)=>i!==6).reduce((s,v)=>s+v,0) >= 10) {
-    return {
-      name:"The One-Time Wonder",
-      tagline:"Great first visit. No second one.",
-      insight:"First-time customers enjoy the experience. But something shifts between visits — taste, service, or atmosphere becomes unpredictable. Customers who loved their first visit have learned not to trust a second. Consistency is the invisible foundation of loyalty.",
-      waMsg:"My restaurant type is 'The One-Time Wonder' 😬 Strong first impression but weak on consistency. This diagnosis was surprisingly accurate:"
-    };
-  }
-
-  // RULE 5: The Hidden Gem
-  // storefront + digital + memory all weak — but internal experience decent
-  if (storefront<=1 && memory<=1 && sigMoment<=1 && entry>=1) {
-    return {
-      name:"The Hidden Gem",
-      tagline:"Good inside — undiscoverable outside.",
-      insight:"Regulars love you — but new customers can't find you, and those who visit once can't describe why they should return. You're a hidden gem that isn't spreading. The experience is real. The signal isn't.",
-      waMsg:"My restaurant type is 'The Hidden Gem' — loved by regulars, invisible to everyone else. This free diagnosis showed me why. Try yours:"
-    };
-  }
-
-  // RULE 6: The Memory Maker
-  // signature moment + memory both strong
-  if (sigMoment===3 && memory===3) {
-    return {
-      name:"The Memory Maker",
-      tagline:"Customers don't just visit — they remember.",
-      insight:"You've done what most restaurants never manage — created a moment customers own in their memory. They come back for the feeling, not just the food. They bring people. They tell stories. Now protect it and sharpen everything else around it.",
-      waMsg:"My restaurant type is 'The Memory Maker' ✨ This free diagnosis confirmed what I hoped. See what type yours is:"
-    };
-  }
-
-  // RULE 7: The Local Favourite
-  // mostly strong — 5+ good scores
-  if (goods >= 5) {
-    return {
-      name:"The Local Favourite",
-      tagline:"Trusted, returned to, recommended locally.",
-      insight:"Most areas of your restaurant are working. Customers trust you, return, and recommend you to people nearby. The opportunity now is to expand that reputation — one signature moment or stronger digital presence could take you from local favourite to destination.",
-      waMsg:"My restaurant type is 'The Local Favourite' 🙌 This free diagnosis was spot on. Try it for your restaurant:"
-    };
-  }
-
-  // DEFAULT: The Almost Restaurant
-  return {
-    name:"The Almost Restaurant",
-    tagline:"Liked — but not yet remembered.",
-    insight:"Customers enjoy the experience and some return. But 2–3 invisible gaps are quietly costing you new customers every week and regulars every month. You're close — but 'almost' is where most restaurants stay forever without a specific diagnosis.",
-    waMsg:"My restaurant type is 'The Almost Restaurant' — this free diagnosis was surprisingly accurate. Try it for yours:"
-  };
+function getArchetype(answers){
+  const sc=answers.map(a=>a?a.sc:0);
+  const bt=answers.map(a=>a?a.bt:'b');
+  const goods=bt.filter(b=>b==='g').length;
+  if(sc[4]===3&&sc[2]===3&&sc[1]===0&&sc[0]<=1) return{name:"Strong Kitchen, Weak Signal",tagline:"Great inside invisible outside.",sub:"Your food is good. People who eat here know it. But strangers walking past don't. Nothing outside is telling them to stop. The kitchen is ready. The signal isn't.",insight:"Your kitchen and experience are solid. But customers outside have no reason to enter. You're losing people before they arrive.",waMsg:"My restaurant type is 'Strong Kitchen, Weak Signal' great food, hard to discover. This free diagnosis was accurate. Try yours:"};
+  if(sc[3]===0&&sc.filter((_,i)=>i!==3).filter(v=>v>0).length>=4) return{name:"The Confusing Menu Trap",tagline:"Customers arrive but can't decide.",sub:"Most things work but the menu gets in the way. Too many choices, not enough direction. Customers end up ordering the safest thing, not your best thing.",insight:"Most areas work but the menu is quietly reducing your average order value every single day.",waMsg:"My restaurant type is 'The Confusing Menu Trap' the menu was the silent problem I never saw. Free test. Try yours:"};
+  if(sc[5]===0&&sc.filter((_,i)=>i!==5).reduce((s,v)=>s+v,0)>=11) return{name:"The Delivery Ghost",tagline:"Great dine-in. Forgotten on delivery.",sub:"Dine-in is working. But every delivery order ends in silence. The food arrives in a generic box and the restaurant disappears. No name. No memory. No reason to order again.",insight:"Your physical experience works but every delivery order ends with a forgettable last impression. The box is the entire brand.",waMsg:"My restaurant type is 'The Delivery Ghost' strong dine-in, invisible on delivery. Try this free diagnosis:"};
+  if(sc[6]===0&&sc.filter((_,i)=>i!==6).reduce((s,v)=>s+v,0)>=10) return{name:"The One-Time Visit Problem",tagline:"Great first visit. No second one.",sub:"First visits go well. But something changes between then and the next one taste, service, vibe. Customers notice. They just don't say anything. They simply don't come back.",insight:"First impressions are strong but something between visits is breaking the cycle of return.",waMsg:"My restaurant type is 'The One-Time Visit Problem' customers come once, not twice. This diagnosis explained why. Try yours:"};
+  if(sc[1]<=1&&sc[0]<=1&&sc[7]<=1&&sc[2]>=1) return{name:"The Hidden Gem",tagline:"Good inside undiscoverable outside.",sub:"The people who've found you love you. But new customers walk past without stopping. And those who do visit once can't quite explain why they should come back.",insight:"Regulars love you but you're invisible to everyone else. Word of mouth isn't spreading.",waMsg:"My restaurant type is 'The Hidden Gem' loved by regulars, undiscoverable to new customers. Free diagnosis:"};
+  if(goods>=5) return{name:"The Local Favourite",tagline:"Trusted, returned to, recommended nearby.",sub:"Most things are working. Customers trust you, return, and recommend you nearby. There's just one thing missing a moment so specific people tell others about it.",insight:"Most areas are working well. One deliberate signature could take you from local favourite to destination.",waMsg:"My restaurant type is 'The Local Favourite' this free diagnosis showed what to sharpen. Try yours:"};
+  return{name:"The Almost Favourite",tagline:"Liked but not yet someone's go-to.",sub:"Customers enjoy the experience and some return. But 2–3 invisible gaps are quietly costing you new customers every week.",insight:"Your regulars like you. Some come back. But ask them to describe your restaurant to a friend and they struggle. 'Nice place' is all they've got and nice doesn't spread.",waMsg:"My restaurant type is 'The Almost Favourite' surprisingly accurate diagnosis. Try it for your restaurant:"};
 }
 
-const SITE_URL = "https://amritkmr08-ux.github.io/My-work/restaurant-diagnosis.html";
+/* ── STATE ── */
+let answers=new Array(QS.length).fill(null);
+let built=false;
+let curQ=0;
+let currentArch=null;
+let panelNextFn=null;
 
-let answers = new Array(QS.length).fill(null);
-let built = false;
-let currentArch = null;
-
-function go(id) {
-  const cur  = document.querySelector('.scr.active');
-  const next = document.getElementById(id);
-  if (!next || cur === next) return;
+/* ── NAV ── */
+function go(id){
+  const cur=document.querySelector('.scr.active');
+  const next=document.getElementById(id);
+  if(!next||cur===next)return;
   cur.classList.remove('active');
   next.classList.add('active');
+  const sticky=document.getElementById('resultStickyCta');
+  if(sticky) sticky.classList.toggle('show', id==='s-share');
+}
+function setProgress(qi){
+  document.getElementById('pgbar').style.display='block';
+  document.getElementById('pgfill').style.width=(qi/QS.length*100)+'%';
 }
 
-function setProgress(qi) {
-  document.getElementById('pgbar').style.display = 'block';
-  document.getElementById('pgfill').style.width = (qi / QS.length * 100) + '%';
-}
+/* ── BUILD Q SCREENS ── */
+const HELP_TEXTS = [
+  "Imagine a regular customer finishing their meal what specific thing would they tell their friend?",
+  "Imagine driving past your restaurant for the first time with no knowledge of it what do you notice first?",
+  "Imagine walking through your own front door as a complete stranger what do you feel in the first 30 seconds?",
+  "Imagine being a first-time visitor holding your menu can you confidently decide what to order in 60 seconds?",
+  "Imagine sitting at your table, food not yet arrived what tells you the kitchen is clean and trustworthy?",
+  "Imagine receiving your own delivery order at home does the packaging tell you anything about who made this food?",
+  "Imagine you loved your last visit and return two weeks later is everything exactly as you remembered?",
+  "Close your eyes and picture your restaurant what is the one small moment that would make a customer say 'this is our place'?"
+];
 
-function buildScreens() {
-  QS.forEach((q, qi) => {
-    const isLast = qi === QS.length - 1;
-    const steps = QS.map((_,i) => `<div class="step${i<qi?' done':i===qi?' cur':''}"></div>`).join('');
-
-    const sQ = document.createElement('div');
-    sQ.className = 'scr scr-q'; sQ.id = 'sq'+qi;
-    sQ.innerHTML = `
-      <div class="q-page">
+function buildScreens(){
+  QS.forEach((q,qi)=>{
+    const isLast=qi===QS.length-1;
+    const steps=QS.map((_,i)=>`<div class="step${i<qi?' done':i===qi?' cur':''}"></div>`).join('');
+    const sQ=document.createElement('div');
+    sQ.className='scr scr-q'; sQ.id='sq'+qi;
+    sQ.innerHTML=`
+      <div class="q-pg">
         <div class="q-top">
           <div class="steps" id="steps${qi}">${steps}</div>
-          <div class="accent-label q-label">Question ${qi+1} of ${QS.length}</div>
-          <div class="q-text">"${q.q}"</div>
+          <div class="al q-lbl">Question ${qi+1} of ${QS.length}</div>
+          <div class="q-txt">"${q.q}"</div>
+          <p class="q-help">${HELP_TEXTS[qi]}</p>
         </div>
         <div class="q-opts" id="qopts${qi}">
           ${q.opts.map((o,oi)=>`
             <div class="opt${answers[qi]?.oi===oi?' sel':''}" id="opt${qi}_${oi}" onclick="pick(${qi},${oi})">
-              <div class="opt-radio"></div>
-              <div class="opt-text">${o.t}</div>
+              <div class="opt-r"></div>
+              <div class="opt-txt">${o.t}</div>
             </div>`).join('')}
         </div>
         <div class="q-nav">
           <button class="btn-ghost" onclick="navBack(${qi})">← Back</button>
-          <button class="btn-outline${answers[qi]?' on':''}" id="bn${qi}" onclick="navNext(${qi})">${isLast?'See my diagnosis':'Next'} →</button>
+          <button class="btn-next${answers[qi]?' on':''}" id="bn${qi}" onclick="openPanel(${qi})">
+            ${isLast?'See my diagnosis':'Next'} →
+          </button>
         </div>
       </div>`;
     document.body.appendChild(sQ);
-
-    const sR = document.createElement('div');
-    sR.className = 'scr scr-r'; sR.id = 'sr'+qi;
-    sR.innerHTML = `
-      <div class="r-page">
-        <div class="accent-label r-label">What this reveals</div>
-        <div class="r-verdict-text" id="rv${qi}">—</div>
-        <div class="r-badge" id="rb${qi}"><div class="bdot" id="rbd${qi}"></div><span id="rbt${qi}"></span></div>
-        <div class="r-rule"></div>
-        <div class="r-obs-label">Field observation</div>
-        <div class="r-obs-text">${q.obs}</div>
-        <div class="r-stat"><div class="r-stat-text">${q.stat}</div></div>
-        <div class="r-nav">
-          <button class="btn-ghost" onclick="go('sq${qi}')">← Back</button>
-          <button class="btn-accent" onclick="${isLast?'showResult()':`goToQ(${qi+1})`}">${isLast?'See my diagnosis →':'Next question →'}</button>
-        </div>
-      </div>`;
-    document.body.appendChild(sR);
   });
 }
 
-function startDiagnosis() {
-  if (!built) { buildScreens(); built = true; }
-  setProgress(0);
-  go('sq0');
+/* ── INTERACTIONS ── */
+function startDiagnosis(){
+  if(!built){buildScreens();built=true;}
+  setProgress(0); go('sq0');
 }
 
-function pick(qi, oi) {
-  answers[qi] = { oi, sc:QS[qi].opts[oi].sc, bt:QS[qi].opts[oi].bt, v:QS[qi].opts[oi].v };
+function pick(qi,oi){
+  answers[qi]={oi,sc:QS[qi].opts[oi].sc,bt:QS[qi].opts[oi].bt,v:QS[qi].opts[oi].v};
   document.querySelectorAll(`#qopts${qi} .opt`).forEach(c=>c.classList.remove('sel'));
   document.getElementById(`opt${qi}_${oi}`).classList.add('sel');
-  const bn = document.getElementById('bn'+qi);
-  if (bn) bn.classList.add('on');
+  const bn=document.getElementById('bn'+qi);
+  if(bn)bn.classList.add('on');
   clearTimeout(window._aa);
-  window._aa = setTimeout(()=>navNext(qi), 500);
+  window._aa=setTimeout(()=>openPanel(qi),450);
 }
 
-function navBack(qi) {
-  if (qi===0) { go('s-setup'); return; }
+function openPanel(qi){
+  if(!answers[qi])return;
+  const q=QS[qi]; const ans=answers[qi];
+  const isLast=qi===QS.length-1;
+  // Split verdict: bold headline + explanation
+  const vparts = ans.v.split('. ');
+  const vHeadline = vparts[0] + (vparts.length > 1 ? '.' : '');
+  const vExplain = vparts.slice(1).join('. ');
+  document.getElementById('rpVerdict').textContent=vHeadline;
+  const explainEl = document.getElementById('rpExplain');
+  if(explainEl) explainEl.textContent = vExplain;
+  // badge handled by score bar
+  document.getElementById('rpObs').textContent=q.obs;
+  document.getElementById('rpStat').textContent=q.stat;
+  const nxtBtn=document.getElementById('rpNext');
+  nxtBtn.textContent=isLast?'See my diagnosis →':'Next question →';
+  panelNextFn=isLast?showResult:()=>goToQ(qi+1);
+  document.getElementById('backdrop').classList.add('show');
+  document.getElementById('revealPanel').classList.add('show');
+  setProgress(qi+1);
+  // animate score bar
+  setTimeout(()=>{
+    const fill = document.getElementById('rpBarFill');
+    const lbl  = document.getElementById('rpBarLabel');
+    if(fill){
+      const pct = ans.bt==='g'?100:ans.bt==='w'?45:15;
+      const cls = ans.bt==='g'?'bar-fill-g':ans.bt==='w'?'bar-fill-w':'bar-fill-b';
+      const txt = ans.bt==='g'?'Working well':ans.bt==='w'?'Needs attention':'Critical gap';
+      fill.style.width = pct+'%';
+      fill.className = 'rp-bar-fill '+cls;
+      if(lbl){ lbl.textContent=txt; lbl.style.color=ans.bt==='g'?'var(--good)':ans.bt==='w'?'var(--warn)':'var(--bad)'; }
+    }
+  },300);
+}
+
+function closePanel(){
+  document.getElementById('backdrop').classList.remove('show');
+  document.getElementById('revealPanel').classList.remove('show');
+}
+
+document.getElementById('rpNext').onclick=function(){
+  closePanel();
+  setTimeout(()=>{if(panelNextFn)panelNextFn();},280);
+};
+
+function navNext(qi){
+  if(!answers[qi])return;
+  openPanel(qi);
+}
+
+function navBack(qi){
+  if(qi===0){go('s-setup');return;}
   goToQ(qi-1);
 }
 
-function navNext(qi) {
-  if (!answers[qi]) return;
-  const ans = answers[qi];
-  const cls  = ans.bt==='g'?'badge-g':ans.bt==='w'?'badge-w':'badge-b';
-  const dcls = ans.bt==='g'?'dg':ans.bt==='w'?'dw':'db';
-  const lbl  = ans.bt==='g'?'Working well':ans.bt==='w'?'Needs attention':'Critical gap';
-  document.getElementById('rv'+qi).textContent = ans.v;
-  const badge = document.getElementById('rb'+qi);
-  badge.className = 'r-badge '+cls;
-  document.getElementById('rbd'+qi).className = 'bdot '+dcls;
-  document.getElementById('rbt'+qi).textContent = lbl;
-  go('sr'+qi);
-  setProgress(qi+1);
-}
-
-function goToQ(qi) {
-  const stepRow = document.getElementById('steps'+qi);
-  if (stepRow) stepRow.innerHTML = QS.map((_,i)=>`<div class="step${i<qi?' done':i===qi?' cur':''}"></div>`).join('');
-  if (answers[qi]) {
+function goToQ(qi){
+  const stepRow=document.getElementById('steps'+qi);
+  if(stepRow)stepRow.innerHTML=QS.map((_,i)=>`<div class="step${i<qi?' done':i===qi?' cur':''}"></div>`).join('');
+  if(answers[qi]){
     document.querySelectorAll(`#qopts${qi} .opt`).forEach(c=>c.classList.remove('sel'));
-    const saved = document.getElementById(`opt${qi}_${answers[qi].oi}`);
-    if (saved) saved.classList.add('sel');
-    const bn = document.getElementById('bn'+qi);
-    if (bn) bn.classList.add('on');
+    const saved=document.getElementById(`opt${qi}_${answers[qi].oi}`);
+    if(saved)saved.classList.add('sel');
+    const bn=document.getElementById('bn'+qi);
+    if(bn)bn.classList.add('on');
   }
   go('sq'+qi);
   setProgress(qi);
 }
 
-function showResult() {
-  const total = answers.reduce((s,a)=>s+(a?.sc||0),0);
-  currentArch = getArchetype(answers);
-  go('s-score');
+/* ── RESULT ── */
+function drawRadar(answers) {
+  const scores = answers.map(a => a ? a.sc : 0);
+  const cx=100, cy=100, maxS=3;
+  const axes = [
+    [100,55],[136,70],[148,100],[136,130],
+    [100,145],[64,130],[52,100],[64,70]
+  ];
+  const pts = axes.map(([ax,ay],i)=>{
+    const ratio = Math.max((scores[i]||0)/maxS, 0.08);
+    return (cx+(ax-cx)*ratio).toFixed(1)+','+(cy+(ay-cy)*ratio).toFixed(1);
+  });
+  const poly = document.getElementById('radarData');
+  if(poly){ poly.setAttribute('points', pts.join(' ')); setTimeout(()=>poly.style.opacity='1',300); }
+}
+
+function showResult(){
+  const total=answers.reduce((s,a)=>s+(a?.sc||0),0);
+  currentArch=getArchetype(answers);
+  // Go directly to result card — no intermediate score screen
+  go('s-share');
+  buildShare();
+  showTabs('result');
+}
+
+/* ── REVENUE GAP ── */
+const ARCH_IMPROVEMENT={
+  "Strong Kitchen, Weak Signal":0.28,
+  "The Confusing Menu Trap":0.22,
+  "The Delivery Ghost":0.18,
+  "The One-Time Visit Problem":0.25,
+  "The Hidden Gem":0.30,
+  "The Almost Favourite":0.20,
+  "The Local Favourite":0.12
+};
+
+function pickFootfall(el,weeklyCustomers,tier){
+  document.querySelectorAll('.ff-opt').forEach(o=>o.classList.remove('sel'));
+  el.classList.add('sel');
+  const avgSpend=240;
+  const annualRev=weeklyCustomers*avgSpend*52;
+  const archName=currentArch?currentArch.name:"The Almost Favourite";
+  const improvement=ARCH_IMPROVEMENT[archName]||0.20;
+  const gap=Math.round(annualRev*improvement);
+  const fixedRev=annualRev+gap;
+  const fmt=n=>n>=100000?'₹'+(n/100000).toFixed(1)+'L':'₹'+Math.round(n/1000)+'K';
+  document.getElementById('projLoss').textContent='You may be leaving '+fmt(gap)+' per year behind';
+  document.getElementById('projSub').textContent='Based on your footfall, customer spending patterns, and your restaurant type gap.';
+  const nowPct=70; const fixPct=Math.round(70*(1+improvement));
+  document.getElementById('barNow').style.width=nowPct+'%';
+  document.getElementById('barFix').style.width=Math.min(fixPct,98)+'%';
+  document.getElementById('barNowVal').textContent=fmt(annualRev);
+  document.getElementById('barFixVal').textContent=fmt(fixedRev);
+  document.getElementById('projNote').textContent='Estimate based on '+weeklyCustomers+' customers/week × ₹'+avgSpend+' average spend. Improvement range typical for '+archName+' type restaurants.';
+  const proj=document.getElementById('projection');
+  proj.classList.add('show');
   setTimeout(()=>{
-    const c = 2*Math.PI*45;
-    document.getElementById('ringFill').style.strokeDasharray = c;
-    document.getElementById('ringFill').style.strokeDashoffset = c-(c*total/24);
-    document.getElementById('ringNum').textContent = total;
-    document.getElementById('archSub').textContent = currentArch.insight;
-    document.getElementById('s-score').classList.add('sa');
-    const el = document.getElementById('archName');
-    el.textContent = '';
-    const full = '"'+currentArch.name+'"';
-    let i=0;
-    const t = setInterval(()=>{ if(i<full.length) el.textContent+=full[i++]; else clearInterval(t); },42);
+    document.getElementById('barNow').style.width=nowPct+'%';
+    document.getElementById('barFix').style.width=Math.min(fixPct,98)+'%';
+  },100);
+}
+
+/* ── FREE FIX ── */
+function goToFix(){ buildFix(); go('s-fix'); document.getElementById('s-fix').scrollTop=0; showTabs('step'); }
+
+function buildFix(){
+  const archName=(currentArch&&currentArch.name)?currentArch.name:"default";
+  const fix=FREE_FIXES[archName]||FREE_FIXES["The Almost Favourite"]||FREE_FIXES.default;
+  document.getElementById('fixTitle').textContent=fix.title;
+  document.getElementById('fixSub').textContent='One specific thing you can do this week no cost, no consultant.';
+  document.getElementById('fcTitle').textContent=fix.title;
+  document.getElementById('fcDesc').textContent=fix.desc;
+  document.getElementById('fcCostTime').textContent=fix.cost+' · '+fix.time;
+}
+
+/* gap→fix handled inline */
+
+/* ── SHARE ── */
+function pickResultFootfall(el, weeklyCustomers){
+  document.querySelectorAll('#s-share .res-footfall .ff-opt').forEach(o=>o.classList.remove('sel'));
+  el.classList.add('sel');
+  const avgSpend=220;
+  const annualRev=weeklyCustomers*avgSpend*52;
+  const archName=currentArch?currentArch.name:"The Almost Favourite";
+  const improvement=ARCH_IMPROVEMENT[archName]||0.20;
+  const gap=Math.round(annualRev*improvement);
+  const fixedRev=annualRev+gap;
+  const fmt=n=>n>=100000?'₹'+(n/100000).toFixed(1)+'L':'₹'+Math.round(n/1000)+'K';
+  document.getElementById('resultGapLoss').textContent='You may be leaving '+fmt(gap)+' per year behind';
+  document.getElementById('resultGapSub').textContent='Based on '+weeklyCustomers+' customers/week × ₹'+avgSpend+' average spend and your '+archName+' gap.';
+  document.getElementById('resultBarNowVal').textContent=fmt(annualRev);
+  document.getElementById('resultBarFixVal').textContent=fmt(fixedRev);
+  document.getElementById('resultProjNote').textContent='This is not a guarantee. It simply shows how a small perception leak can become a real revenue leak over a year.';
+  const nowPct=68;
+  const fixPct=Math.min(Math.round(nowPct*(1+improvement)),98);
+  document.getElementById('resultProjection').classList.add('show');
+  setTimeout(()=>{
+    document.getElementById('resultBarNow').style.width=nowPct+'%';
+    document.getElementById('resultBarFix').style.width=fixPct+'%';
+  },80);
+}
+
+function buildResultAction(){
+  const archName=(currentArch&&currentArch.name)?currentArch.name:"default";
+  const fix=FREE_FIXES[archName]||FREE_FIXES["The Almost Favourite"]||FREE_FIXES.default;
+  document.getElementById('resultFixTitle').textContent=fix.title;
+  document.getElementById('resultFcTitle').textContent=fix.title;
+  document.getElementById('resultFcDesc').textContent=fix.desc;
+  document.getElementById('resultFcCost').textContent=fix.cost+' · '+fix.time;
+}
+
+function buildShare(){
+  if(!currentArch)return;
+  document.getElementById('bottomTabs')?.classList.remove('show');
+  document.getElementById('resultStickyCta')?.classList.add('show');
+  document.getElementById('scArch').textContent   = currentArch.name;
+  document.getElementById('scTagline').textContent = currentArch.tagline||'';
+  document.getElementById('scInsight').textContent = currentArch.insight;
+  buildResultAction();
+  // Draw radar — 240 viewBox, center 120,120
+  const scores=answers.map(a=>a?a.sc:0);
+  const cx=120,cy=120;
+  const axes=[[120,34],[174,58],[198,120],[174,182],[120,206],[66,182],[42,120],[66,58]];
+  const pts=axes.map(([ax,ay],i)=>{
+    const sc=scores[i]||0;
+    const r=(sc===0?0.2:sc===1?0.5:1.0);
+    return (cx+(ax-cx)*r).toFixed(1)+','+(cy+(ay-cy)*r).toFixed(1);
+  });
+  const poly=document.getElementById('resultRadarData');
+  if(poly){
+    poly.setAttribute('points',pts.join(' '));
+    poly.style.opacity='0';
+    setTimeout(()=>poly.style.opacity='1',300);
+  }
+  setTimeout(()=>{
+    const first=document.querySelector('#s-share .res-footfall .ff-opt');
+    if(first && !document.querySelector('#s-share .res-footfall .ff-opt.sel')) pickResultFootfall(first,80);
   },250);
 }
-
-function buildShareCard() {
-  if (!currentArch) return;
-  document.getElementById('scArch').textContent = currentArch.name;
-  document.getElementById('scTagline').textContent = currentArch.tagline;
-  document.getElementById('scInsight').textContent = currentArch.insight;
+function shareWa(){
+  if(!currentArch)return;
+  const msg=encodeURIComponent(currentArch.waMsg+'\n\n'+SITE_URL);
+  window.open('https://wa.me/?text='+msg,'_blank');
+}
+function challengeWa(){
+  const msg=encodeURIComponent('What type is your restaurant? Free 3-minute diagnosis:\n\n'+SITE_URL);
+  window.open('https://wa.me/?text='+msg,'_blank');
 }
 
-function shareWa() {
-  if (!currentArch) return;
-  const msg = encodeURIComponent(currentArch.waMsg + '\n\n' + SITE_URL);
-  window.open('https://wa.me/?text='+msg, '_blank');
+/* ── TAB NAVIGATION ── */
+function showTabs(activeTab) { document.getElementById('bottomTabs')?.classList.remove('show'); }
+
+function switchTab(tab) { if(tab==='result'){ go('s-share'); if(currentArch) buildShare(); } }
+
+
+function openPlanPopup(){
+  const archName=(currentArch&&currentArch.name)?currentArch.name:'your restaurant type';
+  const fix=FREE_FIXES[archName]||FREE_FIXES['The Almost Favourite']||FREE_FIXES.default;
+  const el=document.getElementById('planOverlay');
+  document.getElementById('planPopupTitle').textContent='Your full action plan for '+archName;
+  document.getElementById('planPopupSub').textContent='You already got the first step: '+fix.title+'. The full plan gives the remaining steps, 7-day sequence, and staff checklist so you can apply it without a consultant.';
+  el.classList.add('show');
+}
+function closePlanPopup(e){
+  if(!e || e.target===document.getElementById('planOverlay')) document.getElementById('planOverlay').classList.remove('show');
 }
 
-function challengeWa() {
-  const msg = encodeURIComponent('What type is your restaurant? Take this free 3-minute diagnosis and find out:\n\n' + SITE_URL);
-  window.open('https://wa.me/?text='+msg, '_blank');
+function openPwPopup() {
+  document.getElementById('pwOverlay').classList.add('show');
+}
+function closePwPopup(e) {
+  if(e.target === document.getElementById('pwOverlay')) {
+    document.getElementById('pwOverlay').classList.remove('show');
+  }
 }
 
-function trigFindings() {
-  const body = document.getElementById('findBody');
-  if (body.querySelector('.fitem')) return; // already built
-  const truths = body.querySelector('.truths-section');
-  answers.forEach((ans,i)=>{
-    if (!ans||i>=QS.length) return;
-    const cls  = ans.bt==='g'?'fg':ans.bt==='w'?'fw':'fb';
-    const bcls = ans.bt==='g'?'fbg':ans.bt==='w'?'fbw':'fbb';
-    const blbl = ans.bt==='g'?'Working well':ans.bt==='w'?'Needs attention':'Critical gap';
-    const item = document.createElement('div');
-    item.className = 'fitem'; item.dataset.delay = String(i*60);
-    item.innerHTML = `
-      <div class="fi-head">
-        <div class="fi-num">Q${String(i+1).padStart(2,'0')}</div>
-        <div class="fi-badge ${bcls}">${blbl}</div>
-      </div>
-      <div class="fi-txt">${ans.v}</div>`;
-    body.insertBefore(item,truths);
-  });
-  const obs = new IntersectionObserver(entries=>{
-    entries.forEach(e=>{
-      if(e.isIntersecting){ setTimeout(()=>e.target.classList.add('in'),parseInt(e.target.dataset.delay||0)); obs.unobserve(e.target); }
-    });
-  },{threshold:.05});
-  document.querySelectorAll('.fitem').forEach(c=>obs.observe(c));
+
+function openCostPopup(){
+  document.getElementById('costOverlay').classList.add('show');
 }
+function closeCostPopup(e){
+  if(!e || e.target===document.getElementById('costOverlay')){
+    document.getElementById('costOverlay').classList.remove('show');
+  }
+}
+
+const ARCH_IMP={
+  "Strong Kitchen, Weak Signal":0.28,"The Confusing Menu Trap":0.22,
+  "The Delivery Ghost":0.18,"The One-Time Visit Problem":0.25,
+  "The Hidden Gem":0.30,"The Almost Favourite":0.20,"The Local Favourite":0.12
+};
+
+function pickFootfallPopup(el,weeklyCustomers){
+  document.querySelectorAll('.ff-opts-popup .ff-opt').forEach(o=>o.classList.remove('sel'));
+  el.classList.add('sel');
+  const avgSpend=240;
+  const annual=weeklyCustomers*avgSpend*52;
+  const imp=ARCH_IMP[currentArch?currentArch.name:'The Almost Favourite']||0.20;
+  const gap=Math.round(annual*imp);
+  const fixed=annual+gap;
+  const fmt=n=>n>=100000?'₹'+(n/100000).toFixed(1)+'L':'₹'+Math.round(n/1000)+'K';
+  document.getElementById('cprojLoss').textContent='You may be leaving '+fmt(gap)+' per year behind';
+  document.getElementById('cbarNowVal').textContent=fmt(annual);
+  document.getElementById('cbarFixVal').textContent=fmt(fixed);
+  const res=document.getElementById('costResult');
+  res.classList.add('show');
+  setTimeout(()=>{
+    document.getElementById('cbarNow').style.width='68%';
+    document.getElementById('cbarFix').style.width=Math.min(68+Math.round(imp*68),97)+'%';
+  },200);
+}
+
 </script>
+
+    <div class="tab-label">Your Type</div>
+  </button>
+  <button class="tab-item" id="tab-step" onclick="switchTab('step')">
+    <div class="tab-icon">◈</div>
+    <div class="tab-label">First Step</div>
+  </button>
+  
+</div>
+
+<!-- TOP TABS -->
+<div class="top-tabs" id="bottomTabs">
+  <div class="tab-track">
+    <button class="tab-folder" id="tab-result" onclick="switchTab('result')">Your Type</button>
+    
+  </div>
+</div>
+
+
+<!-- PLAN DETAIL POPUP -->
+<div class="plan-overlay" id="planOverlay" onclick="closePlanPopup(event)">
+  <div class="plan-popup" onclick="event.stopPropagation()">
+    <div class="plan-drag"></div>
+    <div class="al">Full plan preview</div>
+    <h3 class="plan-title" id="planPopupTitle">Your full action plan</h3>
+    <p class="plan-sub" id="planPopupSub">The full plan gives you the exact actions to apply this week.</p>
+    <div class="plan-list">
+      <div class="plan-li">Your restaurant type explained in plain language</div>
+      <div class="plan-li">3 hidden mistakes this type usually makes</div>
+      <div class="plan-li">5 actions under ₹1,000, written for your type</div>
+      <div class="plan-li">7-day action plan, one small task per day</div>
+      <div class="plan-li">Staff discussion checklist to use with your team</div>
+    </div>
+    <div class="pw-callout">Most restaurant owners spend ₹5,000+ on ads trying to fix a problem that costs ₹99 to understand.</div>
+    <div class="plan-price"><strong>₹99</strong><span>One-time · Instant PDF/HTML</span></div>
+    <button class="btn-buy" onclick="alert('Connect Razorpay or Instamojo here')">Get full plan ₹99 →</button>
+    <p style="font-size:12px;color:var(--ink3);text-align:center;margin-top:.6rem">No subscription. No consultation call needed.</p>
+  </div>
+</div>
+
+<!-- PAYWALL POPUP -->
+<div class="pw-overlay" id="pwOverlay" onclick="closePwPopup(event)">
+  <div class="pw-popup" onclick="event.stopPropagation()">
+    <div class="pw-drag"></div>
+    <div class="al pw-tag">Your Action Plan</div>
+    <h3 class="pw-title" style="font-size:clamp(1.15rem,3vw,1.4rem);font-weight:700;color:var(--ink);line-height:1.3;margin:.5rem 0 .875rem">You know your restaurant type. This plan shows exactly what to change.</h3>
+    <p style="font-size:14px;color:var(--ink2);line-height:1.7;margin-bottom:1.5rem">Not generic advice. A specific 8-page plan written for your restaurant type — with actions you can start this week.</p>
+    <div class="pw-list">
+      <div class="pwi">What your restaurant type means in plain language</div>
+      <div class="pwi">What customers are feeling at your weak points</div>
+      <div class="pwi">The 3 hidden mistakes this type almost always makes</div>
+      <div class="pwi">5 actions under ₹1,000 — specific, this week</div>
+      <div class="pwi">7-day action plan — one task per day, 30 minutes</div>
+      <div class="pwi">Staff checklist — questions to ask your team</div>
+    </div>
+    <div class="pw-callout" style="margin-bottom:1.25rem">Most restaurant owners spend ₹5,000+ on ads trying to fix a problem that costs ₹99 to understand.</div>
+    <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:1.25rem">
+      <span style="font-family:'Playfair Display',Georgia,serif;font-size:2.2rem;font-weight:700;color:var(--ink)">₹99</span>
+      <span style="font-size:13px;color:var(--ink3)">One-time · Instant PDF</span>
+    </div>
+    <button class="btn-buy" onclick="alert('Connect Razorpay here')">Get my action plan — ₹99 →</button>
+    <p style="font-size:12px;color:var(--ink3);text-align:center;margin-top:.5rem">One time. No subscription. No upsell.</p>
+  </div>
+</div>
+
+
+<!-- COST POPUP -->
+<div class="cost-overlay" id="costOverlay" onclick="closeCostPopup(event)">
+  <div class="cost-popup" onclick="event.stopPropagation()">
+    <div class="cost-drag"></div>
+    <div class="cost-title">How much is this costing you per year?</div>
+    <div class="ff-opts-popup">
+      <div class="ff-opt" onclick="pickFootfallPopup(this,80)">
+        <div class="ff-opt-r"></div>
+        <div class="ff-opt-txt">Under 100 customers/week</div>
+      </div>
+      <div class="ff-opt" onclick="pickFootfallPopup(this,200)">
+        <div class="ff-opt-r"></div>
+        <div class="ff-opt-txt">100–300 customers/week</div>
+      </div>
+      <div class="ff-opt" onclick="pickFootfallPopup(this,400)">
+        <div class="ff-opt-r"></div>
+        <div class="ff-opt-txt">300+ customers/week</div>
+      </div>
+    </div>
+    <div class="cost-hidden" id="costResult">
+      <div class="proj-callout">
+        <div class="proj-loss" id="cprojLoss"></div>
+        <div class="proj-sub">Based on your footfall and restaurant type gap.</div>
+      </div>
+      <div class="bars">
+        <div class="bar-row">
+          <div class="bar-label">Current</div>
+          <div class="bar-track"><div class="bar-fill bar-now" id="cbarNow"></div></div>
+          <div class="bar-val" id="cbarNowVal"></div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">After fixes</div>
+          <div class="bar-track"><div class="bar-fill bar-fix" id="cbarFix"></div></div>
+          <div class="bar-val" id="cbarFixVal"></div>
+        </div>
+      </div>
+      <div class="proj-highlight">
+        <div class="ph-text">Most restaurant owners spend <strong>₹5,000+ on ads</strong> trying to fix a problem that costs <strong>₹99 to understand.</strong></div>
+      </div>
+      <button class="res-cta" onclick="closeCostPopup();openPwPopup()">Get my action plan — ₹99</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
