@@ -116,6 +116,148 @@
 .cost-hidden { display:none; }
 .cost-hidden.show { display:block; }
 
+
+/* ── FIX 1: PAYWALL REAL REPORT PAGE PREVIEW ── */
+.report-preview-card{
+  background:#fff;
+  border:1px solid rgba(30,24,20,.10);
+  border-radius:18px;
+  padding:1rem;
+  margin:1rem 0 1.15rem;
+  box-shadow:0 14px 34px rgba(22,14,8,.06);
+}
+.report-preview-kicker{
+  font-size:10px;
+  font-weight:900;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--accent);
+  margin-bottom:.65rem;
+}
+.report-preview-page{
+  background:#fffdfa;
+  border:1px solid #eadfd3;
+  border-radius:14px;
+  padding:.9rem;
+  overflow:hidden;
+}
+.report-preview-title{
+  font-size:16px;
+  line-height:1.25;
+  font-weight:900;
+  color:var(--ink);
+  letter-spacing:-.02em;
+  margin-bottom:.25rem;
+}
+.report-preview-sub{
+  font-size:12px;
+  line-height:1.5;
+  color:var(--ink3);
+  margin-bottom:.8rem;
+}
+.menu-before-after{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:.7rem;
+}
+.menu-panel{
+  border:1px solid #eadfd3;
+  border-radius:12px;
+  background:#fff;
+  padding:.75rem;
+}
+.menu-panel.after{
+  border-color:#d7b79c;
+  background:#fff7f0;
+}
+.menu-panel-label{
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:.12em;
+  font-weight:900;
+  color:#9a8e7e;
+  margin-bottom:.5rem;
+}
+.menu-panel.after .menu-panel-label{ color:var(--accent); }
+.menu-row{
+  font-size:11.5px;
+  line-height:1.35;
+  color:var(--ink2);
+  padding:.32rem 0;
+  border-bottom:1px solid #f0e8de;
+}
+.menu-row:last-child{ border-bottom:none; }
+.menu-row.strong{
+  color:var(--ink);
+  font-weight:800;
+}
+.report-preview-note{
+  display:flex;
+  align-items:flex-start;
+  gap:.45rem;
+  background:#f7f2ec;
+  border-radius:10px;
+  padding:.7rem .75rem;
+  margin-top:.8rem;
+  font-size:12px;
+  line-height:1.45;
+  color:var(--ink2);
+}
+.report-preview-caption{
+  font-size:12px;
+  line-height:1.5;
+  color:var(--ink3);
+  text-align:center;
+  margin-top:.7rem;
+}
+.report-preview-caption strong{ color:var(--ink); }
+
+/* ── FIX 2: LOCKED STEPS WITH VISIBLE TITLES ── */
+.fl-item,
+.res-locked-item{
+  filter:none !important;
+  opacity:1 !important;
+}
+.locked-step{
+  display:grid;
+  grid-template-columns:auto 1fr;
+  gap:.65rem;
+  align-items:flex-start;
+  padding:.72rem 0;
+  border-bottom:1px solid var(--border);
+}
+.locked-step:last-child{ border-bottom:none; }
+.locked-step-num{
+  font-size:12px;
+  font-weight:900;
+  color:var(--accent);
+  white-space:nowrap;
+  padding-top:.1rem;
+}
+.locked-step-body{
+  min-width:0;
+}
+.locked-step-title{
+  font-size:13.5px;
+  font-weight:850;
+  color:var(--ink);
+  line-height:1.3;
+  margin-bottom:.25rem;
+}
+.locked-step-desc{
+  font-size:12.5px;
+  color:var(--ink3);
+  line-height:1.45;
+  filter:blur(3px);
+  opacity:.58;
+  user-select:none;
+}
+.res-locked .locked-step-title{ font-size:14px; }
+.res-locked .locked-step-desc{ font-size:12.5px; }
+@media(max-width:420px){
+  .menu-before-after{ grid-template-columns:1fr; }
+}
+
 </style>
 <style>
 *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
@@ -2134,11 +2276,34 @@ html,body { height:100%; overflow:hidden; font-family:'Inter',system-ui,sans-ser
     <div class="fix-locked">
       <div class="fl-top">4 more steps inside your plan</div>
       <div class="fl-list">
-        <div class="fl-item fl-blur">Step 2 · ••••••••••••••••••••</div>
-        <div class="fl-item fl-blur">Step 3 · ••••••••••••••••</div>
-        <div class="fl-item fl-blur">Step 4 · ••••••••••••••••••••</div>
-        <div class="fl-item fl-blur">Step 5 · ••••••••••••••</div>
-        <div class="fl-item fl-blur">7 day plan + staff checklist</div>
+        <div class="locked-step">
+          <div class="locked-step-num">Step 2</div>
+          <div class="locked-step-body">
+            <div class="locked-step-title">Fix your storefront signal</div>
+            <div class="locked-step-desc">Clean up the first thing customers see before they enter.</div>
+          </div>
+        </div>
+        <div class="locked-step">
+          <div class="locked-step-num">Step 3</div>
+          <div class="locked-step-body">
+            <div class="locked-step-title">Make customers remember you</div>
+            <div class="locked-step-desc">Create one repeatable memory hook people can tell a friend.</div>
+          </div>
+        </div>
+        <div class="locked-step">
+          <div class="locked-step-num">Step 4</div>
+          <div class="locked-step-body">
+            <div class="locked-step-title">Staff daily checklist</div>
+            <div class="locked-step-desc">Give your team a simple daily routine to keep the experience consistent.</div>
+          </div>
+        </div>
+        <div class="locked-step">
+          <div class="locked-step-num">Step 5</div>
+          <div class="locked-step-body">
+            <div class="locked-step-title">7-day action calendar</div>
+            <div class="locked-step-desc">Follow one small task per day instead of trying to fix everything at once.</div>
+          </div>
+        </div>
       </div>
     </div>
     <button class="btn-buy" onclick="openPwPopup()">Get the full plan ₹99</button>
@@ -2223,10 +2388,34 @@ html,body { height:100%; overflow:hidden; font-family:'Inter',system-ui,sans-ser
       </div>
       <div class="res-locked">
         <div class="res-locked-title">4 more steps inside the full plan</div>
-        <div class="res-locked-item">Step 2 · Fix the weakest customer signal</div>
-        <div class="res-locked-item">Step 3 · Make customers remember you</div>
-        <div class="res-locked-item">Step 4 · Staff checklist for daily consistency</div>
-        <div class="res-locked-item">Step 5 · 7-day plan + repeat-customer system</div>
+        <div class="locked-step">
+          <div class="locked-step-num">Step 2</div>
+          <div class="locked-step-body">
+            <div class="locked-step-title">Fix your storefront signal</div>
+            <div class="locked-step-desc">Improve the first impression before customers read the menu.</div>
+          </div>
+        </div>
+        <div class="locked-step">
+          <div class="locked-step-num">Step 3</div>
+          <div class="locked-step-body">
+            <div class="locked-step-title">Make customers remember you</div>
+            <div class="locked-step-desc">Build one clear memory hook that creates word of mouth.</div>
+          </div>
+        </div>
+        <div class="locked-step">
+          <div class="locked-step-num">Step 4</div>
+          <div class="locked-step-body">
+            <div class="locked-step-title">Staff daily checklist</div>
+            <div class="locked-step-desc">Use a simple daily checklist to keep the experience reliable.</div>
+          </div>
+        </div>
+        <div class="locked-step">
+          <div class="locked-step-num">Step 5</div>
+          <div class="locked-step-body">
+            <div class="locked-step-title">7-day action calendar</div>
+            <div class="locked-step-desc">Apply one improvement per day without needing a consultant.</div>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -2254,6 +2443,37 @@ html,body { height:100%; overflow:hidden; font-family:'Inter',system-ui,sans-ser
     <span class="al pw-tag">Your Action Plan ₹99</span>
     <h3 class="pw-title" id="pwTitle">You now know what type of restaurant you have. This plan shows you exactly what to change.</h3>
     <p class="pw-sub">Not generic advice. Not a list of tips. A specific 8-page plan written for your restaurant type with actions you can start this week.</p>
+
+    <div class="report-preview-card">
+      <div class="report-preview-kicker">Sample report page</div>
+      <div class="report-preview-page">
+        <div class="report-preview-title">Before / After menu clarity</div>
+        <div class="report-preview-sub">Example: reduce choice overload so new customers decide faster.</div>
+        <div class="menu-before-after">
+          <div class="menu-panel before">
+            <div class="menu-panel-label">Before</div>
+            <div class="menu-row">Paneer Butter Masala</div>
+            <div class="menu-row">Paneer Lababdar</div>
+            <div class="menu-row">Shahi Paneer</div>
+            <div class="menu-row">Kadai Paneer</div>
+            <div class="menu-row">Paneer Tikka Masala</div>
+            <div class="menu-row">Paneer Do Pyaza</div>
+            <div class="menu-row">Palak Paneer</div>
+            <div class="menu-row">Paneer Handi</div>
+            <div class="menu-row">Matar Paneer</div>
+          </div>
+          <div class="menu-panel after">
+            <div class="menu-panel-label">After</div>
+            <div class="menu-row strong">Most ordered: Paneer Butter Masala</div>
+            <div class="menu-row strong">Spicy option: Kadai Paneer</div>
+            <div class="menu-row strong">Comfort option: Shahi Paneer</div>
+            <div class="report-preview-note">The full report shows what to keep, what to group, and what to make obvious for first-time customers.</div>
+          </div>
+        </div>
+      </div>
+      <div class="report-preview-caption"><strong>This is one page from your report.</strong> There are 11 more.</div>
+    </div>
+
     <div class="pw-list">
       <div class="pwi">What your restaurant type means in plain language</div>
       <div class="pwi">What customers are feeling at your specific weak points</div>
@@ -2965,6 +3185,37 @@ function sendPaymentScreenshot(){
     <div class="al">Full plan preview</div>
     <h3 class="plan-title" id="planPopupTitle">Your full action plan</h3>
     <p class="plan-sub" id="planPopupSub">The full plan gives you the exact actions to apply this week.</p>
+
+    <div class="report-preview-card">
+      <div class="report-preview-kicker">Sample report page</div>
+      <div class="report-preview-page">
+        <div class="report-preview-title">Before / After menu clarity</div>
+        <div class="report-preview-sub">Example: reduce choice overload so new customers decide faster.</div>
+        <div class="menu-before-after">
+          <div class="menu-panel before">
+            <div class="menu-panel-label">Before</div>
+            <div class="menu-row">Paneer Butter Masala</div>
+            <div class="menu-row">Paneer Lababdar</div>
+            <div class="menu-row">Shahi Paneer</div>
+            <div class="menu-row">Kadai Paneer</div>
+            <div class="menu-row">Paneer Tikka Masala</div>
+            <div class="menu-row">Paneer Do Pyaza</div>
+            <div class="menu-row">Palak Paneer</div>
+            <div class="menu-row">Paneer Handi</div>
+            <div class="menu-row">Matar Paneer</div>
+          </div>
+          <div class="menu-panel after">
+            <div class="menu-panel-label">After</div>
+            <div class="menu-row strong">Most ordered: Paneer Butter Masala</div>
+            <div class="menu-row strong">Spicy option: Kadai Paneer</div>
+            <div class="menu-row strong">Comfort option: Shahi Paneer</div>
+            <div class="report-preview-note">The full report shows what to keep, what to group, and what to make obvious for first-time customers.</div>
+          </div>
+        </div>
+      </div>
+      <div class="report-preview-caption"><strong>This is one page from your report.</strong> There are 11 more.</div>
+    </div>
+
     <div class="plan-list">
       <div class="plan-li">Your restaurant type explained simply</div>
       <div class="plan-li">3 common mistakes this type usually makes</div>
