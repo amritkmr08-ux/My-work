@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Restaurant Mirror — Customer Voice System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#e9e9e5;
+      --ink:#070707;
+      --muted:#5f5f59;
+      --soft:#d8d8d1;
+      --line:#cfcfc8;
+      --accent:#ff2a1f;
+      --paper:#f3f3ee;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      background:var(--bg);
+      color:var(--ink);
+      font-family:Inter, Helvetica, Arial, sans-serif;
+      font-feature-settings:"ss01";
+    }
+    .page{
+      width:min(100%, 1440px);
+      margin:0 auto;
+      padding:72px 80px 90px;
+    }
+    .topline{
+      display:flex;
+      justify-content:space-between;
+      gap:24px;
+      color:var(--muted);
+      font-size:13px;
+      font-weight:800;
+      letter-spacing:.04em;
+      text-transform:uppercase;
+      margin-bottom:72px;
+    }
+    .hero{
+      min-height:680px;
+      display:flex;
+      flex-direction:column;
+      justify-content:flex-start;
+    }
+    h1{
+      margin:0;
+      max-width:1180px;
+      font-size:clamp(54px, 7.2vw, 104px);
+      line-height:1.02;
+      letter-spacing:-.035em;
+      font-weight:900;
+      text-wrap:balance;
+    }
+    .subhead{
+      max-width:600px;
+      margin:36px 0 0;
+      font-size:22px;
+      line-height:1.42;
+      letter-spacing:-.012em;
+      font-weight:650;
+      color:var(--ink);
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+    .link{
+      width:max-content;
+      display:inline-flex;
+      margin-top:30px;
+      color:var(--ink);
+      text-decoration:none;
+      font-size:15px;
+      font-weight:900;
+      border-bottom:2px solid var(--ink);
+      padding-bottom:6px;
+    }
+    .redbar{
+      width:min(560px,100%);
+      background:var(--accent);
+      color:white;
+      padding:26px 32px;
+      font-size:21px;
+      line-height:1;
+      font-weight:900;
+      letter-spacing:-.04em;
+      margin:0 0 46px;
+    }
+    .grid3{
+      display:grid;
+      grid-template-columns:1.18fr 1fr 1fr;
+      gap:64px;
+      align-items:start;
+      margin-bottom:130px;
+    }
+    h2{
+      margin:0;
+      font-size:clamp(38px,4.4vw,60px);
+      line-height:1.04;
+      letter-spacing:-.018em;
+      font-weight:900;
+    }
+    h3{
+      margin:0 0 12px;
+      font-size:18px;
+      line-height:1.1;
+      letter-spacing:-.035em;
+      font-weight:900;
+    }
+    p{
+      margin:0;
+      font-size:16px;
+      line-height:1.55;
+      color:var(--muted);
+      font-weight:520;
+    }
+    .point{margin-bottom:38px}
+    .section{
+      border-top:1px solid var(--line);
+      padding-top:58px;
+      margin-bottom:130px;
+    }
+    .split{
+      display:grid;
+      grid-template-columns:.85fr 1.15fr;
+      gap:92px;
+      align-items:start;
+    }
+    .smallcopy{max-width:410px;margin-top:26px}
+    .steps{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:0;
+      border-top:1px solid var(--line);
+    }
+    .step{
+      min-height:260px;
+      padding:26px 24px 22px;
+      border-right:1px solid var(--line);
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
+    }
+    .step:last-child{border-right:0}
+    .num{
+      color:var(--accent);
+      font-size:14px;
+      font-weight:900;
+      letter-spacing:.02em;
+    }
+    .step strong{
+      display:block;
+      margin-bottom:13px;
+      font-size:23px;
+      line-height:1.12;
+      letter-spacing:-.012em;
+      font-weight:900;
+    }
+    .business{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:18px;
+    }
+    .card{
+      background:rgba(255,255,255,.28);
+      border-top:1px solid var(--ink);
+      min-height:310px;
+      padding:26px 24px;
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
+    }
+    .tag{
+      display:inline-flex;
+      width:max-content;
+      background:var(--soft);
+      padding:8px 10px;
+      color:var(--ink);
+      font-size:12px;
+      line-height:1;
+      letter-spacing:.06em;
+      text-transform:uppercase;
+      font-weight:900;
+    }
+    .price{
+      margin:26px 0 18px;
+      font-size:58px;
+      line-height:.9;
+      letter-spacing:-.08em;
+      font-weight:900;
+    }
+    .quote{
+      max-width:1280px;
+      margin:40px 0 140px;
+      font-size:clamp(44px,5.7vw,84px);
+      line-height:1.03;
+      letter-spacing:-.045em;
+      font-weight:900;
+    }
+    .quote .line{display:block}
+    .quote .gap{height:.22em;display:block}
+    .quote span{color:var(--ink)}
+    .quote .accent{color:var(--accent)}
+    .two{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:90px;
+    }
+    ul{list-style:none;margin:26px 0 0;padding:0;border-top:1px solid var(--line)}
+    li{
+      padding:18px 0;
+      border-bottom:1px solid var(--line);
+      color:var(--muted);
+      font-size:16px;
+      line-height:1.4;
+      font-weight:650;
+    }
+    .closing{
+      margin-top:120px;
+      padding-top:50px;
+      border-top:1px solid var(--line);
+      display:grid;
+      grid-template-columns:1.1fr .9fr;
+      gap:80px;
+      align-items:end;
+    }
+    .closing h2{font-size:clamp(56px,7vw,110px)}
+    .footer{
+      margin-top:92px;
+      display:flex;
+      justify-content:space-between;
+      gap:24px;
+      color:var(--muted);
+      font-size:13px;
+      font-weight:800;
+      letter-spacing:.02em;
+    }
+    @media(max-width:980px){
+      .page{padding:44px 24px 70px}
+      .topline{margin-bottom:52px;flex-direction:column}
+      .hero{min-height:560px}
+      .grid3,.split,.two,.closing{grid-template-columns:1fr;gap:42px}
+      .steps,.business{grid-template-columns:1fr}
+      .step{border-right:0;border-bottom:1px solid var(--line);min-height:220px}
+      .step:last-child{border-bottom:0}
+      .section{margin-bottom:92px}
+      .quote{margin-bottom:92px;font-size:clamp(42px,12vw,66px);letter-spacing:-.04em;line-height:1.04}
+      .footer{flex-direction:column}
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <div class="topline">
+      <div>Restaurant Mirror</div>
+      <div>Customer voice system for local businesses</div>
+    </div>
+
+    <section class="hero">
+      <h1>Customers<br>are talking.<br>Most businesses<br>aren’t listening.</h1>
+      <p class="subhead">We help restaurants, cafés, clinics and shops capture what customers really feel — before they stop coming back.</p>
+      <a href="#opportunity" class="link">See the pitch</a>
+    </section>
+
+    <div class="redbar" id="opportunity">What’s the opportunity?</div>
+
+    <section class="grid3">
+      <h2>Local business runs on repeat customers. But feedback is mostly invisible.</h2>
+      <div>
+        <div class="point">
+          <h3>The real pain</h3>
+          <p>Owners know sales are slow, but they don’t know whether the issue is food, service, pricing, hygiene, ambience, delivery experience or Google reviews.</p>
+        </div>
+        <div class="point">
+          <h3>The silent gap</h3>
+          <p>Most unhappy customers never complain. They leave quietly, tell someone else, or choose another place next time.</p>
+        </div>
+      </div>
+      <div>
+        <div class="point">
+          <h3>Our wedge</h3>
+          <p>Start with a free diagnosis. Then convert serious owners into a ₹99 improvement report and a QR-based live feedback system.</p>
+        </div>
+        <div class="point">
+          <h3>Why now</h3>
+          <p>India’s local businesses already understand QR, WhatsApp and Google reviews. We add the missing layer: customer truth converted into action.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section split">
+      <div>
+        <h2>Here’s how it works</h2>
+        <p class="smallcopy">A simple funnel that starts free, proves value quickly, and becomes recurring revenue once feedback starts flowing.</p>
+      </div>
+      <div class="steps">
+        <div class="step">
+          <div class="num">01</div>
+          <div>
+            <strong>Free diagnosis</strong>
+            <p>Owner answers simple questions and gets a customer experience score.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="num">02</div>
+          <div>
+            <strong>₹99 report</strong>
+            <p>They receive weak areas, revenue leak signals and a 7-day action plan.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="num">03</div>
+          <div>
+            <strong>QR feedback</strong>
+            <p>QR is placed on tables, bills, counters, menus and delivery packaging.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="num">04</div>
+          <div>
+            <strong>Weekly insights</strong>
+            <p>Feedback becomes clear actions: what improved, what hurts, what to fix next.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section split">
+      <div>
+        <h2>Business model</h2>
+        <p class="smallcopy">Low trust barrier first. Subscription later. Optional service revenue for businesses that need hands-on help.</p>
+      </div>
+      <div class="business">
+        <div class="card">
+          <div>
+            <span class="tag">Lead magnet</span>
+            <div class="price">Free</div>
+            <h3>Business diagnosis</h3>
+          </div>
+          <p>Customer experience score and basic improvement direction.</p>
+        </div>
+        <div class="card">
+          <div>
+            <span class="tag">First sale</span>
+            <div class="price">₹99</div>
+            <h3>Mini report</h3>
+          </div>
+          <p>Issue areas, quick fixes, Google review tips and a practical 7-day plan.</p>
+        </div>
+        <div class="card">
+          <div>
+            <span class="tag">Recurring</span>
+            <div class="price">₹499+</div>
+            <h3>QR feedback system</h3>
+          </div>
+          <p>Live feedback capture, complaint routing, weekly summaries and AI insights.</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="quote">
+      <span class="line">We are not selling</span>
+      <span class="line">a QR code.</span>
+      <span class="gap"></span>
+      <span class="line accent">We are selling</span>
+      <span class="line accent">customer truth.</span>
+    </div>
+
+    <section class="section two">
+      <div>
+        <h2>Who joins first?</h2>
+        <ul>
+          <li>Small restaurants and cafés with repeat-customer dependency</li>
+          <li>Salons, clinics, gyms and coaching centres</li>
+          <li>Businesses already asking customers for Google reviews</li>
+          <li>Owners who care about improvement but lack a simple system</li>
+        </ul>
+      </div>
+      <div>
+        <h2>Why this can scale</h2>
+        <ul>
+          <li>Same system works across many local business categories</li>
+          <li>QR distribution is low-cost and already familiar in India</li>
+          <li>₹99 entry reduces trust barrier</li>
+          <li>Monthly insights create recurring revenue</li>
+          <li>Feedback data can become category and city-level benchmark intelligence</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="closing">
+      <h2>First we diagnose. Then we listen. Then we improve.</h2>
+      <p>The product starts as a restaurant improvement note, but the larger play is a customer voice layer for local businesses — simple enough for owners, useful enough to become a habit.</p>
+    </section>
+
+    <footer class="footer">
+      <div>Working title: Restaurant Mirror</div>
+      <div>Pitch note · V1</div>
+    </footer>
+  </main>
+</body>
+</html>
