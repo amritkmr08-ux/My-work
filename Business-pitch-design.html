@@ -9,246 +9,324 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <style>
     :root{
-      --bg:#e9e9e5;
-      --ink:#070707;
-      --muted:#5f5f59;
-      --soft:#d8d8d1;
-      --line:#cfcfc8;
+      --bg:#ededE8;
+      --ink:#080807;
+      --muted:#62625a;
+      --soft:#deded6;
+      --line:#cfcfc6;
       --accent:#ff2a1f;
-      --paper:#f3f3ee;
+      --paper:#f8f8f2;
+      --deep:#151512;
     }
+
     *{box-sizing:border-box}
+
     html{scroll-behavior:smooth}
+
     body{
       margin:0;
       background:var(--bg);
       color:var(--ink);
       font-family:Inter, Helvetica, Arial, sans-serif;
-      font-feature-settings:"ss01";
+      -webkit-font-smoothing:antialiased;
+      text-rendering:optimizeLegibility;
     }
+
     .page{
-      width:min(100%, 1440px);
+      width:min(100%, 1480px);
       margin:0 auto;
-      padding:72px 80px 90px;
+      padding:84px 88px 96px;
     }
+
     .topline{
       display:flex;
       justify-content:space-between;
-      gap:24px;
+      align-items:flex-start;
+      gap:32px;
       color:var(--muted);
       font-size:13px;
-      font-weight:800;
-      letter-spacing:.04em;
+      font-weight:850;
+      letter-spacing:.06em;
       text-transform:uppercase;
-      margin-bottom:72px;
+      margin-bottom:96px;
     }
+
     .hero{
-      min-height:680px;
-      display:flex;
-      flex-direction:column;
-      justify-content:flex-start;
+      min-height:720px;
+      display:grid;
+      grid-template-columns:1.2fr .8fr;
+      gap:80px;
+      align-items:end;
+      padding-bottom:72px;
     }
+
     h1{
       margin:0;
-      max-width:1180px;
-      font-size:clamp(54px, 7.2vw, 104px);
-      line-height:1.02;
-      letter-spacing:-.035em;
+      max-width:1120px;
+      font-size:clamp(58px, 8vw, 126px);
+      line-height:.99;
+      letter-spacing:-.055em;
       font-weight:900;
-      text-wrap:balance;
     }
+
+    .hero-side{
+      border-left:1px solid var(--line);
+      padding-left:42px;
+      padding-bottom:10px;
+    }
+
     .subhead{
-      max-width:600px;
-      margin:36px 0 0;
-      font-size:22px;
-      line-height:1.42;
-      letter-spacing:-.012em;
-      font-weight:650;
+      margin:0;
+      max-width:560px;
+      font-size:24px;
+      line-height:1.48;
+      letter-spacing:-.025em;
+      font-weight:700;
       color:var(--ink);
-      -webkit-font-smoothing: antialiased;
-      text-rendering: optimizeLegibility;
     }
+
     .link{
       width:max-content;
       display:inline-flex;
-      margin-top:30px;
+      margin-top:38px;
       color:var(--ink);
       text-decoration:none;
       font-size:15px;
       font-weight:900;
       border-bottom:2px solid var(--ink);
-      padding-bottom:6px;
+      padding-bottom:7px;
     }
+
     .redbar{
-      width:min(560px,100%);
+      width:min(620px,100%);
       background:var(--accent);
       color:white;
-      padding:26px 32px;
-      font-size:21px;
+      padding:30px 36px;
+      font-size:22px;
       line-height:1;
       font-weight:900;
-      letter-spacing:-.04em;
-      margin:0 0 46px;
+      letter-spacing:-.045em;
+      margin:0 0 64px;
     }
+
+    .section{
+      border-top:1px solid var(--line);
+      padding-top:72px;
+      margin-bottom:156px;
+    }
+
     .grid3{
       display:grid;
-      grid-template-columns:1.18fr 1fr 1fr;
-      gap:64px;
+      grid-template-columns:1.12fr 1fr 1fr;
+      gap:78px;
       align-items:start;
-      margin-bottom:130px;
+      margin-bottom:156px;
     }
+
     h2{
       margin:0;
-      font-size:clamp(38px,4.4vw,60px);
-      line-height:1.04;
-      letter-spacing:-.018em;
+      font-size:clamp(40px,4.6vw,68px);
+      line-height:1.02;
+      letter-spacing:-.05em;
       font-weight:900;
     }
+
     h3{
-      margin:0 0 12px;
-      font-size:18px;
-      line-height:1.1;
+      margin:0 0 16px;
+      font-size:20px;
+      line-height:1.15;
       letter-spacing:-.035em;
       font-weight:900;
     }
+
     p{
       margin:0;
-      font-size:16px;
-      line-height:1.55;
+      font-size:17px;
+      line-height:1.72;
       color:var(--muted);
-      font-weight:520;
+      font-weight:550;
     }
-    .point{margin-bottom:38px}
-    .section{
-      border-top:1px solid var(--line);
-      padding-top:58px;
-      margin-bottom:130px;
+
+    .point{
+      padding-bottom:44px;
+      margin-bottom:44px;
+      border-bottom:1px solid var(--line);
     }
+
+    .point:last-child{
+      margin-bottom:0;
+      padding-bottom:0;
+      border-bottom:0;
+    }
+
     .split{
       display:grid;
       grid-template-columns:.85fr 1.15fr;
-      gap:92px;
+      gap:108px;
       align-items:start;
     }
-    .smallcopy{max-width:410px;margin-top:26px}
+
+    .smallcopy{
+      max-width:460px;
+      margin-top:32px;
+      font-size:18px;
+      line-height:1.72;
+    }
+
     .steps{
       display:grid;
       grid-template-columns:repeat(4,1fr);
       gap:0;
       border-top:1px solid var(--line);
+      border-bottom:1px solid var(--line);
     }
+
     .step{
-      min-height:260px;
-      padding:26px 24px 22px;
+      min-height:300px;
+      padding:34px 28px 30px;
       border-right:1px solid var(--line);
       display:flex;
       flex-direction:column;
       justify-content:space-between;
+      background:rgba(255,255,255,.16);
     }
+
     .step:last-child{border-right:0}
+
     .num{
       color:var(--accent);
       font-size:14px;
       font-weight:900;
-      letter-spacing:.02em;
+      letter-spacing:.04em;
     }
+
     .step strong{
       display:block;
-      margin-bottom:13px;
-      font-size:23px;
-      line-height:1.12;
-      letter-spacing:-.012em;
+      margin-bottom:18px;
+      font-size:25px;
+      line-height:1.15;
+      letter-spacing:-.04em;
       font-weight:900;
     }
+
     .business{
       display:grid;
       grid-template-columns:repeat(3,1fr);
-      gap:18px;
+      gap:22px;
     }
+
     .card{
-      background:rgba(255,255,255,.28);
-      border-top:1px solid var(--ink);
-      min-height:310px;
-      padding:26px 24px;
+      background:rgba(255,255,255,.34);
+      border-top:1.5px solid var(--ink);
+      min-height:350px;
+      padding:34px 30px;
       display:flex;
       flex-direction:column;
       justify-content:space-between;
     }
+
     .tag{
       display:inline-flex;
       width:max-content;
       background:var(--soft);
-      padding:8px 10px;
+      padding:10px 12px;
       color:var(--ink);
       font-size:12px;
       line-height:1;
-      letter-spacing:.06em;
+      letter-spacing:.07em;
       text-transform:uppercase;
       font-weight:900;
     }
+
     .price{
-      margin:26px 0 18px;
-      font-size:58px;
+      margin:34px 0 24px;
+      font-size:64px;
       line-height:.9;
+      letter-spacing:-.085em;
+      font-weight:900;
+    }
+
+    .quote{
+      max-width:1180px;
+      margin:8px 0 156px;
+      font-size:clamp(50px,6.8vw,104px);
+      line-height:.93;
       letter-spacing:-.08em;
       font-weight:900;
     }
-    .quote{
-      max-width:1280px;
-      margin:40px 0 140px;
-      font-size:clamp(44px,5.7vw,84px);
-      line-height:1.03;
-      letter-spacing:-.045em;
-      font-weight:900;
-    }
-    .quote .line{display:block}
-    .quote .gap{height:.22em;display:block}
-    .quote span{color:var(--ink)}
-    .quote .accent{color:var(--accent)}
+
+    .quote span{color:var(--accent)}
+
     .two{
       display:grid;
       grid-template-columns:1fr 1fr;
-      gap:90px;
+      gap:108px;
     }
-    ul{list-style:none;margin:26px 0 0;padding:0;border-top:1px solid var(--line)}
+
+    ul{
+      list-style:none;
+      margin:36px 0 0;
+      padding:0;
+      border-top:1px solid var(--line);
+    }
+
     li{
-      padding:18px 0;
+      padding:24px 0;
       border-bottom:1px solid var(--line);
       color:var(--muted);
-      font-size:16px;
-      line-height:1.4;
-      font-weight:650;
+      font-size:17px;
+      line-height:1.55;
+      font-weight:700;
     }
+
+    .visual-note{
+      margin:46px 0 0;
+      padding:34px;
+      background:var(--deep);
+      color:white;
+      display:grid;
+      grid-template-columns:1fr 1fr 1fr;
+      gap:28px;
+    }
+
+    .visual-note p{color:rgba(255,255,255,.72);font-size:15px}
+    .visual-note h3{color:white}
+
     .closing{
-      margin-top:120px;
-      padding-top:50px;
+      margin-top:140px;
+      padding-top:68px;
       border-top:1px solid var(--line);
       display:grid;
       grid-template-columns:1.1fr .9fr;
-      gap:80px;
+      gap:96px;
       align-items:end;
     }
-    .closing h2{font-size:clamp(56px,7vw,110px)}
+
+    .closing h2{font-size:clamp(58px,7.2vw,116px)}
+
     .footer{
-      margin-top:92px;
+      margin-top:108px;
+      padding-top:28px;
+      border-top:1px solid var(--line);
       display:flex;
       justify-content:space-between;
       gap:24px;
       color:var(--muted);
       font-size:13px;
-      font-weight:800;
-      letter-spacing:.02em;
+      font-weight:850;
+      letter-spacing:.03em;
     }
-    @media(max-width:980px){
-      .page{padding:44px 24px 70px}
-      .topline{margin-bottom:52px;flex-direction:column}
-      .hero{min-height:560px}
-      .grid3,.split,.two,.closing{grid-template-columns:1fr;gap:42px}
-      .steps,.business{grid-template-columns:1fr}
-      .step{border-right:0;border-bottom:1px solid var(--line);min-height:220px}
+
+    @media(max-width:1020px){
+      .page{padding:52px 28px 76px}
+      .topline{margin-bottom:64px;flex-direction:column}
+      .hero{grid-template-columns:1fr;gap:46px;min-height:620px}
+      .hero-side{border-left:0;border-top:1px solid var(--line);padding:34px 0 0}
+      .grid3,.split,.two,.closing{grid-template-columns:1fr;gap:56px}
+      .steps,.business,.visual-note{grid-template-columns:1fr}
+      .step{border-right:0;border-bottom:1px solid var(--line);min-height:240px}
       .step:last-child{border-bottom:0}
-      .section{margin-bottom:92px}
-      .quote{margin-bottom:92px;font-size:clamp(42px,12vw,66px);letter-spacing:-.04em;line-height:1.04}
+      .section,.grid3,.quote{margin-bottom:108px}
       .footer{flex-direction:column}
     }
   </style>
@@ -262,8 +340,10 @@
 
     <section class="hero">
       <h1>Customers<br>are talking.<br>Most businesses<br>aren’t listening.</h1>
-      <p class="subhead">We help restaurants, cafés, clinics and shops capture what customers really feel — before they stop coming back.</p>
-      <a href="#opportunity" class="link">See the pitch</a>
+      <div class="hero-side">
+        <p class="subhead">A lightweight customer voice system that helps restaurants, cafés, clinics and local shops understand what customers really feel — before they silently stop coming back.</p>
+        <a href="#opportunity" class="link">See the pitch</a>
+      </div>
     </section>
 
     <div class="redbar" id="opportunity">What’s the opportunity?</div>
@@ -309,7 +389,7 @@
           <div class="num">02</div>
           <div>
             <strong>₹99 report</strong>
-            <p>They receive weak areas, revenue leak signals and a 7-day action plan.</p>
+            <p>They receive weak areas, revenue leak signals and a practical 7-day action plan.</p>
           </div>
         </div>
         <div class="step">
@@ -332,7 +412,7 @@
     <section class="section split">
       <div>
         <h2>Business model</h2>
-        <p class="smallcopy">Low trust barrier first. Subscription later. Optional service revenue for businesses that need hands-on help.</p>
+        <p class="smallcopy">Low trust barrier first. Subscription later. Optional service revenue for businesses that need hands-on improvement help.</p>
       </div>
       <div class="business">
         <div class="card">
@@ -362,13 +442,7 @@
       </div>
     </section>
 
-    <div class="quote">
-      <span class="line">We are not selling</span>
-      <span class="line">a QR code.</span>
-      <span class="gap"></span>
-      <span class="line accent">We are selling</span>
-      <span class="line accent">customer truth.</span>
-    </div>
+    <div class="quote">We are not selling a QR code. <span>We are selling customer truth.</span></div>
 
     <section class="section two">
       <div>
@@ -392,6 +466,21 @@
       </div>
     </section>
 
+    <section class="visual-note">
+      <div>
+        <h3>Capture</h3>
+        <p>Collect honest customer signals at the moment of experience.</p>
+      </div>
+      <div>
+        <h3>Decode</h3>
+        <p>Turn messy comments into patterns owners can understand.</p>
+      </div>
+      <div>
+        <h3>Improve</h3>
+        <p>Convert feedback into weekly actions, not another dashboard.</p>
+      </div>
+    </section>
+
     <section class="closing">
       <h2>First we diagnose. Then we listen. Then we improve.</h2>
       <p>The product starts as a restaurant improvement note, but the larger play is a customer voice layer for local businesses — simple enough for owners, useful enough to become a habit.</p>
@@ -399,7 +488,7 @@
 
     <footer class="footer">
       <div>Working title: Restaurant Mirror</div>
-      <div>Pitch note · V1</div>
+      <div>Pitch note · V1 · Ready for GitHub / Netlify</div>
     </footer>
   </main>
 </body>
