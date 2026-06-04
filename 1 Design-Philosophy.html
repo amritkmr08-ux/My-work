@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Design Direction — Sirion Post-Signature</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+
+:root{
+  --bg:#0D0D0D;
+  --surface:#161616;
+  --surface2:#1E1E1E;
+  --rule:rgba(255,255,255,0.09);
+  --ink:#F0EEE9;
+  --ink2:rgba(240,238,233,0.82);
+  --ink3:rgba(240,238,233,0.52);
+  --teal:#0FC0A0;
+  --red:#E8402A;
+  --amber:#F0A030;
+  --violet:#8B7CF8;
+  --green:#22C55E;
+  --serif:'Instrument Serif',Georgia,serif;
+  --sans:'Geist',system-ui,sans-serif;
+  --mono:'Geist Mono',monospace;
+  --max:1060px;
+  --pad:52px;
+}
+
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.65;-webkit-font-smoothing:antialiased;}
+
+/* Progress */
+#bar{position:fixed;top:0;left:0;right:0;height:2px;z-index:500;}
+#bfill{height:100%;background:var(--teal);width:0%;transition:width 0.08s linear;}
+
+/* Nav */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:400;
+  height:50px;display:flex;align-items:center;justify-content:space-between;
+  padding:0 var(--pad);
+  background:rgba(13,13,13,0.94);backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--rule);
+}
+.nav-l{font-family:var(--mono);font-size:12px;letter-spacing:0.05em;color:var(--ink3);}
+.nav-r{font-family:var(--mono);font-size:12px;letter-spacing:0.05em;color:var(--teal);}
+
+/* Wrap */
+.wrap{max-width:var(--max);margin:0 auto;padding:0 var(--pad);}
+
+/* ── HERO ── */
+.hero{
+  padding:116px var(--pad) 72px;
+  max-width:var(--max);margin:0 auto;
+  border-bottom:1px solid var(--rule);
+}
+.eyebrow{
+  font-family:var(--mono);font-size:12px;letter-spacing:0.12em;
+  text-transform:uppercase;color:var(--teal);
+  margin-bottom:28px;display:flex;align-items:center;gap:12px;
+}
+.eyebrow::before{content:'';width:24px;height:1px;background:var(--teal);}
+
+.hero-hed{
+  font-family:var(--serif);
+  font-size:clamp(40px,5.5vw,72px);
+  font-weight:400;line-height:1.08;letter-spacing:-0.02em;
+  color:var(--ink);margin-bottom:36px;max-width:820px;
+}
+.hero-hed em{font-style:italic;color:var(--red);}
+
+.stat-row{display:flex;align-items:baseline;gap:20px;margin-bottom:36px;}
+.stat-big{
+  font-family:var(--serif);
+  font-size:clamp(64px,9vw,108px);
+  font-weight:400;line-height:1;letter-spacing:-0.04em;color:var(--red);
+}
+.stat-desc{font-size:16px;font-weight:400;color:var(--ink2);line-height:1.5;max-width:220px;}
+.stat-source{font-family:var(--mono);font-size:12px;color:var(--ink3);margin-top:6px;}
+
+.hero-quote{
+  font-family:var(--serif);font-size:20px;font-style:italic;
+  font-weight:400;line-height:1.65;color:var(--ink2);
+  border-left:2px solid var(--red);padding-left:20px;
+  max-width:640px;
+}
+
+/* ── SECTIONS ── */
+.section{padding:72px 0;border-bottom:1px solid var(--rule);}
+
+.s-header{
+  display:grid;grid-template-columns:72px 1fr;
+  gap:28px;margin-bottom:48px;align-items:baseline;
+}
+.s-n{font-family:var(--mono);font-size:13px;letter-spacing:0.1em;color:var(--teal);padding-top:7px;}
+.s-hed{
+  font-family:var(--serif);
+  font-size:clamp(26px,3.2vw,44px);
+  font-weight:400;line-height:1.12;letter-spacing:-0.015em;color:var(--ink);
+}
+.s-hed em{font-style:italic;color:var(--teal);}
+
+.intro-row{display:grid;grid-template-columns:180px 1fr;gap:40px;align-items:start;margin-bottom:40px;}
+.intro-label{font-family:var(--mono);font-size:12px;letter-spacing:0.07em;text-transform:uppercase;color:var(--ink3);padding-top:4px;line-height:1.6;}
+.intro-text{font-size:17px;font-weight:300;color:var(--ink2);line-height:1.8;}
+.intro-text strong{color:var(--ink);font-weight:600;}
+
+/* ── PROBLEM CARDS ── */
+.problem-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:0;border:1px solid var(--rule);margin:40px 0;
+}
+.prob-card{
+  padding:26px 22px;
+  border-right:1px solid var(--rule);
+  border-bottom:1px solid var(--rule);
+  transition:background 0.18s;
+}
+.prob-card:hover{background:var(--surface);}
+.prob-card:nth-child(3n){border-right:none;}
+.prob-card:nth-last-child(-n+3){border-bottom:none;}
+.prob-card.span-full{grid-column:1/-1;border-right:none;}
+.prob-tag{
+  font-family:var(--mono);font-size:11px;font-weight:600;
+  letter-spacing:0.08em;text-transform:uppercase;
+  padding:4px 10px;border-radius:3px;
+  display:inline-block;margin-bottom:12px;
+  background:rgba(255,255,255,0.07);color:var(--ink3);
+}
+.prob-tag.y{background:rgba(240,160,48,0.16);color:#F5B840;}
+.prob-tag.r{background:rgba(232,64,42,0.14);color:#F06050;}
+.prob-tag.t{background:rgba(15,192,160,0.12);color:var(--teal);}
+.prob-title{
+  font-family:var(--serif);font-size:16px;font-style:italic;
+  font-weight:400;color:var(--ink);margin-bottom:10px;line-height:1.3;
+}
+.prob-body{font-size:14px;font-weight:400;color:var(--ink2);line-height:1.72;}
+.prob-quote{
+  margin-top:14px;font-size:13px;font-style:italic;
+  color:var(--ink2);border-left:2px solid var(--amber);
+  padding-left:12px;line-height:1.65;
+}
+
+/* ── PERSONA TABLE ── */
+.p-table{margin:40px 0;border:1px solid var(--rule);}
+.p-thead{
+  display:grid;grid-template-columns:180px 180px 1fr 1fr;
+  background:var(--surface);border-bottom:1px solid var(--rule);
+}
+.p-trow{
+  display:grid;grid-template-columns:180px 180px 1fr 1fr;
+  border-bottom:1px solid var(--rule);transition:background 0.14s;
+}
+.p-trow:last-child{border-bottom:none;}
+.p-trow:hover{background:var(--surface2);}
+.p-cell{padding:16px 20px;font-size:14px;border-right:1px solid var(--rule);line-height:1.55;}
+.p-cell:last-child{border-right:none;}
+.p-thead .p-cell{
+  font-family:var(--mono);font-size:12px;font-weight:600;
+  letter-spacing:0.07em;text-transform:uppercase;color:var(--ink3);padding:12px 20px;
+}
+.pname{font-size:15px;font-weight:600;color:var(--ink);}
+.pfocus{font-size:13px;font-weight:400;color:var(--ink3);margin-top:3px;}
+.obj-pill{
+  font-family:var(--mono);font-size:12px;font-weight:500;
+  padding:4px 10px;border-radius:3px;display:inline-block;
+}
+.tasks{color:var(--ink2);font-size:14px;}
+.gap-cell{color:var(--ink3);font-size:13px;font-style:italic;}
+
+/* Insight box */
+.insight-box{
+  margin:40px 0;background:var(--surface);
+  border:1px solid var(--rule);padding:36px 40px;
+}
+.ib-label{font-family:var(--mono);font-size:12px;letter-spacing:0.1em;text-transform:uppercase;color:var(--teal);margin-bottom:18px;}
+.ib-hed{
+  font-family:var(--serif);font-size:clamp(22px,2.8vw,34px);
+  font-weight:400;line-height:1.15;letter-spacing:-0.01em;color:var(--ink);
+  margin-bottom:16px;
+}
+.ib-hed em{font-style:italic;color:var(--teal);}
+.ib-body{font-size:17px;font-weight:300;color:var(--ink2);line-height:1.8;max-width:680px;}
+
+/* ── PATTERN CARDS ── */
+.pattern-grid{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:0;border:1px solid var(--rule);margin:40px 0;
+}
+.pat-card{
+  padding:28px;border-right:1px solid var(--rule);
+  border-bottom:1px solid var(--rule);position:relative;
+}
+.pat-card:nth-child(2n){border-right:none;}
+.pat-card.recommended{background:rgba(15,192,160,0.04);border-color:rgba(15,192,160,0.22);}
+.pat-card.recommended::after{
+  content:'OUR DIRECTION';position:absolute;top:16px;right:16px;
+  font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:0.1em;
+  color:var(--teal);background:rgba(15,192,160,0.14);padding:4px 10px;border-radius:3px;
+}
+.pat-letter{font-family:var(--mono);font-size:12px;color:var(--ink3);margin-bottom:3px;}
+.pat-name{font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:var(--teal);margin-bottom:12px;}
+.pat-idea{font-size:15px;font-weight:400;color:var(--ink2);line-height:1.72;margin-bottom:16px;}
+.pat-meta{display:flex;flex-direction:column;gap:5px;margin-bottom:16px;}
+.pat-meta-row{display:flex;gap:10px;font-size:13px;}
+.pm-k{font-family:var(--mono);font-size:11px;color:var(--ink3);min-width:80px;padding-top:2px;}
+.pm-v{color:var(--ink2);}
+.score-row{display:flex;align-items:center;gap:12px;margin-bottom:12px;}
+.score-track{flex:1;height:4px;background:rgba(255,255,255,0.1);border-radius:2px;overflow:hidden;}
+.score-fill{height:100%;border-radius:2px;}
+.score-val{font-family:var(--mono);font-size:13px;color:var(--ink2);min-width:44px;text-align:right;}
+.pat-trade{
+  font-size:13px;font-style:italic;color:var(--ink3);line-height:1.65;
+  border-top:1px solid var(--rule);padding-top:14px;
+}
+
+/* Pattern E — full width two col */
+.pat-e-inner{display:grid;grid-template-columns:1fr 1fr;gap:28px;}
+.pat-e-right{border-left:1px solid var(--rule);padding-left:28px;display:flex;align-items:center;}
+.pat-e-note-label{font-family:var(--mono);font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink3);margin-bottom:14px;}
+.pat-e-note{font-size:15px;font-weight:400;color:var(--ink2);line-height:1.75;}
+.pat-e-note em{font-style:italic;color:var(--teal);}
+
+/* ── PRINCIPLES ── */
+.principles{margin:40px 0;border-top:1px solid var(--rule);}
+.pr-item{
+  display:grid;grid-template-columns:52px 220px 1fr;
+  gap:0;border-bottom:1px solid var(--rule);
+}
+.pr-item:last-child{border-bottom:none;}
+.pr-n{padding:24px 0;font-family:var(--mono);font-size:13px;color:var(--teal);}
+.pr-title{
+  padding:24px 28px;font-size:16px;font-weight:600;color:var(--ink);line-height:1.35;
+  border-left:1px solid var(--rule);border-right:1px solid var(--rule);
+}
+.pr-desc{padding:24px 28px;font-size:15px;font-weight:300;color:var(--ink2);line-height:1.75;}
+
+/* ── NORTH STAR ── */
+.north-star{
+  margin:40px 0;padding:40px;
+  background:var(--surface);border:1px solid rgba(15,192,160,0.2);
+  position:relative;overflow:hidden;
+}
+.north-star::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--teal),transparent);
+}
+.ns-label{font-family:var(--mono);font-size:12px;letter-spacing:0.1em;text-transform:uppercase;color:var(--teal);margin-bottom:16px;}
+.ns-hed{
+  font-family:var(--serif);font-size:clamp(20px,2.5vw,32px);
+  font-weight:400;font-style:italic;line-height:1.3;color:var(--ink);
+  margin-bottom:28px;max-width:740px;
+}
+.ns-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border-top:1px solid var(--rule);margin-top:24px;}
+.ns-cell{padding:22px 0;border-right:1px solid var(--rule);padding-right:24px;margin-right:24px;}
+.ns-cell:last-child{border-right:none;padding-right:0;margin-right:0;}
+.ns-who{font-family:var(--mono);font-size:11px;letter-spacing:0.09em;text-transform:uppercase;color:var(--ink3);margin-bottom:10px;}
+.ns-flow{font-size:15px;font-weight:400;color:var(--ink2);line-height:1.65;}
+.ns-flow em{font-style:italic;color:var(--teal);}
+
+/* ── OPEN QUESTIONS ── */
+.q-list{margin:40px 0;border:1px solid var(--rule);}
+.q-item{
+  display:flex;align-items:baseline;gap:20px;
+  padding:20px 24px;border-bottom:1px solid var(--rule);
+  font-size:15px;transition:background 0.14s;
+}
+.q-item:last-child{border-bottom:none;}
+.q-item:hover{background:var(--surface);}
+.q-num{font-family:var(--mono);font-size:12px;color:var(--teal);flex-shrink:0;}
+.q-body{color:var(--ink2);line-height:1.65;}
+.q-body strong{color:var(--ink);font-weight:600;}
+
+/* ── FOOTER ── */
+footer{
+  padding:64px var(--pad) 52px;max-width:var(--max);margin:0 auto;
+  display:flex;justify-content:space-between;align-items:flex-end;
+  border-top:1px solid var(--rule);
+}
+.foot-hed{
+  font-family:var(--serif);font-size:clamp(22px,3vw,36px);
+  font-weight:400;font-style:italic;color:var(--ink);line-height:1.2;
+}
+.foot-meta{font-family:var(--mono);font-size:12px;color:var(--ink3);letter-spacing:0.05em;text-align:right;line-height:1.8;}
+
+/* Reveal */
+[data-reveal]{opacity:0;transform:translateY(14px);transition:opacity 0.6s ease,transform 0.6s ease;}
+[data-reveal].in{opacity:1;transform:none;}
+
+@media(max-width:860px){
+  :root{--pad:24px;}
+  .s-header,.intro-row,.pr-item{grid-template-columns:1fr;gap:12px;}
+  .problem-grid{grid-template-columns:1fr;}
+  .prob-card{border-right:none;}
+  .pattern-grid{grid-template-columns:1fr;}
+  .pat-card{border-right:none;}
+  .pat-e-inner{grid-template-columns:1fr;}
+  .pat-e-right{border-left:none;padding-left:0;border-top:1px solid var(--rule);padding-top:20px;}
+  .p-thead,.p-trow{grid-template-columns:1fr 1fr;}
+  .p-cell:nth-child(n+3){display:none;}
+  .p-thead .p-cell:nth-child(n+3){display:none;}
+  .ns-grid{grid-template-columns:1fr;}
+  .ns-cell{border-right:none;padding-right:0;margin-right:0;border-bottom:1px solid var(--rule);padding-bottom:16px;}
+  footer{flex-direction:column;gap:20px;}
+  .foot-meta{text-align:left;}
+}
+</style>
+</head>
+<body>
+
+<div id="bar"><div id="bfill"></div></div>
+
+<nav>
+  <span class="nav-l">Sirion · Internal · Post-Signature Redesign</span>
+  <span class="nav-r">Design Direction · 2026</span>
+</nav>
+
+
+<!-- ══════════════════════
+     HERO
+══════════════════════ -->
+<div class="hero">
+  <div class="eyebrow">Where money disappears after contracts are signed</div>
+
+  <h1 class="hero-hed" data-reveal>
+    Signing the contract<br/>is the easy part.<br/>
+    <em>What comes after</em> is where<br/>value is lost.
+  </h1>
+
+  <div class="stat-row" data-reveal>
+    <div class="stat-big">8.6%</div>
+    <div class="stat-desc">
+      of contract value leaks away after signature — silently, invisibly.
+      <div class="stat-source">Sirion / WCC / KPMG portfolio studies</div>
+    </div>
+  </div>
+
+  <div class="hero-quote" data-reveal>
+    "SLAs un-claimed. Auto-renewals you forgot to stop. Rebates you earned but never invoiced. Scope creep you absorbed. Disputes that festered into lawsuits. The contract was fine. The execution wasn't."
+  </div>
+</div>
+
+
+<!-- ══════════════════════
+     01 — THE PROBLEM
+══════════════════════ -->
+<div class="section">
+  <div class="wrap">
+
+    <div class="s-header" data-reveal>
+      <div class="s-n">01</div>
+      <h2 class="s-hed">Why value disappears<br/>after signature</h2>
+    </div>
+
+    <div class="intro-row" data-reveal>
+      <div class="intro-label">The problem</div>
+      <div class="intro-text">It's not one thing. It's seven overlapping failures that happen quietly, every day, after a contract is signed. The current product doesn't surface any of them.</div>
+    </div>
+
+    <div class="problem-grid" data-reveal>
+
+      <div class="prob-card">
+        <div class="prob-tag y">Hidden work</div>
+        <div class="prob-title">Obligations buried in PDFs</div>
+        <div class="prob-body">Every contract has 40–80 obligations hidden in the middle of an 80-page PDF. Nobody re-reads after signing. They show up only when something breaks.</div>
+      </div>
+
+      <div class="prob-card">
+        <div class="prob-tag">Hard to find</div>
+        <div class="prob-title">The right clause is unfindable</div>
+        <div class="prob-body">Even with search, the clause you need is buried under defined terms and cross-references. Lawyers learn to hunt by keyword — everyone else gives up.</div>
+      </div>
+
+      <div class="prob-card">
+        <div class="prob-tag">Missed deadlines</div>
+        <div class="prob-title">Renewals happen without warning</div>
+        <div class="prob-body">The vendor auto-renews at 12% higher. Procurement finds out when the invoice arrives. By then, the new price is legally locked in.</div>
+        <div class="prob-quote">"We've lost six figures three years running on a single SaaS auto-renew nobody set a reminder for." — Head of Procurement</div>
+      </div>
+
+      <div class="prob-card">
+        <div class="prob-tag r">Too many tools</div>
+        <div class="prob-title">The contract lives in five systems</div>
+        <div class="prob-body">SAP for payments. Salesforce for the customer. JIRA for delivery. ServiceNow for SLA tickets. DocuSign for the PDF. No single place to see the full picture.</div>
+      </div>
+
+      <div class="prob-card">
+        <div class="prob-tag">No early warning</div>
+        <div class="prob-title">Problems spotted too late</div>
+        <div class="prob-body">Vendor emails get tense. Invoices arrive late. Delivery slips quietly. These are signals a dispute is coming — and nobody is watching for them.</div>
+      </div>
+
+      <div class="prob-card">
+        <div class="prob-tag">Audit scramble</div>
+        <div class="prob-title">Compliance is always last-minute</div>
+        <div class="prob-body">Every audit triggers a 3-week scramble to gather security certs, verify data processors, and prove compliance. It's never tracked continuously. Always reactive.</div>
+      </div>
+
+      <div class="prob-card span-full">
+        <div class="prob-tag t">No connected view</div>
+        <div class="prob-title">One deal, six folders</div>
+        <div class="prob-body">A single deal might have: a master agreement, five statements of work, four amendments, a data agreement, an NDA, and seven change orders — spread across six folders. No system shows it as one continuous relationship with a single health signal.</div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════
+     02 — FIVE PERSONAS
+══════════════════════ -->
+<div class="section">
+  <div class="wrap">
+
+    <div class="s-header" data-reveal>
+      <div class="s-n">02</div>
+      <h2 class="s-hed">Five types of people.<br/><em>Five different needs.</em><br/>One broken start.</h2>
+    </div>
+
+    <div class="intro-row" data-reveal>
+      <div class="intro-label">The insight</div>
+      <div class="intro-text">Every team that uses Sirion post-signature is looking for something different. A contract manager needs to track obligations. Legal needs to monitor risk. Procurement needs to catch renewals. Finance needs to match invoices. IT/Security needs to track data compliance. But right now, <strong>everyone starts from the same screen</strong> — a list of documents — and digs from there. That's the foundational problem.</div>
+    </div>
+
+    <div class="p-table" data-reveal>
+      <div class="p-thead">
+        <div class="p-cell">Who</div>
+        <div class="p-cell">What they care about</div>
+        <div class="p-cell">What they do every day</div>
+        <div class="p-cell">How the current system fails them</div>
+      </div>
+      <div class="p-trow">
+        <div class="p-cell"><div class="pname">Contract Manager</div><div class="pfocus">Day-to-day execution</div></div>
+        <div class="p-cell"><span class="obj-pill" style="background:rgba(15,192,160,0.12);color:var(--teal);">Obligations</span></div>
+        <div class="p-cell tasks">Track obligations · Chase milestones · Sign off deliverables · Claim SLA credits · Push amendments</div>
+        <div class="p-cell gap-cell">Obligations are buried in PDFs. Nothing surfaces proactively. You find out when something breaks.</div>
+      </div>
+      <div class="p-trow">
+        <div class="p-cell"><div class="pname">Legal</div><div class="pfocus">Risk & enforceability</div></div>
+        <div class="p-cell"><span class="obj-pill" style="background:rgba(239,68,68,0.12);color:#EF4444;">Risk exposure</span></div>
+        <div class="p-cell tasks">Monitor legal exposure · Issue cure notices · Track surviving clauses · Defend disputes · Keep the playbook current</div>
+        <div class="p-cell gap-cell">Risk is scattered across hundreds of clauses. No aggregated view. Lawyers keyword-hunt across PDFs.</div>
+      </div>
+      <div class="p-trow">
+        <div class="p-cell"><div class="pname">Procurement</div><div class="pfocus">Value & renewal</div></div>
+        <div class="p-cell"><span class="obj-pill" style="background:rgba(240,160,48,0.12);color:var(--amber);">Renewals</span></div>
+        <div class="p-cell tasks">Plan renewals · Benchmark pricing · Score vendors · Run re-tender · Activate alternates</div>
+        <div class="p-cell gap-cell">Notice windows close silently. Renewals tracked in spreadsheets, not the CLM.</div>
+      </div>
+      <div class="p-trow">
+        <div class="p-cell"><div class="pname">Finance</div><div class="pfocus">Revenue & disclosure</div></div>
+        <div class="p-cell"><span class="obj-pill" style="background:rgba(139,124,248,0.12);color:var(--violet);">Cash events</span></div>
+        <div class="p-cell tasks">Book revenue · Match invoices · Accrue costs · Reserve for disputes · Disclose financial obligations</div>
+        <div class="p-cell gap-cell">Invoice matching happens in SAP with no contract context visible. Leakage goes undetected.</div>
+      </div>
+      <div class="p-trow">
+        <div class="p-cell"><div class="pname">IT / Security</div><div class="pfocus">Data & compliance</div></div>
+        <div class="p-cell"><span class="obj-pill" style="background:rgba(34,197,94,0.12);color:var(--green);">Data flows</span></div>
+        <div class="p-cell tasks">Track data processors · Refresh security certs · Audit access rights · Respond to breaches · Prove compliance</div>
+        <div class="p-cell gap-cell">Compliance is entirely reactive. Every audit is a scramble. Nothing is tracked continuously.</div>
+      </div>
+    </div>
+
+    <div class="insight-box" data-reveal>
+      <div class="ib-label">The design problem in one sentence</div>
+      <div class="ib-hed">Each person should open Sirion and immediately see <em>their thing</em> — not a list of documents to dig through.</div>
+      <div class="ib-body">The home screen should reflect how each person actually works. But everything still ties back to the same shared contracts underneath. Start from your role. Land on the contract. Never lose the thread.</div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ══════════════════════
+     03 — THE FIVE PATTERNS
+══════════════════════ -->
+<div class="section">
+  <div class="wrap">
+
+    <div class="s-header" data-reveal>
+      <div class="s-n">03</div>
+      <h2 class="s-hed">Five ideas for<br/>how to solve this.<br/><em>One clear direction.</em></h2>
+    </div>
+
+    <div class="intro-row" data-reveal>
+      <div class="intro-label">How we chose</div>
+      <div class="intro-text">We explored five different ways to restructure the post-signature experience. Each was evaluated on how well it serves all five personas, how it handles the document as the legal record, how it works in everyday use, and how it supports AI assistance without replacing human judgement.</div>
+    </div>
+
+    <div class="pattern-grid" data-reveal>
+
+      <!-- A -->
+      <div class="pat-card">
+        <div class="pat-letter">A</div>
+        <div class="pat-name">Task-first</div>
+        <div class="pat-idea">Every contract becomes a list of tasks. The home screen is a work queue. Switching between personas changes which tasks you see.</div>
+        <div class="pat-meta">
+          <div class="pat-meta-row"><span class="pm-k">Home screen</span><span class="pm-v">A queue of tasks to complete</span></div>
+          <div class="pat-meta-row"><span class="pm-k">Similar to</span><span class="pm-v">Linear, Superhuman</span></div>
+        </div>
+        <div class="score-row">
+          <div class="score-track"><div class="score-fill" style="width:77%;background:var(--amber);"></div></div>
+          <div class="score-val">28 / 36</div>
+        </div>
+        <div class="pat-trade">Loses the contract document as the anchor. Hard to see patterns across multiple contracts.</div>
+      </div>
+
+      <!-- B -->
+      <div class="pat-card">
+        <div class="pat-letter">B</div>
+        <div class="pat-name">Graph / network</div>
+        <div class="pat-idea">Contracts are shown as connected nodes. Obligations, amendments, and documents are links between them. Each persona filters the view to their layer.</div>
+        <div class="pat-meta">
+          <div class="pat-meta-row"><span class="pm-k">Home screen</span><span class="pm-v">A navigable network map</span></div>
+          <div class="pat-meta-row"><span class="pm-k">Similar to</span><span class="pm-v">Notion, Figma canvas</span></div>
+        </div>
+        <div class="score-row">
+          <div class="score-track"><div class="score-fill" style="width:61%;background:var(--red);"></div></div>
+          <div class="score-val">22 / 36</div>
+        </div>
+        <div class="pat-trade">Great for understanding relationships. Too slow and complex for daily work.</div>
+      </div>
+
+      <!-- C — RECOMMENDED -->
+      <div class="pat-card recommended">
+        <div class="pat-letter">C</div>
+        <div class="pat-name">Persona workspaces</div>
+        <div class="pat-idea">Five dedicated workspaces — one for each team. Obligations, Risk, Renewals, Finance, Data. Each workspace shows the same contracts through the right lens for that team. Everything links back to the same contract underneath.</div>
+        <div class="pat-meta">
+          <div class="pat-meta-row"><span class="pm-k">Home screen</span><span class="pm-v">Your workspace, showing your view</span></div>
+          <div class="pat-meta-row"><span class="pm-k">Similar to</span><span class="pm-v">Linear Cycles, Superhuman Inbox</span></div>
+        </div>
+        <div class="score-row">
+          <div class="score-track"><div class="score-fill" style="width:83%;background:var(--teal);"></div></div>
+          <div class="score-val">30 / 36</div>
+        </div>
+        <div class="pat-trade">Needs strong connections between workspaces so users don't feel lost when moving between them.</div>
+      </div>
+
+      <!-- D -->
+      <div class="pat-card">
+        <div class="pat-letter">D</div>
+        <div class="pat-name">Timeline-first</div>
+        <div class="pat-idea">Time is the main axis. Every persona sees a timeline of events from their contracts. Looking back shows history. Looking forward shows what's coming.</div>
+        <div class="pat-meta">
+          <div class="pat-meta-row"><span class="pm-k">Home screen</span><span class="pm-v">A calendar of contract events</span></div>
+          <div class="pat-meta-row"><span class="pm-k">Similar to</span><span class="pm-v">Outlook, Cron, Icertis</span></div>
+        </div>
+        <div class="score-row">
+          <div class="score-track"><div class="score-fill" style="width:66%;background:var(--amber);"></div></div>
+          <div class="score-val">24 / 36</div>
+        </div>
+        <div class="pat-trade">Works well for deadlines and renewals. Less useful for ongoing risks that don't have a specific date.</div>
+      </div>
+
+      <!-- E — full width -->
+      <div class="pat-card" style="grid-column:1/-1;border-bottom:none;">
+        <div class="pat-e-inner">
+          <div>
+            <div class="pat-letter">E</div>
+            <div class="pat-name">AI briefing</div>
+            <div class="pat-idea">Every morning, the AI generates a one-page summary for each persona: what's due, what's at risk, what needs a decision. The contract list is just a drill-down — the briefing is the home.</div>
+            <div class="pat-meta">
+              <div class="pat-meta-row"><span class="pm-k">Home screen</span><span class="pm-v">A daily AI-written summary</span></div>
+              <div class="pat-meta-row"><span class="pm-k">Similar to</span><span class="pm-v">Stripe Atlas, Notion AI</span></div>
+            </div>
+            <div class="score-row">
+              <div class="score-track"><div class="score-fill" style="width:69%;background:var(--violet);"></div></div>
+              <div class="score-val">25 / 36</div>
+            </div>
+            <div class="pat-trade">Executives love it. Power users and legal teams find it frustrating — they need to see the actual data, not a summary they can't verify.</div>
+          </div>
+          <div class="pat-e-right">
+            <div>
+              <div class="pat-e-note-label">Where AI fits instead</div>
+              <div class="pat-e-note">Making AI the only way in doesn't work for legal teams who need to point to specific clauses and data. But AI as a <em>layer inside each workspace</em> — a daily briefing at the top of your workspace — does work. The structure is always visible and verifiable. The AI just helps you focus on what matters today.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════
+     04 — DESIGN DIRECTION
+══════════════════════ -->
+<div class="section">
+  <div class="wrap">
+
+    <div class="s-header" data-reveal>
+      <div class="s-n">04</div>
+      <h2 class="s-hed">The direction.<br/><em>Five workspaces.<br/>One contract underneath.</em></h2>
+    </div>
+
+    <div class="intro-row" data-reveal>
+      <div class="intro-label">What we're building</div>
+      <div class="intro-text">Five workspaces built for each team — Obligations, Risk, Renewals, Finance, Data. Each one shows a different view of the same contracts. Every item in every workspace links back to the contract clause that created it. The contract is always one click away. AI adds a daily briefing inside each workspace, but the full structure is always there to inspect.</div>
+    </div>
+
+    <div class="north-star" data-reveal>
+      <div class="ns-label">What success looks like</div>
+      <div class="ns-hed">"Open your workspace. See what matters today. Click through to the contract. Act."</div>
+      <div class="ns-grid">
+        <div class="ns-cell">
+          <div class="ns-who">Contract Manager</div>
+          <div class="ns-flow">Opens obligations workspace → sees everything due this week → clicks to the clause that created it → sees the owner → closes it out. <em>One flow, no folders.</em></div>
+        </div>
+        <div class="ns-cell">
+          <div class="ns-who">Procurement</div>
+          <div class="ns-flow">Opens renewals workspace → sees every agreement expiring in the next 90 days → sorted by financial risk → clicks through to the renewal window → takes action before it closes. <em>Never surprised again.</em></div>
+        </div>
+        <div class="ns-cell">
+          <div class="ns-who">IT / Security</div>
+          <div class="ns-flow">Opens data workspace → sees every third-party data processor on a live contract → clicks to the data agreement clause → triggers a cert refresh. <em>Continuous, not reactive.</em></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="principles" data-reveal>
+
+      <div class="pr-item">
+        <div class="pr-n">01</div>
+        <div class="pr-title">Start from your role.<br/>Always land on the contract.</div>
+        <div class="pr-desc">Your workspace opens on what you care about — obligations, renewals, risk, whatever. But every item links back to the contract clause that governs it. You never lose the thread between your work and the legal record.</div>
+      </div>
+
+      <div class="pr-item">
+        <div class="pr-n">02</div>
+        <div class="pr-title">Structure first.<br/>AI on top.</div>
+        <div class="pr-desc">AI can only reason about what the system already knows. We build the relationship structure first — which documents govern which, which amendments apply where, what's active and what's superseded. Then AI uses that structure to surface what matters. Not the other way around.</div>
+      </div>
+
+      <div class="pr-item">
+        <div class="pr-n">03</div>
+        <div class="pr-title">The document is the record.<br/>Never change it.</div>
+        <div class="pr-desc">The contract PDF is the legal source of truth. Notes go in the margin. Tracked changes are separate. The system wraps it with context and intelligence — but the original document is always there, untouched. Lawyers can always point to a clause and a line number.</div>
+      </div>
+
+      <div class="pr-item">
+        <div class="pr-n">04</div>
+        <div class="pr-title">One deal.<br/>One health picture.</div>
+        <div class="pr-desc">A master agreement, five statements of work, four amendments, and seven change orders — that's one deal. The system shows it as one relationship with one health score. You see the whole picture without opening a single folder.</div>
+      </div>
+
+      <div class="pr-item">
+        <div class="pr-n">05</div>
+        <div class="pr-title">Warn early.<br/>Don't report late.</div>
+        <div class="pr-desc">The platform watches for early signals — a vendor's tone in emails, a late invoice, a milestone slipping, a renewal window opening. These are flagged before they become problems. The goal is to make invisible things visible before they cost money.</div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ══════════════════════
+     05 — OPEN QUESTIONS
+══════════════════════ -->
+<div class="section">
+  <div class="wrap">
+
+    <div class="s-header" data-reveal>
+      <div class="s-n">05</div>
+      <h2 class="s-hed">What we still<br/><em>need to figure out.</em></h2>
+    </div>
+
+    <div class="intro-row" data-reveal>
+      <div class="intro-label">Next decisions</div>
+      <div class="intro-text">Choosing the persona workspace approach settles the big structure. But it opens six specific questions that need answers before design can start in earnest.</div>
+    </div>
+
+    <div class="q-list" data-reveal>
+      <div class="q-item">
+        <div class="q-num">01</div>
+        <div class="q-body"><strong>Moving between workspaces</strong> — How does someone switch from the renewals workspace to the risk workspace without losing where they were? Sidebar navigation? A global search shortcut? A breadcrumb that shows the path back?</div>
+      </div>
+      <div class="q-item">
+        <div class="q-num">02</div>
+        <div class="q-body"><strong>The shared contract page</strong> — When five workspaces all link to the same contract, what does that contract page look like? Does it stay the same for everyone, or does it adapt to show what's relevant to the person opening it?</div>
+      </div>
+      <div class="q-item">
+        <div class="q-num">03</div>
+        <div class="q-body"><strong>Where the AI briefing lives</strong> — Inside each workspace, where exactly does the daily AI summary go? At the top of the page? In a side panel? Only on login? Does it stay or disappear after you've seen it?</div>
+      </div>
+      <div class="q-item">
+        <div class="q-num">04</div>
+        <div class="q-body"><strong>People who wear multiple hats</strong> — A VP of Legal who also handles renewals. A contract manager who covers finance. Do they get a combined view, or toggle between separate workspaces? How do we avoid confusion when contexts overlap?</div>
+      </div>
+      <div class="q-item">
+        <div class="q-num">05</div>
+        <div class="q-body"><strong>Defining "health"</strong> — A single health score for each deal sounds good. But what goes into it? Obligation completion rate, renewal risk, SLA status, open disputes? Who decides what matters most, and can teams configure it?</div>
+      </div>
+      <div class="q-item">
+        <div class="q-num">06</div>
+        <div class="q-body"><strong>The other tools in the picture</strong> — SAP, Salesforce, JIRA, ServiceNow, and DocuSign are all live in these teams. Do we pull their data into Sirion, or link out? Which data does Sirion own, and which does it just reference?</div>
+      </div>
+
+    <!-- Possible answers -->
+    <div style="margin-top:32px;" data-reveal>
+      <div style="font-family:var(--mono);font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink3);margin-bottom:16px;">Possible directions — one hint per question</div>
+      <div style="border:1px solid var(--rule);">
+
+        <div style="display:grid;grid-template-columns:44px 1fr 1fr;border-bottom:1px solid var(--rule);background:rgba(255,255,255,0.03);">
+          <div style="padding:10px 16px;font-family:var(--mono);font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink3);">#</div>
+          <div style="padding:10px 16px;font-family:var(--mono);font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink3);border-left:1px solid var(--rule);">The question</div>
+          <div style="padding:10px 16px;font-family:var(--mono);font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:var(--teal);border-left:1px solid var(--rule);">A possible direction</div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:44px 1fr 1fr;border-bottom:1px solid var(--rule);">
+          <div style="padding:18px 16px;font-family:var(--mono);font-size:12px;color:var(--teal);">01</div>
+          <div style="padding:18px 16px;font-size:14px;color:var(--ink3);border-left:1px solid var(--rule);line-height:1.6;">Moving between workspaces without losing context</div>
+          <div style="padding:18px 16px;font-size:14px;color:var(--ink2);border-left:1px solid var(--rule);line-height:1.6;">A persistent contract anchor — a thin strip that travels with you across workspaces, always showing which contract you're currently inside. Switching workspace changes the lens; the contract stays pinned.</div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:44px 1fr 1fr;border-bottom:1px solid var(--rule);">
+          <div style="padding:18px 16px;font-family:var(--mono);font-size:12px;color:var(--teal);">02</div>
+          <div style="padding:18px 16px;font-size:14px;color:var(--ink3);border-left:1px solid var(--rule);line-height:1.6;">The shared contract page — same for everyone or persona-adaptive?</div>
+          <div style="padding:18px 16px;font-size:14px;color:var(--ink2);border-left:1px solid var(--rule);line-height:1.6;">Fixed structure, contextual surface. The document, hierarchy, and amendments are always the same. The <em>Today</em> tab pre-filters signals by who's logged in — Legal sees risk, Procurement sees renewals — without changing the underlying page.</div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:44px 1fr 1fr;border-bottom:1px solid var(--rule);">
+          <div style="padding:18px 16px;font-family:var(--mono);font-size:12px;color:var(--teal);">03</div>
+          <div style="padding:18px 16px;font-size:14px;color:var(--ink3);border-left:1px solid var(--rule);line-height:1.6;">Where the AI briefing lives inside each workspace</div>
+          <div style="padding:18px 16px;font-size:14px;color:var(--ink2);border-left:1px solid var(--rule);line-height:1.6;">Dismiss-and-remember. Appears at the top on first login each day, collapses after you interact with it, and is gone until tomorrow. Always recallable from a small chip in the nav. Never blocks the workspace.</div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:44px 1fr 1fr;border-bottom:1px solid var(--rule);">
+          <div style="padding:18px 16px;font-family:var(--mono);font-size:12px;color:var(--teal);">04</div>
+          <div style="padding:18px 16px;font-size:14px;color:var(--ink3);border-left:1px solid var(--rule);line-height:1.6;">People who wear multiple hats</div>
+          <div style="padding:18px 16px;font-size:14px;color:var(--ink2);border-left:1px solid var(--rule);line-height:1.6;">Role stacking, not role switching. A "My work" mode that surfaces obligations from all their active roles in one prioritised list. Workspaces still exist for going deep — but the daily surface is unified.</div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:44px 1fr 1fr;border-bottom:1px solid var(--rule);">
+          <div style="padding:18px 16px;font-family:var(--mono);font-size:12px;color:var(--teal);">05</div>
+          <div style="padding:18px 16px;font-size:14px;color:var(--ink3);border-left:1px solid var(--rule);line-height:1.6;">Defining a single health score</div>
+          <div style="padding:18px 16px;font-size:14px;color:var(--ink2);border-left:1px solid var(--rule);line-height:1.6;">Sensible default, transparent breakdown. Default weights: obligations on time (40%) · SLA compliance (30%) · no active disputes (20%) · renewal risk (10%). Always shown with components — never just a number. Teams can adjust weights.</div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:44px 1fr 1fr;">
+          <div style="padding:18px 16px;font-family:var(--mono);font-size:12px;color:var(--teal);">06</div>
+          <div style="padding:18px 16px;font-size:14px;color:var(--ink3);border-left:1px solid var(--rule);line-height:1.6;">The other tools — pull data in or link out?</div>
+          <div style="padding:18px 16px;font-size:14px;color:var(--ink2);border-left:1px solid var(--rule);line-height:1.6;">Reference, don't own. Sirion shows status signals from SAP, JIRA, Salesforce as linked context — not a replica. Sirion owns the contract relationship graph. Other tools own their objects. Sirion surfaces what you need to know, not everything that exists.</div>
+        </div>
+
+      </div>
+    </div>
+    </div>
+
+  </div>
+</div>
+
+
+
+
+<!-- ══════════════════════
+     06 — DESIGN BETS
+══════════════════════ -->
+<div class="section">
+  <div class="wrap">
+
+    <div class="s-header" data-reveal>
+      <div class="s-n">06</div>
+      <h2 class="s-hed">The bets we're making —<br/><em>and how we'll know we're right.</em></h2>
+    </div>
+
+    <div class="intro-row" data-reveal>
+      <div class="intro-label">Design strategy</div>
+      <div class="intro-text">Every design direction is a bet. Being explicit about what we're betting on — and what would tell us we're wrong — is what separates a strategy from a preference. These are the commitments this direction rests on.</div>
+    </div>
+
+    <div class="principles" data-reveal style="margin-top:0;">
+
+      <div class="pr-item">
+        <div class="pr-n">B·01</div>
+        <div class="pr-title">People work from their role,<br/>not from a list of contracts.</div>
+        <div class="pr-desc">We're betting that a Contract Manager opening Sirion wants to see obligations first — not a contract list they then filter. If this is wrong, we'll see it when users bypass the workspace home and navigate directly to search or contract pages instead. That's the signal to reconsider.</div>
+      </div>
+
+      <div class="pr-item">
+        <div class="pr-n">B·02</div>
+        <div class="pr-title">Structure enables AI.<br/>AI on an unstructured system creates noise.</div>
+        <div class="pr-desc">We're betting that AI summaries are only trusted when users can verify the underlying data. If users start dismissing the briefing without reading it, or escalating AI-generated signals as incorrect, we haven't built enough structure for the AI to reason over reliably.</div>
+      </div>
+
+      <div class="pr-item">
+        <div class="pr-n">B·03</div>
+        <div class="pr-title">Five workspaces stay coherent<br/>because the contract page holds them together.</div>
+        <div class="pr-desc">We're betting that a unified contract page — reachable from every workspace — prevents fragmentation. If users report confusion about which workspace "owns" a contract, or if the same contract appears differently in two workspaces without explanation, that's the seam breaking. The contract page must be the single source of truth.</div>
+      </div>
+
+      <div class="pr-item">
+        <div class="pr-n">B·04</div>
+        <div class="pr-title">Proactive signals reduce leakage<br/>better than better search.</div>
+        <div class="pr-desc">We're betting that surfacing what matters before users ask is more valuable than helping them find things faster. We already know better search didn't move the needle. If proactive signals also fail to drive action — if people see the warning and still miss the SLA window — the problem is accountability, not interface design. That's a different fix.</div>
+      </div>
+
+      <div class="pr-item">
+        <div class="pr-n">B·05</div>
+        <div class="pr-title">Reference beats ownership<br/>when it comes to other tools.</div>
+        <div class="pr-desc">We're betting that showing "Invoice matched in SAP ✓" is more useful than pulling invoice data into Sirion. If users consistently need to leave Sirion to take action in the other tool — and can't do so in one click — the reference model is too shallow and we need deeper integration for specific high-frequency actions.</div>
+      </div>
+
+    </div>
+
+    <!-- What good looks like -->
+    <div class="insight-box" data-reveal style="margin-top:48px;">
+      <div class="ib-label">What good looks like — 6 months in</div>
+      <div class="ib-hed">The <em>signals</em> that tell us<br/>the direction is working.</div>
+      <div class="ib-body" style="margin-top:0;">
+        <div style="display:flex;flex-direction:column;gap:0;margin-top:20px;border-top:1px solid rgba(255,255,255,0.08);">
+          <div style="display:flex;gap:20px;padding:16px 0;border-bottom:1px solid rgba(255,255,255,0.08);align-items:baseline;">
+            <div style="font-family:var(--mono);font-size:11px;color:var(--teal);flex-shrink:0;width:80px;">Signal 01</div>
+            <div style="font-size:15px;color:var(--ink2);line-height:1.65;">Users open their workspace home first — not search or contract list — as their primary daily entry point.</div>
+          </div>
+          <div style="display:flex;gap:20px;padding:16px 0;border-bottom:1px solid rgba(255,255,255,0.08);align-items:baseline;">
+            <div style="font-family:var(--mono);font-size:11px;color:var(--teal);flex-shrink:0;width:80px;">Signal 02</div>
+            <div style="font-size:15px;color:var(--ink2);line-height:1.65;">SLA credit claims are filed within the window. Renewal decisions happen before notice dates. The system warns early enough that people act.</div>
+          </div>
+          <div style="display:flex;gap:20px;padding:16px 0;border-bottom:1px solid rgba(255,255,255,0.08);align-items:baseline;">
+            <div style="font-family:var(--mono);font-size:11px;color:var(--teal);flex-shrink:0;width:80px;">Signal 03</div>
+            <div style="font-size:15px;color:var(--ink2);line-height:1.65;">AI briefing read-rate stays above 60% after 30 days. Users who dismiss it do so because it's not relevant today — not because they don't trust it.</div>
+          </div>
+          <div style="display:flex;gap:20px;padding:16px 0;border-bottom:1px solid rgba(255,255,255,0.08);align-items:baseline;">
+            <div style="font-family:var(--mono);font-size:11px;color:var(--teal);flex-shrink:0;width:80px;">Signal 04</div>
+            <div style="font-size:15px;color:var(--ink2);line-height:1.65;">Users cross-link between workspaces naturally — a procurement user following an obligation chain into Legal's workspace — without getting lost.</div>
+          </div>
+          <div style="display:flex;gap:20px;padding:16px 0;align-items:baseline;">
+            <div style="font-family:var(--mono);font-size:11px;color:var(--teal);flex-shrink:0;width:80px;">Signal 05</div>
+            <div style="font-size:15px;color:var(--ink2);line-height:1.65;">The contract page is the most-visited page across all workspaces. It means the structure is holding — everyone is grounding their work in the same source of truth.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Closing question -->
+    <div class="intro-row" data-reveal style="margin-top:48px;padding-top:48px;border-top:1px solid var(--rule);">
+      <div class="intro-label">The question<br/>worth asking last</div>
+      <div class="intro-text" style="font-size:18px;line-height:1.75;">If a Contract Manager opens Sirion tomorrow and sees their obligations — not a folder, not a list of PDFs, but the three things that need action today and the clause behind each one — does it feel like a better world? <em style="color:var(--teal);">That's the bar.</em></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="foot-hed">The contract was signed.<br/><em>Now the real work starts.</em></div>
+  <div class="foot-meta">
+    SIRION INTERNAL<br/>
+    DESIGN DIRECTION · 2026
+  </div>
+</footer>
+
+
+<script>
+// Progress bar
+window.addEventListener('scroll',()=>{
+  const p=window.scrollY/(document.documentElement.scrollHeight-window.innerHeight);
+  document.getElementById('bfill').style.width=(p*100)+'%';
+},{passive:true});
+
+// Scroll reveal
+const obs=new IntersectionObserver(entries=>{
+  entries.forEach((e,i)=>{
+    if(e.isIntersecting){
+      e.target.style.transitionDelay=Math.min(i*0.04,0.2)+'s';
+      e.target.classList.add('in');
+      obs.unobserve(e.target);
+    }
+  });
+},{threshold:0.06});
+document.querySelectorAll('[data-reveal]').forEach(el=>obs.observe(el));
+</script>
+</body>
+</html>
