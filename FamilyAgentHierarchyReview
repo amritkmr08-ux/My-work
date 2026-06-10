@@ -1,0 +1,1503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Boeing Global · Hierarchy Review Table</title>
+<style>
+  :root{
+    --page-bg:#F8FAFC;
+    --card-bg:#FFFFFF;
+    --folder-bg:#F9FAFB;
+    --row-hover:#F8FAFC;
+    --row-selected:#F0FDFA;
+    --border:#E5E7EB;
+    --divider:#EEF2F7;
+    --text:#1F2937;
+    --text-2:#6B7280;
+    --muted:#98A2B3;
+    --teal:#0F766E;
+    --teal-bg:#F0FDFA;
+    --teal-border:#99F6E4;
+    --red:#DC2626;
+    --red-bg:#FEF2F2;
+    --red-border:#FECACA;
+    --amber:#B45309;
+    --amber-bg:#FFFBEB;
+    --amber-border:#FDE68A;
+    --purple:#7C3AED;
+    --purple-bg:#F5F3FF;
+    --purple-border:#DDD6FE;
+    --grey-bg:#F3F4F6;
+    --grey-border:#E5E7EB;
+    --shadow:0 1px 2px rgba(16,24,40,.04);
+    --shadow-lg:0 12px 40px rgba(16,24,40,.18);
+    --radius:16px;
+    --indent:26px;
+    --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:var(--page-bg);color:var(--text);font-family:var(--font);font-size:14px;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:1320px;margin:0 auto;padding:22px 26px 80px;}
+
+  /* ---------- Header ---------- */
+  .pagehead{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:18px;}
+  .pagehead .left{display:flex;align-items:flex-start;gap:14px;}
+  .collapse-btn{width:30px;height:30px;border:1px solid var(--border);border-radius:8px;background:#fff;display:flex;align-items:center;justify-content:center;color:var(--text-2);cursor:pointer;margin-top:2px;}
+  .collapse-btn:hover{background:var(--row-hover);}
+  h1{font-size:22px;font-weight:650;margin:0;letter-spacing:-.01em;}
+  .subtitle{font-size:13.5px;color:var(--text-2);margin-top:3px;}
+  .btn-open{border:1px solid var(--border);background:#fff;border-radius:10px;padding:10px 18px;font-size:14px;font-weight:550;color:var(--text);cursor:pointer;display:flex;align-items:center;gap:8px;}
+  .btn-open:hover{background:var(--row-hover);}
+  .btn-open .dot{width:8px;height:8px;border-radius:50%;background:var(--amber);}
+
+  /* ---------- Issue tabs ---------- */
+  .tabs{display:flex;align-items:center;gap:4px;background:#fff;border:1px solid var(--border);border-radius:14px;padding:6px;margin-bottom:14px;box-shadow:var(--shadow);overflow-x:auto;}
+  .tab{display:flex;align-items:center;gap:8px;padding:9px 14px;border-radius:10px;font-size:13.5px;font-weight:550;color:var(--text-2);cursor:pointer;white-space:nowrap;border:1px solid transparent;}
+  .tab:hover{background:var(--row-hover);}
+  .tab.active{background:#0f172a;color:#fff;}
+  .tab.active .count{background:rgba(255,255,255,.2);color:#fff;}
+  .tab .count{background:var(--grey-bg);color:var(--text-2);border-radius:20px;padding:1px 8px;font-size:12px;font-weight:600;min-width:20px;text-align:center;}
+  .tab .ic{width:15px;height:15px;display:inline-flex;}
+  .tab.warn .ic{color:var(--red);}
+  .tab.folder .ic{color:#D97706;}
+  .tab.dup .ic{color:var(--text-2);}
+
+  /* ---------- Counterparty alert ---------- */
+  .cp-alert{display:flex;align-items:flex-start;gap:12px;background:var(--amber-bg);border:1px solid var(--amber-border);border-radius:12px;padding:13px 16px;margin-bottom:14px;}
+  .cp-alert .ic{color:#D97706;flex-shrink:0;margin-top:1px;}
+  .cp-alert .body{flex:1;}
+  .cp-alert .t{font-weight:600;color:#92400E;font-size:13.5px;}
+  .cp-alert .d{color:#92400E;opacity:.85;font-size:13px;margin-top:2px;}
+  .cp-alert .acts{display:flex;gap:8px;align-items:center;flex-shrink:0;}
+  .cp-alert .acts button{border:1px solid var(--amber-border);background:#fff;color:#92400E;border-radius:8px;padding:6px 12px;font-size:12.5px;font-weight:550;cursor:pointer;}
+  .cp-alert .acts button:hover{background:#FEF3C7;}
+  .cp-alert .acts .ghost{border:none;background:none;}
+
+  /* ---------- Main card ---------- */
+  .card{background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;}
+  .toolbar{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--divider);}
+  .search{flex:1;max-width:340px;display:flex;align-items:center;gap:8px;border:1px solid var(--border);border-radius:10px;padding:8px 12px;color:var(--muted);background:#fff;}
+  .search input{border:none;outline:none;font-size:13.5px;width:100%;color:var(--text);background:transparent;}
+  .tb-btn{display:flex;align-items:center;gap:7px;border:1px solid var(--border);background:#fff;border-radius:10px;padding:8px 13px;font-size:13.5px;font-weight:520;color:var(--text);cursor:pointer;}
+  .tb-btn:hover{background:var(--row-hover);}
+  .tb-btn .ic{color:var(--text-2);}
+  .spacer{flex:1;}
+  .segmented{display:flex;border:1px solid var(--border);border-radius:10px;overflow:hidden;}
+  .segmented .seg{padding:8px 14px;font-size:13px;font-weight:550;color:var(--text-2);cursor:pointer;background:#fff;}
+  .segmented .seg.active{background:#0f172a;color:#fff;}
+  .seg-label{font-size:12.5px;color:var(--muted);margin-right:8px;align-self:center;}
+
+  /* ---------- Column header ---------- */
+  .colhead{display:grid;align-items:center;padding:11px 18px 11px 16px;border-bottom:1px solid var(--border);background:#fff;position:sticky;top:0;z-index:5;}
+  .colhead, .row{grid-template-columns: minmax(360px,1.6fr) 150px 1.5fr 1.3fr 150px;column-gap:14px;}
+  .colhead .ch{font-size:11.5px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;}
+  .colhead .ch.first{padding-left:36px;}
+
+  /* ---------- Rows ---------- */
+  .tbody{max-height:600px;overflow:auto;}
+  .row{display:grid;align-items:center;padding:0 18px 0 16px;border-bottom:1px solid var(--divider);min-height:40px;cursor:default;position:relative;}
+  .row:hover{background:var(--row-hover);}
+  .row.selected{background:var(--row-selected);}
+  .row.hidden{display:none;}
+  .row.lvl0{background:#fff;}
+  .row.folder{background:var(--folder-bg);}
+  .row.folder:hover{background:#F3F5F8;}
+  /* Density: compact (default) hides the meta line and keeps rows tight */
+  .tbody.compact .row{min-height:36px;height:36px;}
+  .tbody.compact .meta{display:none;}
+  .tbody.compact .row > div{overflow:hidden;}        /* no cell can stretch the row */
+  .tbody.compact .c-cp{white-space:nowrap;}
+  .tbody.compact .c-cp .lab{display:inline;margin-right:6px;}  /* counterparty on one line */
+  .tbody.comfortable .row{min-height:52px;}
+  .tbody.comfortable .row.lvl0{min-height:50px;}
+  .tbody.comfortable .row.folder{min-height:48px;}
+
+  .c-struct{display:flex;align-items:center;gap:2px;min-width:0;}
+  .indent{flex-shrink:0;}
+  .caret{width:22px;height:22px;display:flex;align-items:center;justify-content:center;border-radius:6px;color:var(--text-2);cursor:pointer;flex-shrink:0;}
+  .caret:hover{background:rgba(0,0,0,.05);}
+  .caret.empty{visibility:hidden;}
+  .caret svg{transition:transform .15s;}
+  .caret.open svg{transform:rotate(90deg);}
+  .checkbox{width:16px;height:16px;border:1.5px solid #CBD5E1;border-radius:4px;flex-shrink:0;margin-right:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;background:#fff;}
+  .checkbox.checked{background:var(--teal);border-color:var(--teal);}
+  .checkbox.checked svg{color:#fff;}
+  .checkbox.indet{background:var(--teal);border-color:var(--teal);}
+  .checkbox svg{display:none;}
+  .checkbox.checked svg,.checkbox.indet svg{display:block;}
+  .ficon{width:22px;height:22px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-right:8px;}
+  .ficon.folder{color:#D97706;}
+  .ficon.pdf{color:var(--red);}
+  .ficon.root{color:#0f172a;}
+  .name-wrap{min-width:0;}
+  .name{font-size:13.5px;font-weight:550;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;}
+  .name:hover{color:var(--teal);text-decoration:underline;}
+  .row.folder .name,.row.lvl0 .name{font-weight:600;}
+  .meta{font-size:12px;color:var(--muted);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+
+  /* chips */
+  .chip{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600;border:1px solid transparent;white-space:nowrap;}
+  .chip .cdot{width:6px;height:6px;border-radius:50%;}
+  .chip.ready{background:var(--teal-bg);color:var(--teal);border-color:var(--teal-border);} .chip.ready .cdot{background:var(--teal);}
+  .chip.reviewed{background:var(--grey-bg);color:var(--text-2);border-color:var(--grey-border);} .chip.reviewed .cdot{background:var(--text-2);}
+  .chip.needscheck{background:var(--amber-bg);color:var(--amber);border-color:var(--amber-border);} .chip.needscheck .cdot{background:#D97706;}
+  .chip.missing{background:var(--red-bg);color:var(--red);border-color:var(--red-border);} .chip.missing .cdot{background:var(--red);}
+  .chip.multi{background:#FFF7ED;color:#C2410C;border-color:#FED7AA;} .chip.multi .cdot{background:#EA580C;}
+  .chip.cprisk{background:var(--purple-bg);color:var(--purple);border-color:var(--purple-border);} .chip.cprisk .cdot{background:var(--purple);}
+  .chip.dup{background:#F1F5F9;color:#475569;border-color:#E2E8F0;} .chip.dup .cdot{background:#64748B;}
+  .chip.needsreview{background:var(--amber-bg);color:var(--amber);border-color:var(--amber-border);} .chip.needsreview .cdot{background:#D97706;}
+
+  /* evidence */
+  .c-ev{font-size:13px;color:var(--text);line-height:1.35;}
+  .c-ev.weak{color:var(--amber);}
+  .c-ev.bad{color:var(--red);}
+  .c-ev .sub{font-size:12px;color:var(--muted);}
+  .c-ev .link{color:var(--teal);text-decoration:underline;cursor:pointer;font-size:12.5px;}
+
+  /* counterparty */
+  .c-cp{font-size:13px;line-height:1.3;cursor:pointer;}
+  .c-cp .lab{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.03em;color:var(--muted);}
+  .c-cp .lab.auto{color:#D97706;}
+  .c-cp .lab.risk{color:var(--purple);}
+  .c-cp .val{color:var(--text);font-weight:500;}
+  .c-cp:hover .val{text-decoration:underline;}
+
+  /* action */
+  .c-act{text-align:left;}
+  .act-btn{border:1px solid var(--border);background:#fff;border-radius:8px;padding:6px 12px;font-size:12.5px;font-weight:550;cursor:pointer;white-space:nowrap;color:var(--text);}
+  .act-btn:hover{background:var(--row-hover);}
+  .act-btn.danger{border-color:var(--red-border);color:var(--red);}
+  .act-btn.danger:hover{background:var(--red-bg);}
+  .act-btn.warn{border-color:var(--amber-border);color:var(--amber);}
+  .act-btn.warn:hover{background:var(--amber-bg);}
+  .act-none{color:var(--muted);font-size:14px;}
+
+  /* footer */
+  .cardfoot{display:flex;align-items:center;justify-content:space-between;padding:12px 18px;border-top:1px solid var(--border);font-size:13px;color:var(--text-2);}
+  .pager{display:flex;align-items:center;gap:4px;}
+  .pager button{width:30px;height:30px;border:1px solid var(--border);background:#fff;border-radius:8px;cursor:pointer;color:var(--text-2);display:flex;align-items:center;justify-content:center;}
+  .pager button.active{background:#0f172a;color:#fff;border-color:#0f172a;}
+
+  /* ---------- Bulk bar ---------- */
+  .bulkbar{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(120%);transition:transform .25s cubic-bezier(.2,.8,.2,1);background:#0f172a;color:#fff;border-radius:14px;padding:12px 16px;display:flex;align-items:center;gap:14px;box-shadow:var(--shadow-lg);z-index:40;}
+  .bulkbar.show{transform:translateX(-50%) translateY(0);}
+  .bulkbar .cnt{font-weight:600;font-size:13.5px;}
+  .bulkbar .sep{width:1px;height:22px;background:rgba(255,255,255,.18);}
+  .bulkbar button{border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:#fff;border-radius:8px;padding:7px 12px;font-size:12.5px;font-weight:550;cursor:pointer;}
+  .bulkbar button:hover{background:rgba(255,255,255,.18);}
+  .bulkbar .x{border:none;background:none;padding:4px;opacity:.7;}
+
+  /* ---------- Drawer ---------- */
+  .scrim{position:fixed;inset:0;background:rgba(15,23,42,.35);opacity:0;pointer-events:none;transition:opacity .2s;z-index:50;}
+  .scrim.show{opacity:1;pointer-events:auto;}
+  .drawer{position:fixed;top:0;right:0;height:100%;width:460px;max-width:94vw;background:#fff;box-shadow:var(--shadow-lg);transform:translateX(100%);transition:transform .26s cubic-bezier(.2,.8,.2,1);z-index:60;display:flex;flex-direction:column;}
+  .drawer.show{transform:translateX(0);}
+  .dr-head{padding:20px 22px 16px;border-bottom:1px solid var(--divider);}
+  .dr-eyebrow{font-size:11.5px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--teal);}
+  .dr-eyebrow.warn{color:var(--amber);}
+  .dr-eyebrow.bad{color:var(--red);}
+  .dr-eyebrow.cp{color:var(--purple);}
+  .dr-title{font-size:18px;font-weight:650;margin-top:6px;letter-spacing:-.01em;}
+  .dr-close{position:absolute;top:18px;right:18px;width:30px;height:30px;border:1px solid var(--border);border-radius:8px;background:#fff;cursor:pointer;color:var(--text-2);display:flex;align-items:center;justify-content:center;}
+  .dr-close:hover{background:var(--row-hover);}
+  .dr-body{padding:18px 22px;overflow:auto;flex:1;}
+  .dr-intro{font-size:14px;color:var(--text-2);line-height:1.5;margin-bottom:18px;}
+  .dr-sec{margin-bottom:18px;}
+  .dr-sec h4{font-size:11.5px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);margin:0 0 8px;}
+  .kv{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--border);border-radius:10px;margin-bottom:8px;}
+  .kv .ficon{margin:0;}
+  .kv .ktxt{font-weight:550;font-size:13.5px;}
+  .kv .ksub{font-size:12px;color:var(--muted);margin-top:1px;}
+  .cand{border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:10px;cursor:pointer;transition:.12s;}
+  .cand:hover{border-color:var(--teal);background:var(--teal-bg);}
+  .cand.sel{border-color:var(--teal);background:var(--teal-bg);box-shadow:0 0 0 1px var(--teal);}
+  .cand .ct{font-weight:600;font-size:13.5px;display:flex;align-items:center;gap:8px;}
+  .cand .cscore{margin-left:auto;font-size:11.5px;font-weight:600;color:var(--teal);background:var(--teal-bg);border:1px solid var(--teal-border);border-radius:20px;padding:1px 9px;}
+  .cand .csig{font-size:12.5px;color:var(--text-2);margin-top:6px;line-height:1.4;}
+  .evbox{background:#F8FAFC;border:1px solid var(--divider);border-radius:10px;padding:12px 14px;font-size:13px;color:var(--text);line-height:1.5;}
+  .evbox .hl{background:#FEF9C3;padding:0 3px;border-radius:3px;}
+  .compare{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .compare .col{border:1px solid var(--border);border-radius:10px;padding:10px 12px;}
+  .compare .col h5{margin:0 0 4px;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);}
+  .compare .col .v{font-size:13px;font-weight:550;}
+  .compare .col.mismatch{border-color:var(--red-border);background:var(--red-bg);}
+  .dr-foot{padding:16px 22px;border-top:1px solid var(--divider);display:flex;gap:10px;background:#fff;}
+  .dr-foot button{flex:1;border-radius:10px;padding:11px;font-size:14px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:#fff;color:var(--text);}
+  .dr-foot button:hover{background:var(--row-hover);}
+  .dr-foot button.primary{background:var(--teal);color:#fff;border-color:var(--teal);}
+  .dr-foot button.primary:hover{filter:brightness(1.06);}
+  .dr-foot button.primary:disabled{opacity:.45;cursor:not-allowed;}
+
+  .warn-inline{display:flex;gap:9px;background:var(--amber-bg);border:1px solid var(--amber-border);border-radius:10px;padding:11px 13px;font-size:12.5px;color:#92400E;line-height:1.45;margin-top:14px;}
+  .warn-inline .ic{flex-shrink:0;color:#D97706;}
+
+  /* document viewer */
+  .docviewer{position:fixed;top:0;right:0;height:100%;width:min(960px,96vw);background:#fff;box-shadow:var(--shadow-lg);transform:translateX(100%);transition:transform .26s cubic-bezier(.2,.8,.2,1);z-index:65;display:flex;flex-direction:column;}
+  .docviewer.show{transform:translateX(0);}
+  .dv-head{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid var(--divider);}
+  .dv-eyebrow{font-size:11.5px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--teal);}
+  .dv-title{font-size:17px;font-weight:650;margin-top:4px;}
+  .dv-body{flex:1;display:flex;min-height:0;}
+  .dv-page{flex:1.25;min-width:0;background:#F1F5F9;padding:18px;overflow:auto;}
+  .dv-pagebar{font-size:12px;color:var(--text-2);margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+  .dv-pagebar .dot{width:6px;height:6px;border-radius:50%;background:var(--teal);}
+  .dv-paper{background:#fff;border:1px solid var(--border);border-radius:6px;box-shadow:var(--shadow);padding:34px 38px;font-size:13px;line-height:1.9;color:#334155;min-height:90%;}
+  .dv-paper h3{font-size:15px;margin:0 0 18px;letter-spacing:.01em;}
+  .dv-line{height:11px;background:#EEF2F7;border-radius:3px;margin:9px 0;}
+  .dv-line.s{width:62%;} .dv-line.m{width:84%;}
+  .dv-hl{background:#FEF08A;border-radius:3px;padding:2px 4px;box-shadow:0 0 0 3px rgba(253,224,71,.35);}
+  .dv-paper.compare{display:flex;gap:16px;padding:18px;}
+  .dv-paper.compare .cc{flex:1;border:1px solid var(--border);border-radius:8px;padding:16px;}
+  .dv-paper.compare .cc h4{margin:0 0 8px;font-size:13.5px;}
+  .dv-side{width:360px;flex-shrink:0;border-left:1px solid var(--divider);display:flex;flex-direction:column;}
+  .dv-tabs{display:flex;gap:18px;padding:14px 20px 0;border-bottom:1px solid var(--divider);}
+  .dv-tabs span{font-size:13px;font-weight:600;color:var(--text-2);padding:6px 2px;border-bottom:2px solid transparent;cursor:pointer;margin-bottom:-1px;}
+  .dv-tabs span.active{color:var(--text);border-bottom-color:var(--teal);}
+  .dv-tabbody{padding:18px 20px;overflow:auto;flex:1;}
+  .dv-field{margin-bottom:16px;}
+  .dv-field .fl{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);margin-bottom:4px;}
+  .dv-field .fv{font-size:13.5px;color:var(--text);}
+  .dv-field .fv.bad{color:var(--red);} .dv-field .fv.mut{color:var(--text-2);}
+  .dv-chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;}
+  .dv-chip{border:1px solid var(--border);background:#fff;border-radius:20px;padding:6px 12px;font-size:12.5px;cursor:pointer;font-weight:500;}
+  .dv-chip:hover{background:var(--row-hover);border-color:var(--teal);}
+  .dv-result{border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:10px;}
+  .dv-result .rp{font-size:11.5px;color:var(--muted);font-weight:600;margin-bottom:5px;}
+  .dv-result .rq{font-size:13px;color:var(--text);line-height:1.5;}
+  .dv-result .rq mark{background:#FEF08A;}
+  .dv-result .ra{display:flex;gap:8px;margin-top:10px;}
+  .dv-result .ra button{border:1px solid var(--border);background:#fff;border-radius:8px;padding:6px 11px;font-size:12px;font-weight:550;cursor:pointer;}
+  .dv-result .ra button.primary{background:var(--teal);color:#fff;border-color:var(--teal);}
+
+  /* toast */
+  .toast{position:fixed;bottom:24px;left:24px;background:#0f172a;color:#fff;padding:12px 18px;border-radius:10px;font-size:13.5px;box-shadow:var(--shadow-lg);transform:translateY(150%);transition:transform .25s;z-index:80;display:flex;align-items:center;gap:9px;}
+  .toast.show{transform:translateY(0);}
+  .toast .ic{color:#34D399;}
+
+  .empty{padding:60px 20px;text-align:center;color:var(--text-2);}
+  .empty .et{font-size:16px;font-weight:600;color:var(--text);}
+  .empty .ed{margin-top:6px;}
+
+  /* ---------- App shell + counterparty rail ---------- */
+  .app{display:flex;min-height:100vh;align-items:stretch;}
+  .sidebar{width:308px;flex-shrink:0;background:#fff;border-right:1px solid var(--border);position:sticky;top:0;height:100vh;display:flex;flex-direction:column;}
+  .app.collapsed .sidebar{display:none;}
+  .reopen{display:none;position:fixed;top:16px;left:14px;z-index:35;width:32px;height:32px;border:1px solid var(--border);border-radius:8px;background:#fff;align-items:center;justify-content:center;color:var(--text-2);cursor:pointer;box-shadow:var(--shadow);}
+  .reopen:hover{background:var(--row-hover);}
+  .app.collapsed .reopen{display:flex;}
+  .main{flex:1;min-width:0;}
+  .main .wrap{max-width:1240px;}
+  .main .wrap.wide{max-width:none;padding-left:24px;padding-right:24px;}  /* full width when table is open */
+  .sb-head{padding:18px 18px 12px;border-bottom:1px solid var(--divider);}
+  .sb-titlerow{display:flex;align-items:center;justify-content:space-between;}
+  .sb-title{display:flex;align-items:center;gap:10px;}
+  .sb-title .bk{color:var(--text-2);display:flex;}
+  .sb-title h2{font-size:15.5px;margin:0;font-weight:650;}
+  .sb-sub{font-size:12.5px;color:var(--text-2);margin:3px 0 0 28px;}
+  .sb-collapse{color:var(--muted);cursor:pointer;display:flex;}
+  .sb-search{margin:14px 16px 6px;}
+  .sb-tabs{display:flex;align-items:center;gap:14px;padding:6px 18px 0;border-bottom:1px solid var(--divider);}
+  .sb-tab{font-size:13px;font-weight:550;color:var(--text-2);padding:8px 2px;cursor:pointer;border-bottom:2px solid transparent;display:flex;gap:7px;align-items:center;margin-bottom:-1px;}
+  .sb-tab.active{color:var(--text);border-bottom-color:#6366F1;}
+  .sb-tab .count{font-size:11px;border-radius:20px;padding:1px 8px;background:var(--grey-bg);color:var(--text-2);font-weight:600;}
+  .sb-tab.fail .count{background:var(--red-bg);color:var(--red);}
+  .sb-tab.port .count{background:var(--teal-bg);color:var(--teal);}
+  .sb-sort{margin-left:auto;color:var(--muted);cursor:pointer;display:flex;}
+  .cp-list{flex:1;overflow-y:auto;padding:8px 10px;}
+  .cp-item{padding:10px 12px;border-radius:10px;cursor:pointer;margin-bottom:2px;border:1px solid transparent;}
+  .cp-item:hover{background:var(--row-hover);}
+  .cp-item.active{background:#F0FDFA;border-color:var(--teal-border);}
+  .cp-item .cn{font-size:14px;font-weight:600;color:var(--text);}
+  .cp-item .cs{font-size:12.5px;margin-top:2px;color:var(--text-2);}
+  .cp-item .st{font-weight:600;}
+  .st.ported{color:#15803D;} .st.synced{color:#2563EB;} .st.pending{color:#B45309;}
+  .st.completed{color:var(--teal);} .st.inreview{color:#7C3AED;} .st.failed{color:var(--red);}
+
+  /* ---------- Tree view: review summary + family card ---------- */
+  .review-summary{display:flex;align-items:center;gap:26px;background:#fff;border:1px solid var(--border);border-radius:14px;padding:15px 22px;margin-bottom:14px;box-shadow:var(--shadow);font-size:14px;}
+  .review-summary .lbl{color:var(--text-2);}
+  .review-summary .item{display:flex;align-items:center;gap:8px;font-weight:550;color:var(--text);}
+  .review-summary .item .ic{display:flex;}
+  .review-summary .item.folder .ic{color:#D97706;}
+  .review-summary .item.warn .ic{color:var(--red);}
+  .review-summary .item .n{color:var(--text-2);font-weight:700;}
+
+  .famcard{background:#fff;border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow);overflow:hidden;}
+  .famcard-head{display:flex;align-items:center;justify-content:space-between;padding:15px 20px;border-bottom:1px solid var(--divider);}
+  .famcard-head .fh-left{display:flex;align-items:center;gap:10px;font-weight:650;font-size:15px;}
+  .famcard-head .fh-left .ic{color:#0f172a;display:flex;}
+  .famcard-head .fh-right{display:flex;align-items:center;gap:18px;color:var(--text-2);}
+  .famcard-head .totable{display:flex;align-items:center;gap:7px;font-weight:600;font-size:14px;cursor:pointer;color:var(--text);}
+  .famcard-head .totable:hover{color:var(--teal);}
+  .famcard-head .chev{cursor:pointer;display:flex;}
+
+  .tfolder{display:flex;align-items:center;gap:10px;background:#F8FAFC;border-bottom:1px solid var(--divider);padding:13px 20px;cursor:pointer;}
+  .tfolder:hover{background:#F1F5F9;}
+  .tfolder .tcaret{display:flex;color:var(--text-2);transition:transform .15s;flex-shrink:0;}
+  .tfolder.closed .tcaret{transform:rotate(-90deg);}
+  .tfolder .ic{color:#D97706;display:flex;flex-shrink:0;}
+  .tfolder .tname{font-weight:600;font-size:14.5px;}
+  .tfolder .tmenu{margin-left:auto;color:var(--muted);cursor:pointer;display:flex;}
+
+  .tdoc{display:flex;align-items:flex-start;gap:12px;padding:14px 20px;border-bottom:1px solid var(--divider);cursor:pointer;}
+  .tdoc:last-child{border-bottom:none;}
+  .tdoc:hover{background:var(--row-hover);}
+  .tdoc.sel{background:#F1F5F9;}
+  .tdoc .tcheck{width:18px;height:18px;border:1.5px solid #CBD5E1;border-radius:5px;flex-shrink:0;margin-top:1px;background:#fff;}
+  .tdoc .ic{color:var(--red);display:flex;flex-shrink:0;margin-top:1px;}
+  .tdoc .tmain{min-width:0;flex:1;}
+  .tdoc .ttitle{font-weight:600;font-size:14.5px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .tdoc .tsub{font-size:13px;color:var(--text-2);margin-top:3px;}
+  .tdoc .tsub.bad{color:var(--red);}
+  .tdoc .tsub.uline{text-decoration:underline;}
+  .tdoc .tsrc{opacity:0;margin-left:8px;color:var(--teal);font-size:11.5px;font-weight:600;cursor:pointer;}
+  .tdoc:hover .tsrc{opacity:1;}
+  .tdoc .tsrc:hover{text-decoration:underline;}
+  .tdoc .tright{margin-left:auto;display:flex;align-items:center;gap:14px;flex-shrink:0;}
+  .badge-root{border:1px solid var(--border);border-radius:8px;padding:5px 16px;font-size:13px;font-weight:550;color:var(--text);background:#fff;}
+  .tdoc .tmenu{color:var(--muted);cursor:pointer;display:flex;}
+
+  /* ---------- Workspace: tree (left) + data table (right), open/close split ---------- */
+  .workspace{display:flex;gap:14px;align-items:stretch;}
+  .workspace .famcard{flex:1 1 auto;min-width:0;}
+  .workspace.split .famcard{flex:0 0 44%;}
+  .workspace.tablefull .famcard{display:none;}
+  .tablepane{display:none;background:#fff;border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow);overflow:hidden;flex-direction:column;min-width:0;}
+  .workspace.split .tablepane,.workspace.tablefull .tablepane{display:flex;flex:1 1 auto;}
+  .tp-head{display:flex;align-items:center;gap:10px;padding:13px 16px;border-bottom:1px solid var(--divider);}
+  .tp-scroll{overflow:auto;max-height:620px;}
+  .ws-icon{cursor:pointer;color:var(--text-2);display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;padding:5px 9px;border-radius:7px;}
+  .ws-icon:hover{background:var(--row-hover);color:var(--text);}
+  .dtable{width:100%;border-collapse:collapse;font-size:13.5px;white-space:nowrap;}
+  .dtable th{text-align:left;font-size:11.5px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;padding:13px 18px;border-bottom:1px solid var(--border);position:sticky;top:0;background:#fff;z-index:2;}
+  .dtable td{padding:14px 18px;border-bottom:1px solid var(--divider);color:var(--text);}   /* medium row spacing */
+  .dtable tr:hover td{background:var(--row-hover);}
+  .dtable .syscol{background:#FEFCE8;font-weight:600;}
+  .dtable .more{color:var(--text-2);font-weight:500;}
+  /* structured review table cells */
+  .dtable td{vertical-align:middle;}
+  .dtable .doccell{display:flex;align-items:center;gap:8px;min-width:0;}
+  .dtable .doccell .dt-ic{flex-shrink:0;display:flex;}
+  .dtable .doccell .dt-ic.folder{color:#D97706;} .dtable .doccell .dt-ic.pdf{color:var(--red);}
+  .dtable .doccell .dt-name{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:300px;}
+  .dtable .doccell .dt-sec{font-size:11.5px;color:var(--muted);flex-shrink:0;}
+  .dtable td.evcell.bad{color:var(--red);} .dtable td.evcell.weak{color:var(--amber);}
+  .dtable .src{opacity:0;margin-left:8px;color:var(--teal);font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap;display:inline-flex;align-items:center;gap:3px;}
+  .dtable tr:hover .src{opacity:1;}
+  .dtable .src:hover{text-decoration:underline;}
+  .dtable .cpcell{cursor:pointer;}
+  .dtable .cpcell:hover .cpval{text-decoration:underline;}
+  .dtable .cpk{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;margin-right:6px;}
+  .cpk.reviewed{color:var(--text-2);} .cpk.auto{color:#D97706;} .cpk.risk{color:var(--purple);}
+  .dtable tr.frow td{background:var(--folder-bg);}
+  .dtable tr.frow .dt-name{font-weight:600;}
+  .dtable tr.rrow.hl td,.tdoc.hl,.tfolder.hl{background:#FEF9C3 !important;transition:background .3s;}
+  .tp-foot{display:flex;align-items:center;justify-content:space-between;padding:11px 16px;border-top:1px solid var(--border);font-size:13px;color:var(--text-2);}
+  .tp-foot .pager button{width:28px;height:28px;border:1px solid var(--border);background:#fff;border-radius:7px;cursor:pointer;color:var(--text-2);margin-left:4px;}
+  .tp-foot .pager button.active{background:#0f172a;color:#fff;border-color:#0f172a;}
+  .tp-context{font-size:12.5px;color:var(--text-2);} .tp-context b{color:var(--text);font-weight:600;}
+  .tp-context .clearfocus{color:var(--teal);cursor:pointer;font-weight:600;margin-left:8px;}
+
+  /* lifecycle state panel (non-active counterparties) */
+  .cp-state{background:#fff;border:1px solid var(--border);border-radius:16px;padding:64px 32px;text-align:center;box-shadow:var(--shadow);}
+  .cp-state .ico{width:56px;height:56px;border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;}
+  .cp-state h3{font-size:18px;margin:0 0 8px;font-weight:650;}
+  .cp-state p{color:var(--text-2);font-size:14px;max-width:440px;margin:0 auto 20px;line-height:1.5;}
+  .cp-state button{border:1px solid var(--border);background:#fff;border-radius:10px;padding:10px 18px;font-size:14px;font-weight:600;cursor:pointer;color:var(--text);}
+  .cp-state button.primary{background:var(--teal);color:#fff;border-color:var(--teal);}
+  .cp-state button.danger{border-color:var(--red-border);color:var(--red);}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- Re-open button (only visible when the rail is collapsed) -->
+  <button class="reopen" id="reopenSidebar" title="Show panel"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/></svg></button>
+
+  <!-- Left counterparty rail -->
+  <aside class="sidebar">
+    <div class="sb-head">
+      <div class="sb-titlerow">
+        <div class="sb-title">
+          <span class="bk"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></span>
+          <div><h2>Review Hierarchy</h2></div>
+        </div>
+        <span class="sb-collapse" title="Collapse"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/></svg></span>
+      </div>
+      <div class="sb-sub">Alibaba files request</div>
+    </div>
+    <div class="sb-search">
+      <div class="search" style="max-width:none">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input id="cpSearch" placeholder="Search by counterparty">
+      </div>
+    </div>
+    <div class="sb-tabs" id="cpTabs">
+      <div class="sb-tab active" data-cpf="all">All <span class="count" id="cntAll">0</span></div>
+      <div class="sb-tab fail" data-cpf="failed">Failed <span class="count" id="cntFail">0</span></div>
+      <div class="sb-tab port" data-cpf="ported">Ported <span class="count" id="cntPort">0</span></div>
+      <span class="sb-sort" title="Sort"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 4v16M7 20l-3-3M7 4l3 3M17 20V4M17 4l3 3M17 20l-3-3"/></svg></span>
+    </div>
+    <div class="cp-list" id="cpList"></div>
+  </aside>
+
+  <div class="main">
+  <div class="wrap">
+
+  <!-- Right-panel header -->
+  <div class="pagehead">
+    <div class="left">
+      <div>
+        <h1 id="cpTitle">Boeing Global</h1>
+        <div class="subtitle">Review generated family</div>
+      </div>
+    </div>
+    <button class="btn-open" id="openContract"><span class="dot"></span>Open Contract</button>
+  </div>
+
+  <!-- Review summary bar (tree view) -->
+  <div class="review-summary" id="reviewSummary">
+    <span class="lbl">Review</span>
+    <span class="item folder"><span class="ic"><svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M3 6a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></span>Root Contracts <span class="n">8</span></span>
+    <span class="item warn"><span class="ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg></span>Missing Parents <span class="n">35</span></span>
+    <span class="item"><span class="ic" style="color:var(--text-2)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg></span>Duplicate Documents <span class="n">12</span></span>
+  </div>
+
+  <!-- Workspace: tree (left) + optional data table (right) -->
+  <div class="workspace" id="workspace">
+    <div class="famcard" id="famcard">
+      <div class="famcard-head">
+        <div class="fh-left">
+          <span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><path d="M6.5 10v4.5H17"/></svg></span>
+          <span id="famcardName">Boeing Global</span>
+        </div>
+        <div class="fh-right">
+          <span class="totable" id="toTable"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 17 5-5-5-5M13 17l5-5-5-5"/></svg>Review Table</span>
+          <span class="ws-icon" id="collapseTree" title="Collapse tree, expand table" style="display:none"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m11 17-5-5 5-5M18 17l-5-5 5-5"/></svg></span>
+          <span class="chev" title="Collapse all folders"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m18 15-6-6-6 6"/></svg></span>
+        </div>
+      </div>
+      <div class="famcard-body" id="treeBody"></div>
+    </div>
+
+    <div class="tablepane" id="tablePane">
+      <div class="tp-head">
+        <button class="tb-btn"><span class="ic"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 5h18l-7 8v6l-4-2v-4z"/></svg></span>Filters</button>
+        <span class="tp-context" id="tpContext"></span>
+        <div class="spacer"></div>
+        <span class="ws-icon" id="showTree" title="Show tree" style="display:none"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>Tree</span>
+        <span class="ws-icon" id="closeTable" title="Close table"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6 6 18"/></svg></span>
+      </div>
+      <div class="tp-scroll"><table class="dtable" id="docTable"></table></div>
+      <div class="tp-foot"><span id="rtFoot">—</span><span class="pager" id="rtPager"></span></div>
+    </div>
+  </div>
+
+  <!-- Issue tabs -->
+  <div class="tabs" id="tabs">
+    <div class="tab active" data-filter="all">All <span class="count">2196</span></div>
+    <div class="tab warn" data-filter="needsreview">
+      <span class="ic"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg></span>
+      Needs Review <span class="count">53</span></div>
+    <div class="tab warn" data-filter="missing">
+      <span class="ic"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg></span>
+      Missing Parents <span class="count">35</span></div>
+    <div class="tab dup" data-filter="multi">
+      <span class="ic"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3v12a3 3 0 0 0 3 3h6"/><path d="M18 9v9"/><circle cx="6" cy="3" r="0"/></svg></span>
+      Possible Wrong Parent <span class="count">6</span></div>
+    <div class="tab dup" data-filter="dup">
+      <span class="ic"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg></span>
+      Duplicate Documents <span class="count">12</span></div>
+    <div class="tab" data-filter="ready">Ready <span class="count">2090</span></div>
+  </div>
+
+  <!-- Counterparty alert -->
+  <div class="cp-alert" id="cpAlert">
+    <span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg></span>
+    <div class="body">
+      <div class="t">Counterparty mappings not fully reviewed</div>
+      <div class="d">42 documents were generated from auto-mapped counterparties. Counterparty mapping is set in the <b>normalisation stage</b> — resolve it there before porting.</div>
+    </div>
+    <div class="acts">
+      <button onclick="toast('Opening counterparty normalisation…')">Go to normalisation</button>
+      <button onclick="viewAffectedCounterparty()">View affected</button>
+      <button class="ghost" onclick="document.getElementById('cpAlert').style.display='none'">Dismiss</button>
+    </div>
+  </div>
+
+  <!-- Main card -->
+  <div class="card" id="familyCard">
+    <div class="toolbar">
+      <div class="search">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input id="searchInput" placeholder="Search by document, counterparty, AE ID">
+      </div>
+      <button class="tb-btn"><span class="ic"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 5h18l-7 8v6l-4-2v-4z"/></svg></span>Filters</button>
+      <button class="tb-btn" id="showBtn"><span class="ic"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M2 12s3-6 10-6 10 6 10 6-3 6-10 6-10-6-10-6z"/></svg></span>Show: Issues only ▾</button>
+      <div class="spacer"></div>
+    </div>
+
+    <div class="colhead">
+      <div class="ch first">Document / Structure</div>
+      <div class="ch">Review State</div>
+      <div class="ch">Parent Evidence</div>
+      <div class="ch">Counterparty Status</div>
+      <div class="ch">Action</div>
+    </div>
+
+    <div class="tbody compact" id="tbody"></div>
+
+    <div class="cardfoot">
+      <div id="footCount">—</div>
+      <div class="pager" id="pager"></div>
+    </div>
+  </div>
+
+  <!-- lifecycle state panel (shown for non-active counterparties) -->
+  <div class="cp-state" id="cpState" style="display:none"></div>
+
+  </div><!-- /wrap -->
+  </div><!-- /main -->
+</div><!-- /app -->
+
+<!-- Bulk bar -->
+<div class="bulkbar" id="bulkbar">
+  <span class="cnt" id="bulkCnt">0 documents selected</span>
+  <span class="sep"></span>
+  <button onclick="toast('Bulk: choose parent')">Choose parent</button>
+  <button onclick="toast('Bulk: mark as supporting')">Mark as supporting</button>
+  <button onclick="toast('Bulk: exclude')">Exclude</button>
+  <button class="x" onclick="clearSelection()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+</div>
+
+<!-- Drawer -->
+<div class="scrim" id="scrim" onclick="closeDrawer()"></div>
+<div class="drawer" id="drawer">
+  <button class="dr-close" onclick="closeDrawer()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+  <div class="dr-head">
+    <div class="dr-eyebrow" id="drEyebrow">Evidence</div>
+    <div class="dr-title" id="drTitle">Title</div>
+  </div>
+  <div class="dr-body" id="drBody"></div>
+  <div class="dr-foot" id="drFoot"></div>
+</div>
+
+<!-- Document viewer / source verification -->
+<div class="scrim" id="dvScrim" onclick="closeViewer()"></div>
+<div class="docviewer" id="docViewer">
+  <div class="dv-head">
+    <div><div class="dv-eyebrow" id="dvEyebrow">Source</div><div class="dv-title" id="dvTitle">Document</div></div>
+    <button class="dr-close" style="position:static" onclick="closeViewer()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+  </div>
+  <div class="dv-body">
+    <div class="dv-page" id="dvPage"></div>
+    <div class="dv-side">
+      <div class="dv-tabs" id="dvTabs">
+        <span data-dvtab="evidence" class="active">Evidence</span>
+        <span data-dvtab="metadata">Metadata</span>
+        <span data-dvtab="search">Search</span>
+      </div>
+      <div class="dv-tabbody" id="dvTabBody"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"><span class="ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg></span><span id="toastMsg">Done</span></div>
+
+<script>
+/* ============ DATA MODEL ============ */
+/* state: ready | reviewed | needscheck | missing | multi | cprisk | dup | needsreview */
+const ICON = {
+  folder:'<svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M3 6a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>',
+  pdf:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>',
+  root:'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><path d="M6.5 10v4.5H17"/></svg>'
+};
+const STATE_LABEL = {ready:'Ready',reviewed:'Reviewed',needscheck:'Needs Check',missing:'Missing Parent',multi:'Multiple Parent Match',cprisk:'Counterparty Risk',dup:'Duplicate',needsreview:'Needs Review'};
+
+// Suggested search terms for "no parent reference" cases
+const PARENT_SEARCH_TERMS = ['master agreement','governed by','subject to','pursuant to','under the agreement','parent agreement','statement of work'];
+
+// flat list with parent ids; level via parentId chain.
+// Each document node carries the evidence/source/counterparty fields the reviewer needs.
+const NODES = [
+  {id:'root', type:'root', level:0, name:'Boeing Global', meta:'8 roots · 2,196 docs · 35 missing parents · 12 duplicates',
+   state:'needsreview', stateText:'53 issues inside', ev:'53 issues across this family', evClass:'', cp:{lab:'AUTO',labClass:'auto',val:'42 auto-mapped'}, action:{type:'review',label:'Review issues'} },
+
+  // ---- MSA root (healthy) ----
+  {id:'msa', parent:'root', type:'folder', level:1, name:'C023243 - MSA - 23 Jan 2023', meta:'2 docs · all ready',
+   state:'ready', ev:'Root contract', cp:{lab:'',val:'Reviewed'}, action:null,
+   agreementType:'MSA', effectiveDate:'23 Jan 2023', cpStatus:'Reviewed: Boeing Global', cpKind:'reviewed'},
+  {id:'msa-1', parent:'msa', type:'pdf', level:2, name:'Portfolio Specific for Service - CMR 278984 - MSA',
+   state:'ready', ev:'Parent document', cp:{lab:'',val:'Reviewed'}, action:null, drawer:{kind:'evidence'},
+   aeId:'AE2324', documentId:'D-100245', agreementType:'MSA', effectiveDate:'23 Jan 2023',
+   currentParent:'— (root contract)', suggestedParents:[], signatories:[{name:'J. Whitfield',matched:true},{name:'A. Rao',matched:true}],
+   parentReference:'—', parentEvidence:'Parent document', sourcePage:1, sourceType:'title',
+   sourceText:'MASTER SERVICES AGREEMENT between Boeing Global and DXC Technology, dated 23 January 2023.',
+   extractedCounterparty:'Boeing Global', normalisedCounterparty:'Boeing Global', systemCounterparty:'Boeing Global',
+   counterpartyReviewStatus:'reviewed', counterpartyReason:'Confirmed during normalisation.', cpStatus:'Reviewed: Boeing Global', cpKind:'reviewed',
+   duplicateSignal:'', versionSignal:'Executed', extractionStatus:'Complete'},
+  {id:'msa-2', parent:'msa', type:'pdf', level:2, name:'MSA - 1PSW',
+   state:'ready', ev:'2 of 2 signatories matched', cp:{lab:'',val:'Reviewed'}, action:null, drawer:{kind:'evidence'},
+   aeId:'AE2324', documentId:'D-100246', agreementType:'SOW', effectiveDate:'12 Feb 2023',
+   currentParent:'Portfolio Specific for Service - CMR 278984 - MSA', suggestedParents:[],
+   signatories:[{name:'J. Whitfield',matched:true},{name:'A. Rao',matched:true}],
+   parentReference:'"…governed by the Master Services Agreement dated 23 Jan 2023"', parentEvidence:'2 of 2 signatories matched', sourcePage:12, sourceType:'signatures',
+   sourceText:'IN WITNESS WHEREOF the parties have executed this agreement: J. Whitfield (Boeing Global), A. Rao (DXC).',
+   extractedCounterparty:'Boeing Global', normalisedCounterparty:'Boeing Global', systemCounterparty:'Boeing Global',
+   counterpartyReviewStatus:'reviewed', counterpartyReason:'Confirmed during normalisation.', cpStatus:'Reviewed: Boeing Global', cpKind:'reviewed',
+   duplicateSignal:'', versionSignal:'Executed', extractionStatus:'Complete'},
+
+  // ---- SOW root (issues) ----
+  {id:'sow', parent:'root', type:'folder', level:1, name:'C023243 - SOW • 01 Jan 2024', meta:'4 docs · 1 missing parent · 1 needs check · 1 multiple match',
+   state:'needsreview', stateText:'3 issues inside', ev:'3 issues inside', cp:{lab:'AUTO',labClass:'auto',val:'Auto-mapped'}, action:{type:'review',label:'Review issues'},
+   agreementType:'SOW', effectiveDate:'01 Jan 2024', cpStatus:'Auto-mapped: Boeing Global', cpKind:'auto'},
+  {id:'sow-1', parent:'sow', type:'pdf', level:2, name:'SOW - Statement of Work - CMR 213929 - DGS6TC',
+   state:'missing', ev:'No parent reference found', evClass:'bad', cp:{lab:'AUTO',labClass:'auto',val:'Boeing Global'}, action:{type:'choose',label:'Choose parent'}, drawer:{kind:'choose'},
+   aeId:'AE2324', documentId:'D-100251', agreementType:'SOW', effectiveDate:'01 Jan 2024',
+   currentParent:'— (placed at root)', suggestedParents:[
+     {name:'MSA - 1PSW', score:'Strong', sig:'Same counterparty · earlier effective date · type compatible'},
+     {name:'Portfolio Specific for Service - CMR 278984 - MSA', score:'Medium', sig:'Same signatories · similar title'}],
+   signatories:[{name:'M. Chen',matched:false}], parentReference:'None found', parentEvidence:'No parent reference found',
+   sourcePage:1, sourceType:'search', sourceText:'STATEMENT OF WORK — CMR 213929 — DGS6TC. (No governing-agreement clause located.)',
+   extractedCounterparty:'Boeing Global', normalisedCounterparty:'Boeing Global', systemCounterparty:'Boeing Global',
+   counterpartyReviewStatus:'auto', counterpartyReason:'Auto-mapped from header; not reviewed.', cpStatus:'Auto-mapped: Boeing Global', cpKind:'auto',
+   duplicateSignal:'', versionSignal:'Executed', extractionStatus:'Complete', searchTerms:PARENT_SEARCH_TERMS},
+  {id:'sow-sub', parent:'sow', type:'folder', level:2, name:'C023243-SOW - 01 Jan 2024', meta:'2 docs · 1 needs check',
+   state:'needsreview', stateText:'1 issue inside', ev:'1 issue inside', cp:{lab:'AUTO',labClass:'auto',val:'Auto-mapped'}, action:{type:'review',label:'Review issues'},
+   agreementType:'SOW', effectiveDate:'01 Jan 2024', cpStatus:'Auto-mapped: Boeing Global', cpKind:'auto'},
+  {id:'sow-sub-1', parent:'sow-sub', type:'pdf', level:3, name:'Delivery of IT Services',
+   state:'needscheck', ev:'1 of 2 signatories matched · No direct reference', evClass:'weak', cp:{lab:'AUTO',labClass:'auto',val:'Boeing Global'}, action:{type:'check',label:'Check parent'}, drawer:{kind:'check'},
+   aeId:'AE2324', documentId:'D-100252', agreementType:'SOW', effectiveDate:'15 Jan 2024',
+   currentParent:'C023243-SOW - 01 Jan 2024', suggestedParents:[
+     {name:'C023243-SOW - 01 Jan 2024 (current)', score:'Current', sig:'1 of 2 signatories matched · no direct reference'},
+     {name:'C023243 - SOW • 01 Jan 2024', score:'Alternative', sig:'Same effective date · matching counterparty'}],
+   signatories:[{name:'A. Rao',matched:true},{name:'S. Brand',matched:false}], parentReference:'No direct reference in clause',
+   parentEvidence:'1 of 2 signatories matched · No direct reference', sourcePage:9, sourceType:'signatures',
+   sourceText:'Signed for and on behalf of Boeing Global: A. Rao. (Second signatory block unmatched.)',
+   extractedCounterparty:'Boeing Global', normalisedCounterparty:'Boeing Global', systemCounterparty:'Boeing Global',
+   counterpartyReviewStatus:'auto', counterpartyReason:'Auto-mapped from header; not reviewed.', cpStatus:'Auto-mapped: Boeing Global', cpKind:'auto',
+   duplicateSignal:'', versionSignal:'Executed', extractionStatus:'Partial'},
+  {id:'sow-sub-2', parent:'sow-sub', type:'pdf', level:3, name:'(DXC)_Annex 2 - Standard Contractual Clauses',
+   state:'ready', ev:'Referenced as Annex', cp:{lab:'',val:'Reviewed'}, action:null, drawer:{kind:'evidence'},
+   aeId:'AE2324', documentId:'D-100253', agreementType:'Annex', effectiveDate:'15 Jan 2024',
+   currentParent:'Delivery of IT Services', suggestedParents:[], signatories:[],
+   parentReference:'"…as set out in Annex 2 (Standard Contractual Clauses)"', parentEvidence:'Referenced as Annex', sourcePage:4, sourceType:'annex',
+   sourceText:'The parties agree to the Standard Contractual Clauses set out in Annex 2 to this Statement of Work.',
+   extractedCounterparty:'Boeing Global', normalisedCounterparty:'Boeing Global', systemCounterparty:'Boeing Global',
+   counterpartyReviewStatus:'reviewed', counterpartyReason:'Inherited from parent.', cpStatus:'Reviewed: Boeing Global', cpKind:'reviewed',
+   duplicateSignal:'', versionSignal:'Executed', extractionStatus:'Complete'},
+  {id:'sow-2', parent:'sow', type:'pdf', level:2, name:'Portfolio Specific for Service - CMR 278984 - 1PSW',
+   state:'multi', ev:'Multiple parent candidates', evClass:'weak', cp:{lab:'',val:'Reviewed'}, action:{type:'multi',label:'Check parent'}, drawer:{kind:'check', multi:true},
+   aeId:'AE2324', documentId:'D-100254', agreementType:'PSA', effectiveDate:'10 Mar 2024',
+   currentParent:'C023243 - SOW • 01 Jan 2024', suggestedParents:[
+     {name:'MSA - 1PSW', score:'Likely', sig:'Direct title overlap · same AE ID'},
+     {name:'Portfolio Specific - CMR 278984 - MSA', score:'Possible', sig:'Shared signatory · same date'},
+     {name:'C023243 - SOW • 01 Jan 2024', score:'Possible', sig:'Contract code prefix'}],
+   signatories:[{name:'J. Whitfield',matched:true}], parentReference:'Mentions "Portfolio Specific" — ambiguous',
+   parentEvidence:'Multiple parent candidates', sourcePage:2, sourceType:'reference',
+   sourceText:'This Portfolio Specific document relates to Portfolio Specific for Service CMR 278984.',
+   extractedCounterparty:'Boeing Global', normalisedCounterparty:'Boeing Global', systemCounterparty:'Boeing Global',
+   counterpartyReviewStatus:'reviewed', counterpartyReason:'Confirmed during normalisation.', cpStatus:'Reviewed: Boeing Global', cpKind:'reviewed',
+   duplicateSignal:'', versionSignal:'Executed', extractionStatus:'Complete'},
+
+  // ---- Construction root (counterparty risk) ----
+  {id:'con', parent:'root', type:'folder', level:1, name:'C023244 - Construction Agreement - 12 Sep 2024', meta:'2 docs · 1 counterparty risk',
+   state:'cprisk', stateText:'Counterparty risk', ev:'Counterparty mismatch inside', cp:{lab:'RISK',labClass:'risk',val:'Boeing Global + 12 more'}, action:{type:'validate',label:'Review counterparty'},
+   agreementType:'Construction', effectiveDate:'12 Sep 2024', cpStatus:'Extracted ≠ Normalised', cpKind:'risk'},
+  {id:'con-1', parent:'con', type:'pdf', level:2, name:'Construction Agreement - Main Hangar',
+   state:'cprisk', ev:'Counterparty mismatch with source', evClass:'bad', cp:{lab:'RISK',labClass:'risk',val:'Extracted ≠ Normalised'}, action:{type:'validate',label:'Review counterparty'}, drawer:{kind:'validate'},
+   aeId:'AE2324', documentId:'D-100261', agreementType:'Construction', effectiveDate:'12 Sep 2024',
+   currentParent:'— (root contract)', suggestedParents:[], signatories:[{name:'K. Tanaka',matched:true}],
+   parentReference:'—', parentEvidence:'Parent reference matched', sourcePage:1, sourceType:'parties',
+   sourceText:'This Construction Agreement is entered into by Boeing Services Japan K.K. and Obayashi Corp.',
+   extractedCounterparty:'Boeing Services Japan', normalisedCounterparty:'Boeing Global', systemCounterparty:'Boeing Global',
+   counterpartyReviewStatus:'auto', counterpartyReason:'Extracted name "Boeing Services Japan" was auto-mapped to "Boeing Global" without review. Likely a separate legal entity.',
+   cpStatus:'Extracted ≠ Normalised', cpKind:'risk', duplicateSignal:'', versionSignal:'Executed', extractionStatus:'Complete'},
+  {id:'con-2', parent:'con', type:'pdf', level:2, name:'Partnership Agreement',
+   state:'reviewed', ev:'Parent reference matched', cp:{lab:'',val:'Reviewed'}, action:null, drawer:{kind:'evidence'},
+   aeId:'AE2324', documentId:'D-100262', agreementType:'Partnership', effectiveDate:'01 Aug 2024',
+   currentParent:'Construction Agreement - Main Hangar', suggestedParents:[], signatories:[{name:'K. Tanaka',matched:true}],
+   parentReference:'"…pursuant to the Construction Agreement"', parentEvidence:'Parent reference matched', sourcePage:1, sourceType:'reference',
+   sourceText:'This Partnership Agreement is made pursuant to the Construction Agreement for the Main Hangar project.',
+   extractedCounterparty:'Boeing Global', normalisedCounterparty:'Boeing Global', systemCounterparty:'Boeing Global',
+   counterpartyReviewStatus:'reviewed', counterpartyReason:'Confirmed during normalisation.', cpStatus:'Reviewed: Boeing Global', cpKind:'reviewed',
+   duplicateSignal:'', versionSignal:'Executed', extractionStatus:'Complete'},
+
+  // ---- Duplicates root ----
+  {id:'dup', parent:'root', type:'folder', level:1, name:'C023245 - Master Service Agreement - 12 Jun 2024', meta:'2 docs · 2 duplicates',
+   state:'dup', stateText:'2 duplicates', ev:'Competing copies detected', cp:{lab:'',val:'Boeing Global + 2 more'}, action:{type:'resolve',label:'Resolve duplicate'},
+   agreementType:'MSA', effectiveDate:'12 Jun 2024', cpStatus:'Auto-mapped: Boeing Global + 2 more', cpKind:'auto'},
+  {id:'dup-1', parent:'dup', type:'pdf', level:2, name:'Master Service Agreement_signed.pdf',
+   state:'dup', ev:'87% similar · executed copy', evClass:'weak', cp:{lab:'',val:'Boeing Global + 2 more'}, action:{type:'duplicate',label:'Compare documents'}, drawer:{kind:'resolve'},
+   aeId:'AE2324', documentId:'D-100271', agreementType:'MSA', effectiveDate:'12 Jun 2024',
+   currentParent:'— (root contract)', suggestedParents:[], signatories:[{name:'J. Whitfield',matched:true},{name:'A. Rao',matched:true}],
+   parentReference:'—', parentEvidence:'87% similar to competing copy', sourcePage:14, sourceType:'signatures',
+   sourceText:'IN WITNESS WHEREOF… (signature block present).',
+   extractedCounterparty:'Boeing Global', normalisedCounterparty:'Boeing Global', systemCounterparty:'Boeing Global',
+   counterpartyReviewStatus:'auto', counterpartyReason:'Auto-mapped from header.', cpStatus:'Auto-mapped: Boeing Global + 2 more', cpKind:'auto',
+   duplicateSignal:'87% similar to _v3_final.pdf', versionSignal:'Executed (signed)', extractionStatus:'Complete'},
+  {id:'dup-2', parent:'dup', type:'pdf', level:2, name:'Master Service Agreement_v3_final.pdf',
+   state:'dup', ev:'87% similar · later file date', evClass:'weak', cp:{lab:'',val:'Boeing Global + 2 more'}, action:{type:'duplicate',label:'Compare documents'}, drawer:{kind:'resolve'},
+   aeId:'AE2324', documentId:'D-100272', agreementType:'MSA', effectiveDate:'12 Jun 2024',
+   currentParent:'— (root contract)', suggestedParents:[], signatories:[],
+   parentReference:'—', parentEvidence:'87% similar to competing copy', sourcePage:1, sourceType:'title',
+   sourceText:'MASTER SERVICE AGREEMENT — v3 final (no signature block).',
+   extractedCounterparty:'Boeing Global', normalisedCounterparty:'Boeing Global', systemCounterparty:'Boeing Global',
+   counterpartyReviewStatus:'auto', counterpartyReason:'Auto-mapped from header.', cpStatus:'Auto-mapped: Boeing Global + 2 more', cpKind:'auto',
+   duplicateSignal:'87% similar to _signed.pdf', versionSignal:'Draft v3 (unsigned)', extractionStatus:'Complete'},
+];
+
+/* ============ STATE ============ */
+let filter = 'all';
+let view = 'tree';
+let density = 'compact';
+let page = 1;
+const FAMILIES_PER_PAGE = 3; // paginate by contract family / root — never by document row
+const expanded = new Set(['root','msa','sow','sow-sub','con','dup']);
+const selected = new Set();
+
+// top-level family (root contract) that a node belongs to
+function familyRootOf(id){
+  let cur = NODES.find(x=>x.id===id);
+  if(!cur || cur.type==='root') return null;
+  while(cur.parent && cur.parent!=='root'){ cur = NODES.find(x=>x.id===cur.parent); }
+  return cur ? cur.id : null;
+}
+
+const ISSUE_STATES = new Set(['missing','needscheck','multi','cprisk','dup','needsreview']);
+function matchFilter(n){
+  if(filter==='all') return true;
+  if(filter==='needsreview') return ISSUE_STATES.has(n.state);
+  return n.state===filter;
+}
+// keep ancestors of any matched node visible (ghost context)
+function visibleIds(){
+  const vis = new Set();
+  NODES.forEach(n=>{ if(matchFilter(n)){ vis.add(n.id); let p=n.parent; while(p){vis.add(p); p=(NODES.find(x=>x.id===p)||{}).parent;} }});
+  return vis;
+}
+
+/* ============ RENDER ============ */
+const tbody = document.getElementById('tbody');
+function render(){
+  const vis = visibleIds();
+  const search = document.getElementById('searchInput').value.trim().toLowerCase();
+
+  // --- family-level pagination (page by root contract, not by row) ---
+  const familyRoots = NODES.filter(n=>n.parent==='root');
+  const activeFamilies = familyRoots.filter(f=>vis.has(f.id));
+  // Tree view = scan/browse → continuous scroll, no numbered pages.
+  // Review Table = work/audit queue → paginate by family.
+  const paginate = (view==='table');
+  const totalPages = paginate ? Math.max(1, Math.ceil(activeFamilies.length/FAMILIES_PER_PAGE)) : 1;
+  if(page>totalPages) page=totalPages;
+  const start = paginate ? (page-1)*FAMILIES_PER_PAGE : 0;
+  const slice = paginate ? activeFamilies.slice(start,start+FAMILIES_PER_PAGE) : activeFamilies;
+  const pageFamilies=new Set(slice.map(f=>f.id));
+
+  let rows='';
+  let shown=0;
+  NODES.forEach(n=>{
+    if(!vis.has(n.id)) return;
+    if(n.type!=='root'){ const fam=familyRootOf(n.id); if(fam && !pageFamilies.has(fam)) return; }
+    // collapse: hide if any ancestor collapsed
+    let p=n.parent, hiddenByCollapse=false;
+    while(p){ if(!expanded.has(p)){hiddenByCollapse=true;break;} p=(NODES.find(x=>x.id===p)||{}).parent; }
+    if(hiddenByCollapse) return;
+    if(search && !(n.name.toLowerCase().includes(search) || (n.meta||'').toLowerCase().includes(search))) {
+      // only filter out leaf docs by search; keep if descendant matches — simple: skip
+      const descMatch = NODES.some(c=>c.parent && isDescendant(c.id,n.id) && (c.name.toLowerCase().includes(search)));
+      if(!descMatch) return;
+    }
+    shown++;
+    rows += rowHtml(n);
+  });
+  tbody.innerHTML = rows || emptyHtml();
+  if(paginate){
+    const from = activeFamilies.length ? start+1 : 0;
+    const to = Math.min(start+FAMILIES_PER_PAGE, activeFamilies.length);
+    document.getElementById('footCount').textContent =
+      `Families ${from}–${to} of ${activeFamilies.length} · 2,196 documents · ${shown} rows on screen`;
+    renderPager(totalPages);
+  } else {
+    document.getElementById('footCount').textContent =
+      `${activeFamilies.length} root contracts · 2,196 documents · scroll to browse`;
+    document.getElementById('pager').innerHTML = '';
+  }
+  bindRows();
+}
+
+function renderPager(totalPages){
+  const p=document.getElementById('pager');
+  let h=`<button data-pg="prev" ${page<=1?'disabled style="opacity:.4;cursor:default"':''}>‹</button>`;
+  for(let i=1;i<=totalPages;i++){ h+=`<button data-pg="${i}" class="${i===page?'active':''}">${i}</button>`; }
+  h+=`<button data-pg="next" ${page>=totalPages?'disabled style="opacity:.4;cursor:default"':''}>›</button>`;
+  p.innerHTML=h;
+  p.querySelectorAll('[data-pg]').forEach(b=>b.onclick=()=>{
+    const v=b.dataset.pg;
+    if(v==='prev'&&page>1)page--;
+    else if(v==='next')page++;
+    else if(v!=='prev'&&v!=='next')page=+v;
+    render();
+    document.getElementById('tbody').scrollTop=0;
+  });
+}
+function isDescendant(id, ancestor){ let p=(NODES.find(x=>x.id===id)||{}).parent; while(p){ if(p===ancestor)return true; p=(NODES.find(x=>x.id===p)||{}).parent;} return false;}
+
+function hasChildren(n){ return NODES.some(c=>c.parent===n.id); }
+
+function rowHtml(n){
+  const lvl=n.level;
+  const isOpen=expanded.has(n.id);
+  const kids=hasChildren(n);
+  const cls=['row'];
+  if(lvl===0)cls.push('lvl0');
+  if(n.type==='folder')cls.push('folder');
+  if(selected.has(n.id))cls.push('selected');
+
+  const caret = kids
+    ? `<div class="caret ${isOpen?'open':''}" data-toggle="${n.id}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="m9 6 6 6-6 6"/></svg></div>`
+    : `<div class="caret empty"></div>`;
+
+  // checkbox only for selectable doc rows (not root, not folders here keep simple: docs only)
+  let checkbox='';
+  if(n.type==='pdf'){
+    const st = selected.has(n.id)?'checked':'';
+    checkbox = `<div class="checkbox ${st}" data-check="${n.id}"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg></div>`;
+  }
+
+  const ic = n.type==='root'?'root':(n.type==='folder'?'folder':'pdf');
+  const indent = `<span class="indent" style="width:${lvl*22}px"></span>`;
+
+  // review state chip
+  const stChip = `<span class="chip ${n.state}"><span class="cdot"></span>${n.stateText||STATE_LABEL[n.state]}</span>`;
+
+  // evidence
+  const evHtml = `<div class="c-ev ${n.evClass||''}">${n.ev||''}${n.drawer?` <span class="link" data-ev="${n.id}">View evidence</span>`:''}</div>`;
+
+  // counterparty
+  const cp=n.cp||{};
+  const cpHtml = `<div class="c-cp" data-cp="${n.id}">${cp.lab?`<div class="lab ${cp.labClass||''}">${cp.lab}</div>`:''}<div class="val">${cp.val||''}</div></div>`;
+
+  // action
+  let actHtml='<span class="act-none">—</span>';
+  if(n.action){
+    const a=n.action;
+    const danger = a.type==='choose'?'danger':(a.type==='review'?'':(a.type==='validate'?'warn':(a.type==='check'?'warn':(a.type==='resolve'?'':''))));
+    actHtml=`<button class="act-btn ${danger}" data-act="${n.id}">${a.label}</button>`;
+  }
+
+  return `<div class="${cls.join(' ')}" data-row="${n.id}">
+    <div class="c-struct">${indent}${caret}${checkbox}<span class="ficon ${ic}">${ICON[ic]}</span>
+      <div class="name-wrap"><div class="name" data-name="${n.id}">${n.name}</div>${n.meta?`<div class="meta">${n.meta}</div>`:''}</div>
+    </div>
+    <div>${stChip}</div>
+    <div>${evHtml}</div>
+    <div>${cpHtml}</div>
+    <div class="c-act">${actHtml}</div>
+  </div>`;
+}
+
+function emptyHtml(){
+  const map={missing:'No missing parents found',multi:'No wrong-parent candidates found',dup:'No duplicate documents found',cprisk:'No counterparty risks found',ready:'No ready documents in this view',needsreview:'No issues to review'};
+  return `<div class="empty"><div class="et">${map[filter]||'Nothing here'}</div><div class="ed">Try another tab, or switch Show to “All documents”.</div></div>`;
+}
+
+/* ============ BINDINGS ============ */
+function bindRows(){
+  tbody.querySelectorAll('[data-toggle]').forEach(el=>el.onclick=e=>{e.stopPropagation();const id=el.dataset.toggle;expanded.has(id)?expanded.delete(id):expanded.add(id);render();});
+  tbody.querySelectorAll('[data-check]').forEach(el=>el.onclick=e=>{e.stopPropagation();toggleSelect(el.dataset.check);});
+  tbody.querySelectorAll('[data-name]').forEach(el=>el.onclick=e=>{e.stopPropagation();openRowDrawer(el.dataset.name);});
+  tbody.querySelectorAll('[data-ev]').forEach(el=>el.onclick=e=>{e.stopPropagation();openRowDrawer(el.dataset.ev);});
+  tbody.querySelectorAll('[data-cp]').forEach(el=>el.onclick=e=>{e.stopPropagation();openCpDrawer(el.dataset.cp);});
+  tbody.querySelectorAll('[data-act]').forEach(el=>el.onclick=e=>{e.stopPropagation();openAction(el.dataset.act);});
+}
+
+/* ============ SELECTION ============ */
+function toggleSelect(id){ selected.has(id)?selected.delete(id):selected.add(id); updateBulk(); render(); }
+function clearSelection(){ selected.clear(); updateBulk(); render(); }
+function updateBulk(){
+  const bar=document.getElementById('bulkbar');
+  if(selected.size>0){ bar.classList.add('show'); document.getElementById('bulkCnt').textContent=`${selected.size} document${selected.size>1?'s':''} selected`; }
+  else bar.classList.remove('show');
+}
+
+/* ============ ACTIONS ============ */
+function openAction(id){
+  const n=NODES.find(x=>x.id===id); if(!n||!n.action) return;
+  const t=n.action.type;
+  if(t==='review'){ if(wsState==='treeonly') setWs('split'); focusFamily(id); return; }      // folder → focus table
+  if(t==='duplicate'){ openCompareDocuments(id); return; }
+  if(t==='validate' && n.type==='folder'){ viewAffectedCounterparty(); return; }
+  openRowDrawer(id);   // choose / check / multi / validate / resolve / evidence
+}
+
+/* ============ DRAWERS ============ */
+const scrim=document.getElementById('scrim'), drawer=document.getElementById('drawer');
+function openDrawer(){scrim.classList.add('show');drawer.classList.add('show');}
+function closeDrawer(){scrim.classList.remove('show');drawer.classList.remove('show');}
+
+function openRowDrawer(id){
+  const n=NODES.find(x=>x.id===id);
+  if(!n) return;
+  const d=n.drawer;
+  if(!d){ // generic evidence
+    fillDrawer({eyebrow:'Document',eyebrowClass:'',title:n.name,intro:'No additional review evidence for this document.',body:'',foot:[{label:'Close',fn:'closeDrawer()'}]}); openDrawer(); return;
+  }
+  if(d.kind==='evidence') return drawerEvidence(n,d);
+  if(d.kind==='choose') return drawerChoose(n);
+  if(d.kind==='check') return drawerCheck(n,d);
+  if(d.kind==='validate') return drawerValidate(n);
+  if(d.kind==='resolve') return drawerResolve(n);
+}
+function openCpDrawer(id){ const n=NODES.find(x=>x.id===id); if(n && n.drawer && n.drawer.kind==='validate') return drawerValidate(n); return drawerValidate(n,true); }
+
+function fillDrawer({eyebrow,eyebrowClass,title,html,foot}){
+  document.getElementById('drEyebrow').className='dr-eyebrow '+(eyebrowClass||'');
+  document.getElementById('drEyebrow').textContent=eyebrow;
+  document.getElementById('drTitle').textContent=title;
+  document.getElementById('drBody').innerHTML=html;
+  const f=document.getElementById('drFoot');
+  f.innerHTML=foot.map(b=>`<button class="${b.primary?'primary':''}" ${b.id?`id="${b.id}"`:''} onclick="${b.fn}">${b.label}</button>`).join('');
+}
+
+function drawerEvidence(n,d){
+  fillDrawer({eyebrow:'Evidence',eyebrowClass:'',title:STATE_LABEL[n.state]==='Ready'?'Parent reference matched':n.name,
+    html:`<div class="dr-intro">${n.name}</div>
+      <div class="dr-sec"><h4>Current parent</h4><div class="kv"><span class="ficon pdf">${ICON.pdf}</span><div><div class="ktxt">${d.current}</div></div></div></div>
+      <div class="dr-sec"><h4>Matched evidence</h4><div class="evbox">${d.evidence}</div></div>
+      <div class="dr-sec"><h4>Source reference</h4><div class="evbox">${d.ref}</div></div>`,
+    foot:[{label:'Close',fn:'closeDrawer()'},{label:'Change parent',fn:`drawerChoose(NODES.find(x=>x.id==='${n.id}'))`}]});
+  openDrawer();
+}
+
+function drawerChoose(n){
+  const cands=[
+    {name:'MSA - 1PSW',sig:'Same counterparty · earlier effective date · agreement type compatible',score:'Strong'},
+    {name:'Portfolio Specific for Service - CMR 278984 - MSA',sig:'Same signatories · similar title',score:'Medium'},
+    {name:'C023243 - MSA - 23 Jan 2023',sig:'Same contract code prefix',score:'Weak'},
+  ];
+  fillDrawer({eyebrow:'Missing parent',eyebrowClass:'bad',title:'Choose parent document',
+    html:`<div class="dr-intro">No direct parent reference was found in <b>${n.name}</b>. Choose a parent based on available signals, or keep this document as a root contract.</div>
+      <div class="dr-sec"><h4>Possible parents</h4>
+        ${cands.map((c,i)=>`<div class="cand" data-cand="${i}"><div class="ct"><span class="ficon pdf" style="margin:0">${ICON.pdf}</span>${c.name}<span class="cscore">${c.score}</span></div><div class="csig">${c.sig}</div></div>`).join('')}
+      </div>
+      <div class="dr-sec"><h4>Or search</h4><div class="search" style="max-width:none"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input placeholder="Search parent documents"></div></div>`,
+    foot:[{label:'Keep as root',fn:`resolveRow('${n.id}','Kept as root contract','reviewed','Manually kept as root')`},{label:'Place under selected parent',primary:true,id:'placeBtn',fn:`placeUnder('${n.id}')`}]});
+  // candidate selection
+  setTimeout(()=>{
+    let sel=null;
+    document.getElementById('placeBtn').disabled=true;
+    document.querySelectorAll('[data-cand]').forEach(el=>el.onclick=()=>{
+      document.querySelectorAll('[data-cand]').forEach(x=>x.classList.remove('sel'));el.classList.add('sel');sel=el.querySelector('.ct').textContent.replace(/Strong|Medium|Weak/,'').trim();
+      window.__chosenParent=sel; document.getElementById('placeBtn').disabled=false;
+    });
+  },10);
+  openDrawer();
+}
+function placeUnder(id){ const p=window.__chosenParent||'selected parent'; resolveRow(id,`Moved under ${p}`,'reviewed','Manually assigned'); }
+
+function drawerCheck(n,d){
+  const cands = d.multi ? [
+    {name:'MSA - 1PSW',sig:'Direct title overlap · same AE ID',score:'Likely'},
+    {name:'Portfolio Specific - CMR 278984 - MSA',sig:'Shared signatory · same date',score:'Possible'},
+    {name:'C023243 - SOW • 01 Jan 2024',sig:'Contract code prefix',score:'Possible'},
+  ] : [
+    {name:'C023243-SOW - 01 Jan 2024 (current)',sig:'1 of 2 signatories matched · no direct reference',score:'Current'},
+    {name:'C023243 - SOW • 01 Jan 2024',sig:'Same effective date · matching counterparty',score:'Alternative'},
+  ];
+  fillDrawer({eyebrow:d.multi?'Multiple match':'Needs check',eyebrowClass:'warn',title:'Check parent placement',
+    html:`<div class="dr-intro">${d.multi?'This document matched <b>more than one</b> possible parent.':'The system placed this document under its parent, but the evidence is partial.'} Review the comparison and confirm or change the placement.</div>
+      <div class="dr-sec"><h4>Issue found</h4><div class="evbox ${''}">${n.ev}</div></div>
+      <div class="dr-sec"><h4>${d.multi?'Possible parents':'Parent options'}</h4>
+        ${cands.map((c,i)=>`<div class="cand ${i===0&&!d.multi?'sel':''}" data-cand="${i}"><div class="ct"><span class="ficon pdf" style="margin:0">${ICON.pdf}</span>${c.name}<span class="cscore">${c.score}</span></div><div class="csig">${c.sig}</div></div>`).join('')}
+      </div>`,
+    foot:[{label:'Confirm current',fn:`resolveRow('${n.id}','Parent confirmed','reviewed','Confirmed on review')`},{label:'Change parent',primary:true,fn:`resolveRow('${n.id}','Parent changed','reviewed','Manually reassigned')`}]});
+  setTimeout(()=>{document.querySelectorAll('[data-cand]').forEach(el=>el.onclick=()=>{document.querySelectorAll('[data-cand]').forEach(x=>x.classList.remove('sel'));el.classList.add('sel');});},10);
+  openDrawer();
+}
+
+function drawerValidate(n){
+  if(!n) return;
+  const mismatch = n.cpKind==='risk' || (n.extractedCounterparty&&n.normalisedCounterparty&&n.extractedCounterparty!==n.normalisedCounterparty);
+  fillDrawer({eyebrow:'Counterparty · read-only',eyebrowClass:'cp',title:'Counterparty mapping',
+    html:`<div class="dr-intro">Counterparty mapping is owned by the <b>normalisation stage</b>. This hierarchy review shows the risk so you can catch it before porting — it can't be changed here.</div>
+      <div class="dr-sec"><h4>How this counterparty was assigned</h4>
+        <div class="compare">
+          <div class="col ${mismatch?'mismatch':''}"><h5>Extracted</h5><div class="v">${n.extractedCounterparty||'—'}</div></div>
+          <div class="col"><h5>Normalised</h5><div class="v">${n.normalisedCounterparty||'—'}</div></div>
+        </div>
+        <div class="compare" style="margin-top:10px">
+          <div class="col"><h5>System counterparty</h5><div class="v">${n.systemCounterparty||'—'}</div></div>
+          <div class="col"><h5>Source reference</h5><div class="v">${n.sourceType||'parties'} · p.${n.sourcePage||1}</div></div>
+        </div>
+      </div>
+      <div class="dr-sec"><h4>Why this is flagged</h4><div class="evbox">${n.counterpartyReason||'Auto-mapped during normalisation.'} <span class="link" onclick="closeDrawer();openDocumentViewer('${n.id}','counterparty')">View source</span></div></div>
+      ${mismatch?`<div class="warn-inline"><span class="ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg></span>Extracted name doesn't match the normalised counterparty. To re-map it, return to normalisation — this family may then regenerate.</div>`:''}`,
+    foot:[{label:'Close',fn:'closeDrawer()'},{label:'Go to normalisation',primary:true,fn:`closeDrawer();toast('Opening counterparty normalisation…')`}]});
+  openDrawer();
+}
+
+function drawerResolve(n){
+  fillDrawer({eyebrow:'Duplicate',eyebrowClass:'',title:'Resolve duplicate',
+    html:`<div class="dr-intro">Two highly similar documents were found. Duplicate files are not extra files — they are <b>competing truths</b>. Decide which copy the family should use.</div>
+      <div class="dr-sec"><h4>Duplicate group · 87% similar</h4>
+        <div class="kv"><span class="ficon pdf">${ICON.pdf}</span><div><div class="ktxt">Master Service Agreement_signed.pdf</div><div class="ksub">Has signature block · used as root contract</div></div></div>
+        <div class="kv"><span class="ficon pdf">${ICON.pdf}</span><div><div class="ktxt">Master Service Agreement_v3_final.pdf</div><div class="ksub">No signature block · later file date</div></div></div>
+      </div>
+      <div class="dr-sec"><h4>Resolution</h4>
+        <div class="cand sel" data-cand="0"><div class="ct">Keep “_signed” as executed copy<span class="cscore">Recommended</span></div><div class="csig">Use the signed version; attach the other as evidence.</div></div>
+        <div class="cand" data-cand="1"><div class="ct">Replace with “_v3_final”</div><div class="csig">Use the latest version as the family document.</div></div>
+        <div class="cand" data-cand="2"><div class="ct">Exclude both from family</div><div class="csig">Remove from this contract family entirely.</div></div>
+      </div>`,
+    foot:[{label:'Cancel',fn:'closeDrawer()'},{label:'Apply resolution',primary:true,fn:`resolveRow('${n.id}','Duplicate resolved','reviewed','Kept executed copy')`}]});
+  setTimeout(()=>{document.querySelectorAll('[data-cand]').forEach(el=>el.onclick=()=>{document.querySelectorAll('[data-cand]').forEach(x=>x.classList.remove('sel'));el.classList.add('sel');});},10);
+  openDrawer();
+}
+
+function resolveRow(id,msg,newState,evText){
+  const n=NODES.find(x=>x.id===id);
+  if(n){ n.state=newState; n.ev=evText; n.parentEvidence=evText; n.evClass=''; n.action=null; n.stateText=null; if(n.cp) n.cp={lab:'',val:'Reviewed'}; }
+  closeDrawer(); renderTree(); if(wsState!=='treeonly') renderReviewTable(); toast(msg);
+}
+
+/* ============ TABS / VIEW ============ */
+function filterTo(f){
+  filter=f;
+  page=1;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.filter===f));
+  // expand all so matches show
+  NODES.forEach(n=>{if(hasChildren(n))expanded.add(n.id);});
+  render();
+}
+
+/* ---------- Workspace: tree always visible; data table opens/closes alongside ---------- */
+// wsState: 'treeonly' | 'split' | 'tablefull'
+let wsState='treeonly';
+const workspace=document.getElementById('workspace');
+function setWs(state){
+  wsState=state;
+  workspace.className='workspace'+(state==='split'?' split':state==='tablefull'?' tablefull':'');
+  document.querySelector('.main .wrap').classList.toggle('wide', state!=='treeonly');
+  document.getElementById('toTable').style.display      = state==='treeonly'?'':'none';
+  document.getElementById('collapseTree').style.display = state==='split'?'':'none';
+  document.getElementById('showTree').style.display     = state==='tablefull'?'':'none';
+  if(state!=='treeonly'){ renderReviewTable(); }
+}
+document.getElementById('toTable').onclick     =()=>setWs('split');
+document.getElementById('collapseTree').onclick=()=>setWs('tablefull');
+document.getElementById('showTree').onclick    =()=>setWs('split');
+document.getElementById('closeTable').onclick  =()=>setWs('treeonly');
+document.querySelector('.famcard-head .chev').onclick=()=>{
+  const folders=NODES.filter(n=>n.type==='folder');
+  const anyOpen=folders.some(f=>expanded.has(f.id));
+  folders.forEach(f=>anyOpen?expanded.delete(f.id):expanded.add(f.id));
+  renderTree();
+};
+
+/* ---------- Review Table: decision-relevant columns ---------- */
+let rtPage=1, focusFolder=null, rtStateFilter=null;
+function rtSrc(label,fn){return `<span class="src" onclick="event.stopPropagation();${fn}"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>${label}</span>`;}
+function rtChip(n){return `<span class="chip ${n.state}"><span class="cdot"></span>${STATE_LABEL[n.state]}</span>`;}
+function rtCpCell(n){
+  const v=n.cpStatus||'—'; const i=v.indexOf(': ');
+  const kindLabel = n.cpKind==='reviewed'?'Reviewed':n.cpKind==='auto'?'Auto':n.cpKind==='risk'?'Risk':'';
+  const val = i>=0 ? v.slice(i+2) : v;
+  return `${kindLabel?`<span class="cpk ${n.cpKind}">${kindLabel}</span>`:''}<span class="cpval">${val}</span>`;
+}
+function rtEvSrc(n){
+  if(n.state==='missing') return rtSrc('Search document',`openSearchDocument('${n.id}')`);
+  if(n.state==='multi')   return rtSrc('Compare evidence',`openCompareParentCandidates('${n.id}')`);
+  if(n.state==='dup')     return rtSrc('Compare documents',`openCompareDocuments('${n.id}')`);
+  return rtSrc('View source',`openDocumentViewer('${n.id}','evidence')`);
+}
+function rtAction(n){
+  if(!n.action) return '<span class="act-none">—</span>';
+  const cls={choose:'danger',check:'warn',multi:'warn',validate:'warn',duplicate:'',resolve:'',review:''}[n.action.type]||'';
+  return `<button class="act-btn ${cls}" onclick="event.stopPropagation();openAction('${n.id}')">${n.action.label}</button>`;
+}
+function rowReview(n){
+  const depth=Math.max(0,n.level-1), pad=10+depth*18;
+  if(n.type==='folder'){
+    return `<tr class="frow rrow" data-rid="${n.id}">
+      <td><div class="doccell" style="padding-left:${pad}px"><span class="dt-ic folder">${ICON.folder}</span><span class="dt-name">${n.name}</span></div></td>
+      <td>${rtChip(n)}</td><td>—</td><td>—</td><td>${n.stateText||'—'}</td>
+      <td class="cpcell" data-cp="${n.id}">${rtCpCell(n)}</td>
+      <td>${rtAction(n)}</td></tr>`;
+  }
+  return `<tr class="rrow" data-rid="${n.id}">
+    <td><div class="doccell" style="padding-left:${pad}px"><span class="dt-ic pdf">${ICON.pdf}</span><span class="dt-name" data-open="${n.id}" title="${n.name}">${n.name}</span>${n.aeId?`<span class="dt-sec">${n.aeId}</span>`:''}</div></td>
+    <td>${rtChip(n)}</td>
+    <td>${n.agreementType||'—'}${rtSrc('View source',`openDocumentViewer('${n.id}','agreement')`)}</td>
+    <td>${n.effectiveDate||'—'}${rtSrc('View source',`openDocumentViewer('${n.id}','date')`)}</td>
+    <td class="evcell ${n.evClass||''}">${n.parentEvidence||n.ev||''}${rtEvSrc(n)}</td>
+    <td class="cpcell" data-cp="${n.id}">${rtCpCell(n)}${rtSrc('View source',`openDocumentViewer('${n.id}','counterparty')`)}</td>
+    <td>${rtAction(n)}</td></tr>`;
+}
+function renderReviewTable(){
+  const fams=NODES.filter(n=>n.parent==='root');
+  let pageFams, total=1, start=0;
+  if(focusFolder){ const famId=familyRootOf(focusFolder)||focusFolder; pageFams=fams.filter(f=>f.id===famId); }
+  else {
+    total=Math.max(1,Math.ceil(fams.length/FAMILIES_PER_PAGE));
+    if(rtPage>total) rtPage=total;
+    start=(rtPage-1)*FAMILIES_PER_PAGE;
+    pageFams=fams.slice(start,start+FAMILIES_PER_PAGE);
+  }
+  const famIds=new Set(pageFams.map(f=>f.id));
+  let rows='', shown=0;
+  NODES.forEach(n=>{
+    if(n.type==='root') return;
+    const fam=familyRootOf(n.id); if(!fam||!famIds.has(fam)) return;
+    if(focusFolder && !(n.id===focusFolder || isDescendant(n.id,focusFolder))) return;
+    if(rtStateFilter && n.type!=='folder' && n.state!==rtStateFilter) return;
+    rows+=rowReview(n); shown++;
+  });
+  document.getElementById('docTable').innerHTML=
+    `<thead><tr><th>Document / Structure</th><th>Review State</th><th>Agreement Type</th><th>Effective Date</th><th>Parent Evidence</th><th>Counterparty Status</th><th>Action</th></tr></thead><tbody>${rows}</tbody>`;
+
+  // context line + footer
+  const ctx=document.getElementById('tpContext');
+  if(focusFolder){
+    const f=NODES.find(n=>n.id===focusFolder);
+    ctx.innerHTML=`Documents in <b>${f?f.name:''}</b> · ${shown} rows<span class="clearfocus" onclick="clearFocus()">Clear</span>`;
+    document.getElementById('rtFoot').textContent=`${shown} documents in focus`;
+    document.getElementById('rtPager').innerHTML='';
+  } else if(rtStateFilter){
+    ctx.innerHTML=`Showing <b>${STATE_LABEL[rtStateFilter]}</b> · ${shown} documents<span class="clearfocus" onclick="clearFocus()">Clear</span>`;
+    document.getElementById('rtFoot').textContent=`${shown} ${STATE_LABEL[rtStateFilter]} documents`;
+    document.getElementById('rtPager').innerHTML='';
+  } else {
+    ctx.textContent='';
+    const from=fams.length?start+1:0, to=Math.min(start+FAMILIES_PER_PAGE,fams.length);
+    document.getElementById('rtFoot').textContent=`Families ${from}–${to} of ${fams.length} · 2,196 documents · ${shown} rows on screen`;
+    let ph='';for(let i=1;i<=total;i++)ph+=`<button class="${i===rtPage?'active':''}" onclick="rtPage=${i};renderReviewTable();">${i}</button>`;
+    document.getElementById('rtPager').innerHTML=ph;
+  }
+  bindReviewTable();
+}
+function clearFocus(){focusFolder=null;rtStateFilter=null;rtPage=1;renderReviewTable();}
+function bindReviewTable(){
+  document.querySelectorAll('#docTable tr.rrow').forEach(tr=>tr.onclick=e=>{
+    if(e.target.closest('.act-btn')||e.target.closest('.src')||e.target.closest('.cpval')||e.target.closest('[data-open]'))return;
+    syncTableToTree(tr.dataset.rid);
+  });
+  document.querySelectorAll('#docTable [data-open]').forEach(el=>el.onclick=e=>{e.stopPropagation();openDocumentViewer(el.dataset.open,'title');});
+  document.querySelectorAll('#docTable .cpcell .cpval').forEach(el=>el.onclick=e=>{e.stopPropagation();drawerValidate(NODES.find(x=>x.id===el.closest('.cpcell').dataset.cp));});
+}
+
+/* ---------- Tree view renderer (matches the product's default view) ---------- */
+function renderTree(){
+  let h='';
+  NODES.forEach(n=>{
+    if(n.type==='root') return;                 // root = the famcard itself
+    // hide if any ancestor (below root) is collapsed
+    let p=n.parent, hidden=false;
+    while(p && p!=='root'){ if(!expanded.has(p)){hidden=true;break;} p=(NODES.find(x=>x.id===p)||{}).parent; }
+    if(hidden) return;
+    const depth=Math.max(0,n.level-1);
+    const pad=20+depth*30;
+    if(n.type==='folder'){
+      const open=expanded.has(n.id);
+      h+=`<div class="tfolder ${open?'':'closed'}" data-tf="${n.id}" style="padding-left:${pad}px">
+        <span class="tcaret" data-caret="${n.id}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="m9 6 6 6-6 6"/></svg></span>
+        <span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M3 6a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></span>
+        <span class="tname">${n.name}</span>
+        <span class="tmenu"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg></span>
+      </div>`;
+    } else {
+      const sub = n.state==='missing'?'bad':((n.state==='multi'||n.state==='needscheck'||n.state==='cprisk')?'weak':'');
+      let right='';
+      if(n.action && n.action.type==='choose') right=`<button class="act-btn danger" data-ta="${n.id}">Choose parent</button>`;
+      else if(n.action && (n.action.type==='check'||n.action.type==='multi')) right=`<button class="act-btn danger" data-ta="${n.id}">Check parent</button>`;
+      else if(n.action && n.action.type==='validate') right=`<button class="act-btn warn" data-ta="${n.id}">Review counterparty</button>`;
+      else if(n.action && n.action.type==='duplicate') right=`<button class="act-btn" data-ta="${n.id}">Compare documents</button>`;
+      else if(n.ev==='Parent document') right=`<span class="badge-root">Root</span>`;
+      const sel = n.state==='needscheck'?'sel':'';
+      const check = sel?`<span class="tcheck"></span>`:'';
+      h+=`<div class="tdoc ${sel}" data-td="${n.id}" style="padding-left:${pad}px">
+        ${check}
+        <span class="ic"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg></span>
+        <div class="tmain"><div class="ttitle">${n.name}</div><div class="tsub ${sub}">${n.ev||''}${treeEvSrc(n)}</div></div>
+        <div class="tright">${right}<span class="tmenu"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg></span></div>
+      </div>`;
+    }
+  });
+  document.getElementById('treeBody').innerHTML=h;
+  document.querySelectorAll('#treeBody [data-caret]').forEach(el=>el.onclick=e=>{e.stopPropagation();const id=el.dataset.caret;expanded.has(id)?expanded.delete(id):expanded.add(id);renderTree();});
+  document.querySelectorAll('#treeBody [data-tf]').forEach(el=>el.onclick=e=>{
+    if(e.target.closest('[data-caret]')||e.target.closest('.tsrc'))return;
+    const id=el.dataset.tf;
+    if(wsState!=='treeonly') focusFamily(id);
+    else { expanded.has(id)?expanded.delete(id):expanded.add(id); renderTree(); }
+  });
+  document.querySelectorAll('#treeBody [data-td]').forEach(el=>el.onclick=e=>{
+    if(e.target.closest('[data-ta]')||e.target.closest('.tsrc'))return;
+    const id=el.dataset.td;
+    if(wsState!=='treeonly') syncTreeToTable(id); else openRowDrawer(id);
+  });
+  document.querySelectorAll('#treeBody [data-ta]').forEach(el=>el.onclick=e=>{e.stopPropagation();openAction(el.dataset.ta);});
+}
+function treeEvSrc(n){
+  let label,fn;
+  if(n.state==='missing'){label='Search document';fn=`openSearchDocument('${n.id}')`;}
+  else if(n.state==='multi'){label='Compare evidence';fn=`openCompareParentCandidates('${n.id}')`;}
+  else if(n.state==='dup'){label='Compare documents';fn=`openCompareDocuments('${n.id}')`;}
+  else if(!n.ev){return '';}
+  else {label='View source';fn=`openDocumentViewer('${n.id}','evidence')`;}
+  return ` <span class="tsrc" onclick="event.stopPropagation();${fn}">${label}</span>`;
+}
+function focusFamily(id){ focusFolder=id; renderReviewTable(); toast('Focused table on '+((NODES.find(n=>n.id===id)||{}).name||'folder')); }
+
+document.getElementById('openContract').onclick=()=>{
+  const cnt=s=>NODES.filter(n=>n.id!=='root'&&n.type!=='folder'&&n.state===s).length;
+  const missing=cnt('missing'),multi=cnt('multi'),cprisk=cnt('cprisk'),dup=cnt('dup'),needs=cnt('needscheck');
+  const total=missing+multi+cprisk+dup+needs;
+  if(total>0){
+    const row=(color,n,label)=>n>0?`<div class="kv"><span class="ficon" style="color:${color}">${ICON.pdf}</span><div><div class="ktxt">${n} ${label}</div></div></div>`:'';
+    fillDrawer({eyebrow:'Confirm',eyebrowClass:'warn',title:'Unresolved issues remain',
+      html:`<div class="dr-intro">Opening this contract now may port an <b>incomplete or incorrect</b> family structure.</div>
+        <div class="dr-sec">
+          ${row('var(--red)',missing,'missing parents')}
+          ${row('#C2410C',multi,'multiple parent matches')}
+          ${row('var(--purple)',cprisk,'counterparty risks')}
+          ${row('#64748B',dup,'duplicate documents')}
+          ${row('var(--amber)',needs,'need a check')}
+        </div>
+        ${cprisk>0?`<div class="warn-inline"><span class="ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg></span>Some documents were generated from unreviewed counterparty mappings.</div>`:''}`,
+      foot:[{label:'Review issues',fn:`closeDrawer();reviewIssues()`},{label:'Continue anyway',primary:true,fn:`closeDrawer();toast('Opening contract…')`}]});
+    openDrawer();
+  } else toast('Opening contract…');
+};
+function reviewIssues(){ if(wsState==='treeonly') setWs('split'); rtStateFilter=null; focusFolder=null; renderReviewTable(); toast('Review the flagged rows in the table'); }
+
+/* ============ TOAST ============ */
+let toastTimer;
+function toast(msg){const t=document.getElementById('toast');document.getElementById('toastMsg').textContent=msg;t.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),2200);}
+
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeDrawer();closeViewer();}});
+
+/* ============ LEFT COUNTERPARTY RAIL ============ */
+/* status: inreview (active, has family) | pending | failed | synced | completed | ported */
+const STATUS_LABEL={inreview:'In Review',pending:'Pending',failed:'Failed',synced:'Synced',completed:'Completed',ported:'Ported'};
+const COUNTERPARTIES=[
+  {id:'boeing',  name:'Boeing Global',        status:'inreview',  roots:8,  docs:240, unit:'Root'},
+  {id:'atlas',   name:'Atlas Enterprises',    status:'ported',    roots:8,  docs:240, unit:'Root'},
+  {id:'quantum', name:'Quantum Dynamics',     status:'synced',    roots:12, docs:320, unit:'Nodes'},
+  {id:'neptune', name:'Neptune Solutions',    status:'pending',   roots:5,  docs:180, unit:'Roots'},
+  {id:'crest',   name:'Crest Innovations',    status:'completed', roots:10, docs:290, unit:'Roots'},
+  {id:'pinnacle',name:'Pinnacle Systems',     status:'synced',    roots:7,  docs:210, unit:'Nodes'},
+  {id:'vortex',  name:'Vortex Technologies',  status:'ported',    roots:9,  docs:260, unit:'Roots'},
+  {id:'summit',  name:'Summit Networks',      status:'failed',    roots:4,  docs:150, unit:'Nodes'},
+  {id:'echo',    name:'Echo Labs',            status:'synced',    roots:11, docs:300, unit:'Roots'},
+  {id:'solaris', name:'Solaris Corp',         status:'ported',    roots:6,  docs:230, unit:'Nodes'},
+];
+let activeCp='boeing';
+let cpFilter='all';
+
+function renderRail(){
+  const q=document.getElementById('cpSearch').value.trim().toLowerCase();
+  const list=COUNTERPARTIES.filter(c=>{
+    if(cpFilter==='failed'&&c.status!=='failed')return false;
+    if(cpFilter==='ported'&&c.status!=='ported')return false;
+    return !q || c.name.toLowerCase().includes(q);
+  });
+  document.getElementById('cpList').innerHTML=list.map(c=>`
+    <div class="cp-item ${c.id===activeCp?'active':''}" data-cp="${c.id}">
+      <div class="cn">${c.name}</div>
+      <div class="cs"><span class="st ${c.status}">${STATUS_LABEL[c.status]}</span> · ${c.roots} ${c.unit} · ${c.docs} Docs</div>
+    </div>`).join('') || `<div style="padding:24px;text-align:center;color:var(--muted);font-size:13px">No counterparties match</div>`;
+  document.querySelectorAll('#cpList [data-cp]').forEach(el=>el.onclick=()=>selectCp(el.dataset.cp));
+  document.getElementById('cntAll').textContent=COUNTERPARTIES.length;
+  document.getElementById('cntFail').textContent=COUNTERPARTIES.filter(c=>c.status==='failed').length;
+  document.getElementById('cntPort').textContent=COUNTERPARTIES.filter(c=>c.status==='ported').length;
+}
+document.getElementById('cpSearch').oninput=renderRail;
+document.querySelectorAll('#cpTabs .sb-tab').forEach(t=>t.onclick=()=>{
+  cpFilter=t.dataset.cpf;
+  document.querySelectorAll('#cpTabs .sb-tab').forEach(x=>x.classList.remove('active'));
+  t.classList.add('active'); renderRail();
+});
+
+function showFamily(on){
+  document.getElementById('cpState').style.display=on?'none':'';
+  if(on){
+    document.getElementById('reviewSummary').style.display='';
+    document.getElementById('workspace').style.display='';
+    ['tabs','cpAlert','familyCard'].forEach(id=>document.getElementById(id).style.display='none');
+    renderTree(); setWs('treeonly');
+  } else {
+    ['reviewSummary','workspace','tabs','cpAlert','familyCard'].forEach(id=>document.getElementById(id).style.display='none');
+  }
+}
+
+function selectCp(id){
+  activeCp=id; renderRail();
+  const cp=COUNTERPARTIES.find(c=>c.id===id);
+  document.getElementById('cpTitle').textContent=cp.name;
+  document.getElementById('famcardName').textContent=cp.name;
+  // Only the active "In Review" family is fully populated in this prototype.
+  if(cp.status==='inreview'){ showFamily(true); }
+  else { showFamily(false); renderState(cp); }
+}
+
+function renderState(cp){
+  const I=(p,c)=>`<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="${c}" stroke-width="2">${p}</svg>`;
+  const tealBg='style="background:var(--teal-bg)"',amberBg='style="background:var(--amber-bg)"',redBg='style="background:var(--red-bg)"',greenBg='style="background:#F0FDF4"',blueBg='style="background:#EFF6FF"';
+  const map={
+    pending:{bg:amberBg,ico:I('<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>','#B45309'),h:'Family not generated yet',
+      p:`Generation for <b>${cp.name}</b> is queued. The contract family will appear here for review once processing completes.`,
+      btn:'<button disabled style="opacity:.5;cursor:default">Awaiting generation</button>'},
+    failed:{bg:redBg,ico:I('<circle cx="12" cy="12" r="9"/><path d="M15 9l-6 6M9 9l6 6"/>','#DC2626'),h:'Family generation failed',
+      p:`We couldn't generate the family for <b>${cp.name}</b>. Retry generation, or review the source documents if the failure repeats.`,
+      btn:'<button class="danger" onclick="toast(\'Retrying generation…\')">Retry generation</button>'},
+    synced:{bg:blueBg,ico:I('<path d="M21 12a9 9 0 1 1-9-9"/><path d="M21 3v6h-6"/>','#2563EB'),h:'Synced — ready to review',
+      p:`<b>${cp.name}</b> has been synced. Open it to review the generated family before porting.`,
+      btn:'<button class="primary" onclick="toast(\'Opening family…\')">Review family</button>'},
+    completed:{bg:tealBg,ico:I('<path d="M20 6 9 17l-5-5"/>','#0F766E'),h:'Review completed',
+      p:`Review for <b>${cp.name}</b> is complete and the family is ready to port.`,
+      btn:'<button class="primary" onclick="toast(\'Opening contract…\')">Open Contract</button>'},
+    ported:{bg:greenBg,ico:I('<path d="M20 6 9 17l-5-5"/>','#15803D'),h:'Already ported',
+      p:`<b>${cp.name}</b> has been ported into the CLM. This family is read-only here; changes must be made on the contract record.`,
+      btn:'<button onclick="toast(\'Opening contract record…\')">View contract</button>'},
+  };
+  const s=map[cp.status]||map.pending;
+  document.getElementById('cpState').innerHTML=
+    `<div class="ico" ${s.bg}>${s.ico}</div><h3>${s.h}</h3><p>${s.p}</p><div>${s.btn}</div>`;
+}
+
+/* ============ COUNTERPARTY SAFETY NET ============ */
+function viewAffectedCounterparty(){
+  if(wsState==='treeonly') setWs('split');
+  focusFolder=null; rtStateFilter='cprisk'; rtPage=1; renderReviewTable();
+  toast('Showing counterparty-risk documents');
+}
+
+/* ============ DOCUMENT VIEWER (source verification) ============ */
+const dvScrim=document.getElementById('dvScrim'), docViewer=document.getElementById('docViewer');
+let dvNode=null, dvType='evidence';
+const SRC_FIELD={title:'Title / Agreement Type',agreement:'Agreement Type',date:'Effective Date',counterparty:'Counterparty',evidence:'Parent Evidence',search:'Parent reference'};
+function closeViewer(){dvScrim.classList.remove('show');docViewer.classList.remove('show');}
+function openViewer(){dvScrim.classList.add('show');docViewer.classList.add('show');}
+
+function openDocumentViewer(id,sourceType){
+  const n=NODES.find(x=>x.id===id); if(!n) return;
+  dvNode=n; dvType=sourceType||'evidence';
+  document.getElementById('dvEyebrow').textContent = (SRC_FIELD[dvType]||'Source')+' · verify source';
+  document.getElementById('dvTitle').textContent = n.name;
+  renderDvPage(n);
+  const startTab = dvType==='search'?'search':'evidence';
+  setDvTab(startTab);
+  document.querySelectorAll('#dvTabs span').forEach(s=>s.onclick=()=>setDvTab(s.dataset.dvtab));
+  openViewer();
+}
+function openSearchDocument(id){ openDocumentViewer(id,'search'); }
+
+function renderDvPage(n){
+  const txt=n.sourceText||n.name;
+  document.getElementById('dvPage').innerHTML=
+    `<div class="dv-pagebar"><span class="dot"></span>Page ${n.sourcePage||1} of 18 · auto-scrolled to source</div>
+     <div class="dv-paper" id="dvPaper">
+       <h3>${(n.agreementType||'Document').toUpperCase()}</h3>
+       <div class="dv-line m"></div><div class="dv-line"></div><div class="dv-line s"></div>
+       <p style="margin:18px 0"><mark class="dv-hl" id="dvMark">${txt}</mark></p>
+       <div class="dv-line"></div><div class="dv-line m"></div><div class="dv-line s"></div><div class="dv-line"></div>
+     </div>`;
+  setTimeout(()=>{const m=document.getElementById('dvMark'); if(m)m.scrollIntoView({block:'center'});},60);
+}
+function setDvTab(tab){
+  document.querySelectorAll('#dvTabs span').forEach(s=>s.classList.toggle('active',s.dataset.dvtab===tab));
+  const n=dvNode, b=document.getElementById('dvTabBody');
+  if(tab==='evidence'){
+    const needAction = !!n.action;
+    b.innerHTML=
+      `<div class="dv-field"><div class="fl">Field being verified</div><div class="fv">${SRC_FIELD[dvType]||'Parent Evidence'}</div></div>
+       <div class="dv-field"><div class="fl">Extracted value</div><div class="fv ${n.evClass==='bad'?'bad':''}">${n.parentEvidence||n.ev||'—'}</div></div>
+       <div class="dv-field"><div class="fl">Reason</div><div class="fv mut">${n.counterpartyReason&&dvType==='counterparty'?n.counterpartyReason:(n.parentReference&&n.parentReference!=='—'?n.parentReference:'Derived from document structure.')}</div></div>
+       <div class="dv-field"><div class="fl">Source page</div><div class="fv">Page ${n.sourcePage||1}</div></div>
+       <div class="dv-field"><div class="fl">Source text</div><div class="fv mut">“${n.sourceText||'—'}”</div></div>
+       <div class="dv-field"><div class="fl">Current review state</div><div class="fv">${STATE_LABEL[n.state]}</div></div>
+       ${needAction?`<button class="act-btn ${n.action.type==='choose'?'danger':'warn'}" onclick="closeViewer();openAction('${n.id}')">${n.action.label}</button>`:''}`;
+  } else if(tab==='metadata'){
+    const sig=(n.signatories||[]).map(s=>`${s.name} ${s.matched?'✓':'✗'}`).join(', ')||'—';
+    const f=(l,v)=>`<div class="dv-field"><div class="fl">${l}</div><div class="fv">${v||'—'}</div></div>`;
+    b.innerHTML=f('Agreement Type',n.agreementType)+f('Effective Date',n.effectiveDate)+f('Signatories',sig)
+      +f('Parent Reference',n.parentReference)+f('Extracted Counterparty',n.extractedCounterparty)
+      +f('Normalised Counterparty',n.normalisedCounterparty)+f('System Counterparty',n.systemCounterparty)
+      +f('AE ID',n.aeId)+f('Extraction Status',n.extractionStatus);
+  } else { // search
+    const terms=n.searchTerms||PARENT_SEARCH_TERMS;
+    b.innerHTML=`<div class="dv-field"><div class="fl">Search this document for a parent reference</div></div>
+      <div class="dv-chips">${terms.map(t=>`<span class="dv-chip" onclick="dvSearch('${t.replace(/'/g,"")}')">${t}</span>`).join('')}</div>
+      <div id="dvSearchResults"></div>`;
+  }
+}
+function dvSearch(term){
+  const n=dvNode, res=document.getElementById('dvSearchResults');
+  if(n.state==='missing' && (term==='governed by'||term==='master agreement')){
+    res.innerHTML=`<div class="fv" style="margin-bottom:10px;font-weight:600">1 match found for “${term}”</div>
+      <div class="dv-result"><div class="rp">Page 4</div>
+        <div class="rq">“This Statement of Work is <mark>governed by</mark> the Master Services Agreement dated 23 Jan 2023.”</div>
+        <div class="ra"><button class="primary" onclick="closeViewer();toast('Evidence captured — choose the matched parent');openAction('${n.id}')">Use as parent evidence</button><button onclick="closeViewer();openAction('${n.id}')">Choose parent</button></div>
+      </div>`;
+  } else {
+    res.innerHTML=`<div class="fv mut" style="margin-bottom:10px">No matches for “${term}” in this document.</div>
+      <div class="ra" style="display:flex;gap:8px"><button class="act-btn danger" onclick="closeViewer();openAction('${n.id}')">Choose parent</button><button class="act-btn" onclick="closeViewer();resolveRow('${n.id}','Kept as root contract','reviewed','Manually kept as root')">Keep as root</button></div>`;
+  }
+}
+function openCompareParentCandidates(id){ const n=NODES.find(x=>x.id===id); drawerCheck(n,{multi:true}); }
+function openCompareDocuments(id){ const n=NODES.find(x=>x.id===id); drawerResolve(n); }
+
+/* ============ TREE ↔ TABLE SYNC ============ */
+function highlightTableRow(id){
+  document.querySelectorAll('#docTable tr.hl').forEach(t=>t.classList.remove('hl'));
+  const tr=document.querySelector(`#docTable tr[data-rid="${id}"]`);
+  if(tr){ tr.classList.add('hl'); tr.scrollIntoView({block:'center'}); setTimeout(()=>tr.classList.remove('hl'),2000); }
+}
+function highlightTreeNode(id){
+  document.querySelectorAll('#treeBody .hl').forEach(t=>t.classList.remove('hl'));
+  const el=document.querySelector(`#treeBody [data-td="${id}"],#treeBody [data-tf="${id}"]`);
+  if(el){ el.classList.add('hl'); el.scrollIntoView({block:'center'}); setTimeout(()=>el.classList.remove('hl'),2000); }
+}
+function jumpToFamilyPageForNode(id){
+  const fam=familyRootOf(id); if(!fam) return false;
+  const fams=NODES.filter(n=>n.parent==='root'); const idx=fams.findIndex(f=>f.id===fam);
+  const targetPage=Math.floor(idx/FAMILIES_PER_PAGE)+1;
+  if(!focusFolder && !rtStateFilter && targetPage!==rtPage){ rtPage=targetPage; renderReviewTable(); return true; }
+  return false;
+}
+function syncTreeToTable(id){
+  if(wsState==='treeonly') return;
+  // ensure the row is reachable: clear filters/focus that would hide it
+  let adjusted=false;
+  if(rtStateFilter){ const n=NODES.find(x=>x.id===id); if(n && n.state!==rtStateFilter){ rtStateFilter=null; adjusted=true; } }
+  if(focusFolder && !(id===focusFolder||isDescendant(id,focusFolder))){ focusFolder=null; adjusted=true; }
+  if(adjusted) renderReviewTable();
+  const jumped=jumpToFamilyPageForNode(id);
+  highlightTableRow(id);
+  if(jumped) toast('Moved to the right family page to show selected document.');
+  else if(adjusted) toast('Filters adjusted to show selected document.');
+  else toast('Showing selected document in Review Table.');
+}
+function syncTableToTree(id){
+  // expand ancestors so the tree row is visible
+  let p=(NODES.find(x=>x.id===id)||{}).parent;
+  while(p && p!=='root'){ expanded.add(p); p=(NODES.find(x=>x.id===p)||{}).parent; }
+  renderTree();
+  highlightTreeNode(id);
+  toast('Revealed in tree');
+}
+
+/* ============ SIDEBAR COLLAPSE ============ */
+const appEl=document.querySelector('.app');
+document.querySelector('.sb-collapse').onclick=()=>appEl.classList.add('collapsed');
+document.getElementById('reopenSidebar').onclick=()=>appEl.classList.remove('collapsed');
+
+/* ============ INIT ============ */
+renderRail();
+selectCp('boeing');
+</script>
+</body>
+</html>
