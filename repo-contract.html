@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CO Repository Page — Design Blueprint</title>
+<style>
+  :root{
+    --bg:#f6f3ee;
+    --surface:#fffdf9;
+    --surface-2:#f0ebe4;
+    --ink:#181512;
+    --muted:#6f665d;
+    --soft:#9d9388;
+    --line:#ded6cc;
+    --line-2:#ece4da;
+    --accent:#6f4df6;
+    --accent-soft:#eee9ff;
+    --green:#1f7a56;
+    --green-soft:#e6f4ed;
+    --amber:#9a6a12;
+    --amber-soft:#fff3d2;
+    --red:#a83d32;
+    --red-soft:#fde8e5;
+    --blue:#245fbd;
+    --blue-soft:#e7efff;
+    --shadow:0 18px 50px rgba(45,35,25,.08);
+    --radius:18px;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    --sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14px;line-height:1.55}
+  a{color:inherit;text-decoration:none}
+  .app{display:grid;grid-template-columns:280px 1fr;min-height:100vh}
+  aside{position:sticky;top:0;height:100vh;padding:22px 18px;border-right:1px solid var(--line);background:rgba(255,253,249,.82);backdrop-filter:blur(12px);overflow:auto}
+  .brand{display:flex;align-items:center;gap:10px;margin-bottom:22px}
+  .mark{width:36px;height:36px;border-radius:12px;background:linear-gradient(135deg,#181512,#6f4df6);box-shadow:var(--shadow)}
+  .brand h1{font-size:14px;margin:0;line-height:1.2}
+  .brand p{font-size:11px;margin:2px 0 0;color:var(--muted)}
+  nav{display:grid;gap:4px;margin-top:14px}
+  nav a{padding:9px 10px;border-radius:10px;color:var(--muted);font-size:12px;display:flex;justify-content:space-between;gap:8px}
+  nav a:hover{background:var(--surface-2);color:var(--ink)}
+  .side-note{margin-top:20px;padding:14px;border-radius:14px;background:var(--surface-2);border:1px solid var(--line);font-size:12px;color:var(--muted)}
+  main{padding:34px 44px 80px;max-width:1320px;width:100%;margin:0 auto}
+  .hero{padding:34px;border-radius:28px;background:linear-gradient(135deg,#171410,#32275a 70%,#6f4df6);color:#fff;box-shadow:var(--shadow);position:relative;overflow:hidden}
+  .hero:after{content:"";position:absolute;right:-120px;top:-120px;width:360px;height:360px;border-radius:50%;background:rgba(255,255,255,.08)}
+  .eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:#d6cbff;font-weight:700;margin-bottom:12px}
+  .hero h2{font-size:38px;line-height:1.02;margin:0 0 14px;letter-spacing:-.04em;max-width:900px}
+  .hero p{font-size:16px;color:#e7e0ff;max-width:820px;margin:0}
+  .hero-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:28px;position:relative;z-index:1}
+  .hero-card{padding:14px;border-radius:16px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.16)}
+  .hero-card strong{display:block;font-size:17px;margin-bottom:2px}
+  .hero-card span{font-size:12px;color:#d6cbff}
+  section{margin-top:34px}
+  .section-hd{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;margin-bottom:16px}
+  .section-hd h3{font-size:24px;letter-spacing:-.03em;margin:0}
+  .section-hd p{margin:6px 0 0;color:var(--muted);max-width:850px}
+  .pill{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:5px 9px;font-size:11px;font-weight:700;border:1px solid var(--line);background:var(--surface);white-space:nowrap}
+  .pill.red{color:var(--red);background:var(--red-soft);border-color:#f4c3bd}
+  .pill.green{color:var(--green);background:var(--green-soft);border-color:#b9dfca}
+  .pill.amber{color:var(--amber);background:var(--amber-soft);border-color:#efd38d}
+  .pill.blue{color:var(--blue);background:var(--blue-soft);border-color:#bbcdf4}
+  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px;box-shadow:0 10px 30px rgba(45,35,25,.035)}
+  .card h4{font-size:16px;margin:0 0 8px;letter-spacing:-.02em}
+  .card p{margin:0;color:var(--muted)}
+  .small{font-size:12px;color:var(--muted)}
+  .big-quote{font-size:24px;line-height:1.25;letter-spacing:-.03em;font-weight:750;padding:26px;border-radius:22px;background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow)}
+  .compare{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .compare .left{border-left:4px solid var(--soft)}
+  .compare .right{border-left:4px solid var(--accent)}
+  table{width:100%;border-collapse:separate;border-spacing:0;background:var(--surface);border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:0 10px 30px rgba(45,35,25,.035)}
+  th,td{padding:13px 14px;text-align:left;border-bottom:1px solid var(--line-2);vertical-align:top}
+  th{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);background:#faf7f2}
+  tr:last-child td{border-bottom:0}
+  td strong{display:block;margin-bottom:3px}
+  .matrix td:first-child{font-weight:700;color:var(--ink);width:210px}
+  .code{font-family:var(--mono);font-size:12px;background:#f4eee5;border:1px solid var(--line);padding:2px 5px;border-radius:6px;color:#5d5147}
+  .flow{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
+  .flow .step{position:relative;padding:16px;border-radius:16px;background:var(--surface);border:1px solid var(--line);min-height:130px}
+  .flow .step:not(:last-child):after{content:"→";position:absolute;right:-13px;top:50%;transform:translateY(-50%);color:var(--soft);font-weight:800}
+  .step-num{width:24px;height:24px;border-radius:8px;background:var(--accent-soft);color:var(--accent);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;margin-bottom:10px}
+  .step h4{font-size:14px;margin:0 0 5px}
+  .step p{font-size:12px;color:var(--muted);margin:0}
+  .module{display:grid;grid-template-columns:240px 1fr;gap:16px;align-items:start;margin-bottom:14px}
+  .module-title{position:sticky;top:20px;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:18px}
+  .module-title h4{margin:0 0 6px;font-size:16px}
+  .module-title p{margin:0;color:var(--muted);font-size:12px}
+  .module-body{display:grid;gap:12px}
+  .wire{background:#161412;color:#f5efe8;border-radius:24px;padding:20px;box-shadow:var(--shadow)}
+  .wire-top{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;margin-bottom:18px}
+  .wire h4{margin:0 0 6px;font-size:18px;color:#fff}
+  .wire p{margin:0;color:#b9b0a6}
+  .search{border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);border-radius:14px;padding:13px;color:#d7cec3;font-size:13px;margin-top:14px}
+  .wire-grid{display:grid;grid-template-columns:300px 1fr;gap:14px}
+  .side-tree{background:#211e1b;border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:12px}
+  .tree-row{display:flex;justify-content:space-between;gap:8px;padding:9px 10px;border-radius:12px;color:#d9d0c7;font-size:12px}
+  .tree-row.on{background:rgba(255,255,255,.08);color:#fff}
+  .tree-child{margin-left:16px;border-left:1px solid rgba(255,255,255,.09);padding-left:8px;color:#aaa29a}
+  .content-pane{display:grid;gap:12px}
+  .attention{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  .attention-card{background:#25211d;border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:14px;color:#fff}
+  .attention-card h5{margin:8px 0 8px;font-size:14px}
+  .attention-card p{font-size:12px;color:#b9b0a6;margin:0 0 10px}
+  .mini-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+  .mini-pill{font-size:10px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);border-radius:999px;padding:3px 7px;color:#d4cbc2}
+  .family-card{background:#211e1b;border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:15px;color:#fff}
+  .family-card h5{font-size:14px;margin:0 0 6px}
+  .family-meta{font-size:11px;color:#aaa29a;margin-bottom:12px}
+  .signal{display:grid;grid-template-columns:1fr auto;gap:10px;padding:9px;border-radius:12px;background:rgba(255,255,255,.045);margin-top:8px;font-size:12px}
+  .cta{display:inline-flex;margin-top:12px;border-radius:10px;padding:8px 10px;background:#f4efe8;color:#171410;font-size:12px;font-weight:750}
+  .drawer{display:grid;grid-template-columns:1.1fr .9fr;gap:14px;background:var(--surface);border:1px solid var(--line);border-radius:24px;padding:18px;box-shadow:var(--shadow)}
+  .drawer-panel{border:1px solid var(--line);border-radius:18px;padding:16px;background:#fffaf4}
+  .source-box{background:#fbf4ec;border:1px dashed #d2c4b5;border-radius:14px;padding:12px;font-size:12px;color:#5b5047;margin-top:10px}
+  .badge-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+  .checklist{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+  .check{display:flex;gap:10px;align-items:flex-start;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px}
+  .tick{width:20px;height:20px;border-radius:7px;background:var(--green-soft);color:var(--green);font-weight:900;display:flex;align-items:center;justify-content:center;flex:0 0 auto;font-size:12px}
+  .anti{width:20px;height:20px;border-radius:7px;background:var(--red-soft);color:var(--red);font-weight:900;display:flex;align-items:center;justify-content:center;flex:0 0 auto;font-size:12px}
+  .footer{margin-top:50px;padding:22px;border-top:1px solid var(--line);color:var(--muted);font-size:12px;text-align:center}
+  @media(max-width:1100px){.app{grid-template-columns:1fr}aside{position:relative;height:auto}.hero-grid,.grid-4,.grid-3,.attention,.flow{grid-template-columns:1fr 1fr}.module,.wire-grid,.drawer{grid-template-columns:1fr}.flow .step:after{display:none}}
+  @media(max-width:720px){main{padding:20px}.hero h2{font-size:28px}.hero-grid,.grid-2,.grid-3,.grid-4,.compare,.attention,.flow,.checklist{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside>
+    <div class="brand">
+      <div class="mark"></div>
+      <div>
+        <h1>CO Repository Page</h1>
+        <p>Design blueprint · Sirion CLM</p>
+      </div>
+    </div>
+    <nav>
+      <a href="#purpose">01 Purpose <span>→</span></a>
+      <a href="#difference">02 Repository vs Contract Page <span>→</span></a>
+      <a href="#mindsets">03 Mindsets <span>→</span></a>
+      <a href="#personas">04 Personas <span>→</span></a>
+      <a href="#scenarios">05 Scenarios <span>→</span></a>
+      <a href="#data">06 Data needed <span>→</span></a>
+      <a href="#ia">07 Page IA <span>→</span></a>
+      <a href="#modules">08 UI modules <span>→</span></a>
+      <a href="#current">09 Current HTML critique <span>→</span></a>
+      <a href="#decisions">10 Decisions before design <span>→</span></a>
+      <a href="#checklist">11 Final checklist <span>→</span></a>
+    </nav>
+    <div class="side-note">
+      <strong>Filtered philosophy:</strong><br />
+      This is only for repository. It avoids generic agentic patterns and focuses on portfolio discovery, relationship governance, triage, evidence, and routing.
+    </div>
+  </aside>
+
+  <main>
+    <header class="hero">
+      <div class="eyebrow">Repository-specific design foundation</div>
+      <h2>Designing an agentic Contract Repository for Contract Operations</h2>
+      <p>The repository page is not a mini contract page. Its job is to help users scan many contract relationships, detect exceptions, trust agent findings, and route the next action.</p>
+      <div class="hero-grid">
+        <div class="hero-card"><strong>Find</strong><span>Locate the right relationship, family, document, or exception.</span></div>
+        <div class="hero-card"><strong>Compare</strong><span>See risk, value, status, and readiness across families.</span></div>
+        <div class="hero-card"><strong>Govern</strong><span>Keep hierarchy, metadata, ownership, and confidence clean.</span></div>
+        <div class="hero-card"><strong>Route</strong><span>Send users to review, fix, bulk amend, claim, renew, or assign.</span></div>
+      </div>
+    </header>
+
+    <section id="purpose">
+      <div class="section-hd">
+        <div>
+          <h3>01 · Page purpose</h3>
+          <p>The Contract Repository page is the portfolio entry point. It should not behave like a storage table or like a single-contract detail page.</p>
+        </div>
+        <span class="pill blue">Repository = control room</span>
+      </div>
+      <div class="big-quote">
+        A Contract Repository in an agentic CLM platform helps users find the right contract relationship, understand current portfolio state, detect exceptions, verify agent confidence, and route action across many contracts.
+      </div>
+      <div class="grid-4" style="margin-top:16px">
+        <div class="card"><h4>Primary job</h4><p>Surface what matters across the portfolio before the user opens a contract.</p></div>
+        <div class="card"><h4>Primary object</h4><p>Counterparty and contract family, not a PDF file.</p></div>
+        <div class="card"><h4>Primary value</h4><p>Prevent buried risk, missed renewal windows, missed credits, and bad hierarchy decisions.</p></div>
+        <div class="card"><h4>Primary output</h4><p>Action routing: review, fix, assign, bulk amend, claim, renew, escalate, or open evidence.</p></div>
+      </div>
+    </section>
+
+    <section id="difference">
+      <div class="section-hd">
+        <div>
+          <h3>02 · Repository vs Contract Page</h3>
+          <p>Both can use agentic intelligence, but they do not have the same user problem. This distinction must be protected before designing.</p>
+        </div>
+      </div>
+      <div class="compare">
+        <div class="card left">
+          <h4>Contract Page</h4>
+          <p><strong>Question:</strong> What is going on inside this one selected contract?</p>
+          <p style="margin-top:10px"><strong>Best for:</strong> deep understanding, clause evidence, timeline, metadata, obligations, risk, documents, history, and actions for one record/family.</p>
+          <p style="margin-top:10px"><strong>User mode:</strong> reading, verifying, deciding inside one context.</p>
+        </div>
+        <div class="card right">
+          <h4>Contract Repository Page</h4>
+          <p><strong>Question:</strong> Where should I focus across many contract relationships?</p>
+          <p style="margin-top:10px"><strong>Best for:</strong> portfolio scan, search, compare, triage, bulk action, agent readiness, hierarchy cleanup, and routing.</p>
+          <p style="margin-top:10px"><strong>User mode:</strong> scanning, filtering, comparing, prioritizing, assigning, and moving to the right workspace.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="mindsets">
+      <div class="section-hd">
+        <div>
+          <h3>03 · Repository-specific user mindsets</h3>
+          <p>The repository user is usually trying to remove uncertainty across the portfolio, not read contracts deeply.</p>
+        </div>
+      </div>
+      <div class="grid-3">
+        <div class="card"><span class="pill amber">Find</span><h4>“Where is the right contract family?”</h4><p>User needs latest active contract, correct parent, correct counterparty, correct relationship, or current conformed state.</p></div>
+        <div class="card"><span class="pill red">Triage</span><h4>“What needs attention?”</h4><p>User expects renewals, obligations, SLA breaches, low-confidence AI findings, and missing ownership to float up.</p></div>
+        <div class="card"><span class="pill blue">Compare</span><h4>“Which family is more risky?”</h4><p>User wants to compare by risk, value, dates, obligations, status, confidence, and missing data.</p></div>
+        <div class="card"><span class="pill green">Govern</span><h4>“Is the repository clean enough?”</h4><p>User worries about wrong hierarchy, duplicate counterparties, stale metadata, orphan docs, and agent-readiness gaps.</p></div>
+        <div class="card"><span class="pill blue">Route</span><h4>“Where do I go next?”</h4><p>The page should send the user to contract page, doc tree, bulk amendment, source viewer, review queue, or task assignment.</p></div>
+        <div class="card"><span class="pill amber">Defend</span><h4>“Can I explain this later?”</h4><p>Every meaningful agent finding should carry confidence, source, reason, and audit trail path.</p></div>
+      </div>
+    </section>
+
+    <section id="personas">
+      <div class="section-hd">
+        <div>
+          <h3>04 · Personas and repository lenses</h3>
+          <p>Repository cannot be a single universal table. It should support role-based lenses because each persona sees “attention” differently.</p>
+        </div>
+      </div>
+      <table class="matrix">
+        <thead><tr><th>Persona</th><th>What they are trying to do</th><th>Repository signals they need</th><th>Likely CTA</th></tr></thead>
+        <tbody>
+          <tr><td>Contract Manager</td><td>Maintain portfolio health and avoid misses.</td><td>Renewals, missing owners, overdue obligations, failed extraction, family mapping gaps.</td><td>Review queue, assign owner, fix metadata, open family.</td></tr>
+          <tr><td>Legal / Legal Ops</td><td>Validate risk, deviations, hierarchy, and evidence.</td><td>High-risk clauses, deviation from standard, amendment impact, low-confidence citation, governing document.</td><td>Open evidence, review source, approve/override, escalate.</td></tr>
+          <tr><td>Procurement</td><td>Manage supplier relationship, spend, negotiation leverage.</td><td>Supplier exposure, renewal window, price increase, single-source risk, performance trend.</td><td>Prepare negotiation brief, start sourcing, review renewal.</td></tr>
+          <tr><td>Finance / Ops</td><td>Prevent leakage and claim value.</td><td>SLA credit windows, invoice-pricing mismatch, payment term changes, penalties, credits, line item variance.</td><td>Claim credit, validate invoice, notify owner.</td></tr>
+          <tr><td>Admin / CO Ops</td><td>Make repository reliable for agents and workflows.</td><td>Agent readiness, duplicate counterparty, missing agreement type, orphan docs, low-confidence hierarchy.</td><td>Clean data, merge, map, run review, configure workflow.</td></tr>
+          <tr><td>Business owner</td><td>Know what can/cannot be done without legal complexity.</td><td>Active relationship status, next obligation, renewal date, allowed action, owner contact.</td><td>Ask question, request review, open plain-language brief.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="scenarios">
+      <div class="section-hd">
+        <div>
+          <h3>05 · Must-design repository scenarios</h3>
+          <p>These are the scenarios that make this page different from a contract details page.</p>
+        </div>
+      </div>
+      <div class="flow">
+        <div class="step"><div class="step-num">1</div><h4>Portfolio triage</h4><p>User lands and sees what needs attention across all contract families.</p></div>
+        <div class="step"><div class="step-num">2</div><h4>Relationship discovery</h4><p>User finds the correct counterparty, MSA, SOW, amendment, or active family.</p></div>
+        <div class="step"><div class="step-num">3</div><h4>Family health review</h4><p>User checks if mapping, metadata, owners, and current-state rollup are trustworthy.</p></div>
+        <div class="step"><div class="step-num">4</div><h4>Evidence verification</h4><p>User opens source snippets for low-confidence or high-impact findings.</p></div>
+        <div class="step"><div class="step-num">5</div><h4>Bulk operation</h4><p>User selects multiple families/contracts to amend, assign, fix, export, or review.</p></div>
+        <div class="step"><div class="step-num">6</div><h4>Action routing</h4><p>User moves into contract page, document tree, workflow, source viewer, or task queue.</p></div>
+      </div>
+    </section>
+
+    <section id="data">
+      <div class="section-hd">
+        <div>
+          <h3>06 · Data needed before design</h3>
+          <p>This is the minimum object model and datapoint set required to design a credible CO repository.</p>
+        </div>
+        <span class="pill green">Data shapes UI behavior</span>
+      </div>
+      <table>
+        <thead><tr><th>Data area</th><th>Must know</th><th>Why repository needs it</th><th>Front-end expression</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Counterparty</strong></td><td>Legal name, aliases, supplier/customer role, parent org, total exposure, owner.</td><td>Repository users think in relationships and suppliers/customers.</td><td>Sidebar grouping, counterparty lens, exposure/risk badge.</td></tr>
+          <tr><td><strong>Contract family</strong></td><td>Family ID, MSA/SOW/order/amendment links, active governing agreement, conformed state.</td><td>Family is the main scan unit, not the PDF.</td><td>Family card, family health score, open family CTA.</td></tr>
+          <tr><td><strong>Document evidence</strong></td><td>Executed copy, versions, source PDF, page, clause snippet, signature state.</td><td>Documents are proof behind the current state.</td><td>Evidence drawer, source viewer, “view receipt”.</td></tr>
+          <tr><td><strong>Hierarchy</strong></td><td>Parent-child relation, amendment applies to, supersedes, renews, governs, order of precedence.</td><td>Wrong hierarchy breaks every agent conclusion.</td><td>Relationship map, low-confidence mapping queue, fix mapping CTA.</td></tr>
+          <tr><td><strong>Key dates</strong></td><td>Effective, expiry, renewal, notice, milestone, cure period, claim window.</td><td>Time-boxed signals are the most actionable.</td><td>Needs attention card, timeline chips, date filters.</td></tr>
+          <tr><td><strong>Obligations</strong></td><td>Owner, responsible party, due date, status, recurrence, financial impact, source clause.</td><td>Core operational triage object.</td><td>Due/overdue queue, owner filter, action routing.</td></tr>
+          <tr><td><strong>SLAs</strong></td><td>Metric, target, actual, breach flag, credit %, credit cap, claim window.</td><td>Repository should reveal value leakage opportunities.</td><td>SLA breach card, claim credit CTA, finance lens.</td></tr>
+          <tr><td><strong>Financials</strong></td><td>TCV, ARR/spend, currency, payment terms, line items, price changes, FX exposure.</td><td>Risk needs business weight; not all issues are equal.</td><td>Value-at-risk sort, commercial lens, impact badge.</td></tr>
+          <tr><td><strong>Risk / issue</strong></td><td>Severity, reason, deviation, impacted family, remediation owner, due date.</td><td>Repository must rank exceptions by actionability.</td><td>Risk queue, reason chips, issue clustering.</td></tr>
+          <tr><td><strong>Confidence / provenance</strong></td><td>Confidence score, model source, extraction status, citation, reviewed state, override history.</td><td>Trust is not generic here; it decides whether portfolio action is safe.</td><td>Confidence badge, source count, review needed state.</td></tr>
+          <tr><td><strong>Workflow readiness</strong></td><td>Agreement type, template, workflow version, eligible actions, required metadata.</td><td>Repository must route to bulk amend/review workflows correctly.</td><td>Action eligibility, disabled CTA reason, readiness score.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="ia">
+      <div class="section-hd">
+        <div>
+          <h3>07 · Recommended page IA</h3>
+          <p>The IA should move from broad portfolio context to action-ready exceptions, then to relationship browsing.</p>
+        </div>
+      </div>
+      <div class="grid-3">
+        <div class="card"><span class="pill blue">Layer 1</span><h4>Scope + ask/search</h4><p>What repository am I in? Which counterparties/families are included? Can I ask/search by relationship, date, risk, or action?</p></div>
+        <div class="card"><span class="pill red">Layer 2</span><h4>Needs Attention</h4><p>Time-sensitive and high-impact exceptions: renewals, SLA breaches, overdue obligations, low-confidence mappings.</p></div>
+        <div class="card"><span class="pill amber">Layer 3</span><h4>Portfolio Health</h4><p>Readiness, risk exposure, incomplete records, missing owners, data quality, family mapping confidence.</p></div>
+        <div class="card"><span class="pill green">Layer 4</span><h4>Relationship Navigator</h4><p>Counterparty → family → documents. Keep the user oriented in business/legal relationship structure.</p></div>
+        <div class="card"><span class="pill blue">Layer 5</span><h4>Family Cards / Table</h4><p>Scan or compare families by current state, next event, impact, confidence, and action.</p></div>
+        <div class="card"><span class="pill amber">Layer 6</span><h4>Evidence + action drawer</h4><p>Show source and decision brief without forcing a full page transition.</p></div>
+      </div>
+    </section>
+
+    <section id="modules">
+      <div class="section-hd">
+        <div>
+          <h3>08 · UI modules to design</h3>
+          <p>These are the concrete modules your HTML concept should contain. Each module exists because of repository-specific behavior.</p>
+        </div>
+      </div>
+
+      <div class="module">
+        <div class="module-title"><h4>A. Header + repository search</h4><p>Not just keyword search. Relationship-aware search.</p></div>
+        <div class="module-body">
+          <div class="card"><h4>Purpose</h4><p>Let user ask across repository: “Show SOWs governed by TechCorp MSA”, “Which renewals close this quarter?”, “Find low-confidence parent mappings”.</p></div>
+          <div class="card"><h4>Required fields</h4><p><span class="code">counterparty</span> <span class="code">family_id</span> <span class="code">agreement_type</span> <span class="code">status</span> <span class="code">renewal_date</span> <span class="code">owner</span> <span class="code">confidence</span> <span class="code">relationship_type</span></p></div>
+        </div>
+      </div>
+
+      <div class="module">
+        <div class="module-title"><h4>B. Needs Attention queue</h4><p>The hero module. Replaces raw object counts.</p></div>
+        <div class="module-body">
+          <table>
+            <thead><tr><th>Signal</th><th>Example card copy</th><th>Primary CTA</th></tr></thead>
+            <tbody>
+              <tr><td>Renewal</td><td>“Renewal notice closes in 18 days · $2.4M annual value · 4 sources.”</td><td>Review renewal</td></tr>
+              <tr><td>SLA breach</td><td>“99.9% uptime missed · credit window open for 12 days.”</td><td>Claim credit</td></tr>
+              <tr><td>Obligation</td><td>“SOC 2 report overdue · owner missing · source clause available.”</td><td>Assign owner</td></tr>
+              <tr><td>Hierarchy</td><td>“Amendment 2 may apply to 5 SOWs · 68% confidence.”</td><td>Review mapping</td></tr>
+              <tr><td>Metadata</td><td>“12 high-value records missing agreement type required for bulk amendment.”</td><td>Fix metadata</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="module">
+        <div class="module-title"><h4>C. Relationship navigator</h4><p>Counterparty-first, family-second, document-last.</p></div>
+        <div class="module-body">
+          <div class="card"><h4>Design rule</h4><p>Sidebar should not be a folder tree. It should represent commercial/legal relationships: Counterparty → Family → Active agreement set → Supporting documents.</p></div>
+          <div class="card"><h4>What to show</h4><p>Counterparty health, number of families, value exposure, high-risk count, low-confidence count, and expand/collapse family children.</p></div>
+        </div>
+      </div>
+
+      <div class="module">
+        <div class="module-title"><h4>D. Family card</h4><p>The main repository scan unit.</p></div>
+        <div class="module-body">
+          <table>
+            <thead><tr><th>Card row</th><th>Must show</th><th>Why</th></tr></thead>
+            <tbody>
+              <tr><td>Identity</td><td>Family name, counterparty, active governing agreement, documents count.</td><td>User must know what relationship this is.</td></tr>
+              <tr><td>Current state</td><td>Active/expired/draft, amendments applied, active SOWs, conformed state status.</td><td>Repository should show reality, not just files.</td></tr>
+              <tr><td>Next event</td><td>Renewal, notice, milestone, obligation, claim window.</td><td>Turns passive record into action.</td></tr>
+              <tr><td>Impact</td><td>TCV/spend, risk severity, SLA credit, financial leakage.</td><td>Helps ranking.</td></tr>
+              <tr><td>Trust</td><td>Confidence, source count, reviewed/unreviewed state.</td><td>Prevents blind AI trust.</td></tr>
+              <tr><td>Action</td><td>Review, open family, fix mapping, assign, start amendment.</td><td>Repository routes.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="module">
+        <div class="module-title"><h4>E. Table / list view</h4><p>For comparison and bulk action.</p></div>
+        <div class="module-body">
+          <div class="card"><h4>Table columns should be decision columns</h4><p>Family, counterparty, current state, next action, impact, confidence, owner, readiness, last updated, action eligibility.</p></div>
+          <div class="card"><h4>Avoid making these primary</h4><p>Clause count, document count, pricing count, obligation count. These are secondary drill-down counts unless they are tied to action.</p></div>
+        </div>
+      </div>
+
+      <div class="module">
+        <div class="module-title"><h4>F. Evidence drawer</h4><p>Trust layer for repository-level findings.</p></div>
+        <div class="module-body">
+          <div class="drawer">
+            <div class="drawer-panel">
+              <h4>Decision brief</h4>
+              <p><strong>Agent finding:</strong> Amendment 2 likely changes payment terms for 5 active SOWs.</p>
+              <div class="badge-row"><span class="pill amber">68% confidence</span><span class="pill blue">5 impacted SOWs</span><span class="pill red">Review needed</span></div>
+              <div class="source-box">Reason: amendment clause references “all active statements of work under the master agreement,” but two SOWs use different legal entity names.</div>
+            </div>
+            <div class="drawer-panel">
+              <h4>Evidence</h4>
+              <p class="small">Source document · Amendment 2 · Page 4 · Clause 3.1</p>
+              <div class="source-box">Snippet preview with source link, page number, and option to open document viewer.</div>
+              <div class="badge-row"><span class="pill green">Mark correct</span><span class="pill amber">Fix mapping</span><span class="pill blue">Open source</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="module">
+        <div class="module-title"><h4>G. Bulk action layer</h4><p>Repository-only behavior.</p></div>
+        <div class="module-body">
+          <table>
+            <thead><tr><th>Bulk action</th><th>Precondition</th><th>Disabled state reason</th></tr></thead>
+            <tbody>
+              <tr><td>Bulk amend</td><td>Selected contracts share eligible agreement type/workflow.</td><td>“3 selected records do not have agreement type mapped.”</td></tr>
+              <tr><td>Assign owner</td><td>Selected items have open obligation/risk/metadata task.</td><td>“No actionable owner field on selected records.”</td></tr>
+              <tr><td>Review low-confidence</td><td>Selected items have confidence below threshold.</td><td>“All selected records are already verified.”</td></tr>
+              <tr><td>Export evidence</td><td>Selected findings have citations/source docs.</td><td>“2 findings have missing provenance.”</td></tr>
+              <tr><td>Fix metadata</td><td>Selected records share missing field type.</td><td>“Selected records have mixed issue types.”</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-hd">
+        <div>
+          <h3>09 · Example concept direction</h3>
+          <p>A compact wire-style representation of how the repository page can feel after applying the rules above.</p>
+        </div>
+      </div>
+      <div class="wire">
+        <div class="wire-top">
+          <div>
+            <h4>Contract Repository</h4>
+            <p>5 counterparties · 10 families · 34 documents · 87% agent-ready</p>
+            <div class="search">Ask across repository… e.g. “Show renewals due this quarter with high value and low confidence.”</div>
+          </div>
+          <span class="pill amber">12 need review</span>
+        </div>
+        <div class="wire-grid">
+          <div class="side-tree">
+            <div class="tree-row on"><span>TechCorp International</span><strong>3</strong></div>
+            <div class="tree-child">
+              <div class="tree-row"><span>MSA Northstar Catalyst</span><strong>4 docs</strong></div>
+              <div class="tree-row"><span>SaaS Renewal 2025</span><strong>6 docs</strong></div>
+              <div class="tree-row"><span>Professional Services</span><strong>3 docs</strong></div>
+            </div>
+            <div class="tree-row"><span>Meridian Logistics</span><strong>2</strong></div>
+            <div class="tree-row"><span>Nova Systems</span><strong>2</strong></div>
+            <div class="tree-row"><span>Bluewave Corp</span><strong>1</strong></div>
+          </div>
+          <div class="content-pane">
+            <div class="attention">
+              <div class="attention-card"><span class="pill red">Renewal</span><h5>SaaS Renewal 2025</h5><p>Notice window closes in 18 days · $2.4M value · 4 source clauses.</p><div class="mini-row"><span class="mini-pill">91% confidence</span><span class="mini-pill">Review renewal</span></div></div>
+              <div class="attention-card"><span class="pill amber">Hierarchy</span><h5>Amendment impact unclear</h5><p>Amendment 2 may apply to 5 SOWs; two entity-name conflicts found.</p><div class="mini-row"><span class="mini-pill">68% confidence</span><span class="mini-pill">Fix mapping</span></div></div>
+              <div class="attention-card"><span class="pill green">SLA credit</span><h5>Credit window open</h5><p>Uptime target missed; claim window open for 12 more days.</p><div class="mini-row"><span class="mini-pill">$36K est.</span><span class="mini-pill">Claim credit</span></div></div>
+            </div>
+            <div class="family-card">
+              <h5>MSA Northstar Catalyst</h5>
+              <div class="family-meta">TechCorp · Active · MSA + SOW + Amendment + Order Form · 4 docs</div>
+              <div class="signal"><span>Current state</span><strong>2 amendments applied · 5 active SOWs</strong></div>
+              <div class="signal"><span>Next event</span><strong>SOC2 obligation due in 12 days</strong></div>
+              <div class="signal"><span>Trust</span><strong>94% confidence · 8 sources</strong></div>
+              <a class="cta">Open family brief</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="current">
+      <div class="section-hd">
+        <div>
+          <h3>10 · Current HTML critique and conversion</h3>
+          <p>Your current HTML is a strong starting point because it already has a counterparty/family structure. The main shift is from inventory counts to action signals.</p>
+        </div>
+      </div>
+      <table>
+        <thead><tr><th>Current element</th><th>What it means today</th><th>Repository-specific improvement</th></tr></thead>
+        <tbody>
+          <tr><td>Page title: Contract Portfolio</td><td>Good broad framing.</td><td>Use “Contract Repository” or “Contract Portfolio Control Room” depending product naming.</td></tr>
+          <tr><td>Stats: documents/issues/clauses/obligations/pricing/SLAs</td><td>Feels like inventory/analysis output.</td><td>Replace hero stats with needs attention, agent readiness, value at risk, renewals due, low-confidence findings.</td></tr>
+          <tr><td>Counterparty sidebar</td><td>Strong relationship-first pattern.</td><td>Add exposure, risk, readiness, and low-confidence badges per counterparty.</td></tr>
+          <tr><td>Family cards</td><td>Good scan unit, but led by object counts.</td><td>Lead with current state, next event, impact, confidence, and CTA.</td></tr>
+          <tr><td>Grid/list toggle</td><td>Useful for scan vs compare.</td><td>Grid for triage cards; table for bulk comparison/action.</td></tr>
+          <tr><td>Doc type filter</td><td>Traditional repository filter.</td><td>Add scenario filters: renewals, SLA credits, mapping review, missing owner, high value, low confidence, bulk eligible.</td></tr>
+          <tr><td>Risk chips</td><td>Helpful but vague.</td><td>Show reason: “8 high because liability cap missing / DPA gap / renewal close”.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="decisions">
+      <div class="section-hd">
+        <div>
+          <h3>11 · Decisions needed before final design</h3>
+          <p>These are the PM/engineering/product questions that decide how far the repository concept can go.</p>
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="card"><h4>Object ownership</h4><p>Is the primary repository object Contract, Agreement, Contract Family, Relationship, or Document? This decides card structure and URL routing.</p></div>
+        <div class="card"><h4>Current state computation</h4><p>Can system compute conformed state across MSA/SOW/amendments? If not, UI must show “agent-suggested” instead of “confirmed”.</p></div>
+        <div class="card"><h4>Confidence threshold</h4><p>At what confidence does a finding become auto-actionable, review-needed, or hidden? Who sets the threshold?</p></div>
+        <div class="card"><h4>Evidence availability</h4><p>Do all extracted values have source document, page number, snippet, and clause type? What happens when provenance is missing?</p></div>
+        <div class="card"><h4>Bulk action eligibility</h4><p>What fields/workflow rules must match before bulk amend or bulk fix can run?</p></div>
+        <div class="card"><h4>Persona lens</h4><p>Is lens role-based by permission/persona, manually selected, or fixed for all users?</p></div>
+        <div class="card"><h4>Repository health scoring</h4><p>What inputs create agent readiness: metadata completeness, hierarchy confidence, evidence coverage, owner coverage, workflow eligibility?</p></div>
+        <div class="card"><h4>Routing model</h4><p>Which CTA opens contract page, doc tree, source viewer, workflow, review queue, or right drawer?</p></div>
+      </div>
+    </section>
+
+    <section id="checklist">
+      <div class="section-hd">
+        <div>
+          <h3>12 · Final design checklist</h3>
+          <p>Use this before starting high fidelity. If these are not answered, the design will become generic again.</p>
+        </div>
+      </div>
+      <div class="checklist">
+        <div class="check"><div class="tick">✓</div><div><strong>Relationship-first</strong><br><span class="small">Does the page start from counterparty/family, not PDFs?</span></div></div>
+        <div class="check"><div class="tick">✓</div><div><strong>Action-first</strong><br><span class="small">Does every major card answer “what should I do next?”</span></div></div>
+        <div class="check"><div class="tick">✓</div><div><strong>Decision fuel first</strong><br><span class="small">Are renewals, obligations, SLAs, risk, financial impact, and confidence ahead of raw counts?</span></div></div>
+        <div class="check"><div class="tick">✓</div><div><strong>Evidence available</strong><br><span class="small">Can user open source snippets for AI findings without losing context?</span></div></div>
+        <div class="check"><div class="tick">✓</div><div><strong>Bulk-ready</strong><br><span class="small">Does the table/list support multi-select and explain disabled actions?</span></div></div>
+        <div class="check"><div class="tick">✓</div><div><strong>Agent readiness visible</strong><br><span class="small">Can user see which parts of repository are safe/unsafe for agentic actions?</span></div></div>
+        <div class="check"><div class="tick">✓</div><div><strong>Persona lens</strong><br><span class="small">Can different users prioritize different signals without rebuilding the page?</span></div></div>
+        <div class="check"><div class="tick">✓</div><div><strong>Documents last, not lost</strong><br><span class="small">Are documents treated as evidence and still accessible when needed?</span></div></div>
+        <div class="check"><div class="anti">!</div><div><strong>Avoid generic AI summary</strong><br><span class="small">Repository summary should not repeat the same agentic pattern as Contract Page.</span></div></div>
+        <div class="check"><div class="anti">!</div><div><strong>Avoid vanity counts</strong><br><span class="small">Do not make “748 clauses” the hero unless it creates an action.</span></div></div>
+      </div>
+    </section>
+
+    <div class="footer">
+      CO Repository Page Design Blueprint · Built as a pre-concept foundation for Sirion CLM repository design.
+    </div>
+  </main>
+</div>
+</body>
+</html>
