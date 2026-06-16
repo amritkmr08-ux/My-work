@@ -124,6 +124,25 @@
   .footer{margin-top:50px;padding:22px;border-top:1px solid var(--line);color:var(--muted);font-size:12px;text-align:center}
   @media(max-width:1100px){.app{grid-template-columns:1fr}aside{position:relative;height:auto}.hero-grid,.grid-4,.grid-3,.attention,.flow{grid-template-columns:1fr 1fr}.module,.wire-grid,.drawer{grid-template-columns:1fr}.flow .step:after{display:none}}
   @media(max-width:720px){main{padding:20px}.hero h2{font-size:28px}.hero-grid,.grid-2,.grid-3,.grid-4,.compare,.attention,.flow,.checklist{grid-template-columns:1fr}}
+
+  /* Contract lifecycle stage model — repository specific */
+  .stage-principle{border-left:4px solid var(--accent)}
+  .stage-layers{margin-top:16px}
+  .stage-card{position:relative;overflow:hidden}
+  .stage-card:before{content:"";position:absolute;right:-42px;top:-42px;width:110px;height:110px;border-radius:50%;background:var(--accent-soft);opacity:.9}
+  .stage-card > *{position:relative;z-index:1}
+  .token-row{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}
+  .token{display:inline-flex;align-items:center;border-radius:999px;padding:6px 9px;font-size:11px;font-weight:700;border:1px solid var(--line);background:var(--surface-2);color:var(--muted);white-space:nowrap}
+  .token.lifecycle{background:var(--blue-soft);color:var(--blue);border-color:#bbcdf4}
+  .token.term{background:var(--amber-soft);color:var(--amber);border-color:#efd38d}
+  .token.attention{background:var(--red-soft);color:var(--red);border-color:#f4c3bd}
+  .token.good{background:var(--green-soft);color:var(--green);border-color:#b9dfca}
+  .stage-note{padding:18px 20px;border-radius:18px;background:var(--blue-soft);border:1px solid #bbcdf4;color:#1d4f9c;margin:16px 0}
+  .stage-mini-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+  .stage-mini-grid ul{margin:0;padding-left:18px;color:var(--muted)}
+  .stage-mini-grid li{margin:6px 0}
+  @media(max-width:720px){.stage-mini-grid{grid-template-columns:1fr}}
+
 </style>
 </head>
 <body>
@@ -140,14 +159,16 @@
       <a href="#purpose">01 Purpose <span>→</span></a>
       <a href="#difference">02 Repository vs Contract Page <span>→</span></a>
       <a href="#mindsets">03 Mindsets <span>→</span></a>
-      <a href="#personas">04 Personas <span>→</span></a>
-      <a href="#scenarios">05 Scenarios <span>→</span></a>
-      <a href="#data">06 Data needed <span>→</span></a>
-      <a href="#ia">07 Page IA <span>→</span></a>
-      <a href="#modules">08 UI modules <span>→</span></a>
-      <a href="#current">09 Current HTML critique <span>→</span></a>
-      <a href="#decisions">10 Decisions before design <span>→</span></a>
-      <a href="#checklist">11 Final checklist <span>→</span></a>
+      <a href="#contract-lifecycle-stage-model">04 Lifecycle & stages <span>→</span></a>
+      <a href="#personas">05 Personas <span>→</span></a>
+      <a href="#scenarios">06 Scenarios <span>→</span></a>
+      <a href="#data">07 Data needed <span>→</span></a>
+      <a href="#ia">08 Page IA <span>→</span></a>
+      <a href="#modules">09 UI modules <span>→</span></a>
+      <a href="#example">10 Example concept <span>→</span></a>
+      <a href="#current">11 Current HTML critique <span>→</span></a>
+      <a href="#decisions">12 Decisions before design <span>→</span></a>
+      <a href="#checklist">13 Final checklist <span>→</span></a>
     </nav>
     <div class="side-note">
       <strong>Filtered philosophy:</strong><br />
@@ -167,363 +188,6 @@
         <div class="hero-card"><strong>Route</strong><span>Send users to review, fix, bulk amend, claim, renew, or assign.</span></div>
       </div>
     </header>
-<!-- =========================================================
-CONTRACT LIFECYCLE & STAGE MODEL — REPOSITORY SPECIFIC
-========================================================= -->
-<style>
-  .cr-stage-section {
-    margin: 40px 0;
-    padding: 32px;
-    border: 1px solid rgba(255,255,255,0.10);
-    border-radius: 20px;
-    background: linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.02));
-  }
-
-  .cr-stage-eyebrow {
-    font-size: 11px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: #8f96a3;
-    margin-bottom: 10px;
-  }
-
-  .cr-stage-title {
-    font-size: 28px;
-    line-height: 1.15;
-    font-weight: 650;
-    letter-spacing: -0.03em;
-    margin: 0 0 12px;
-    color: #f4f4f5;
-  }
-
-  .cr-stage-intro {
-    max-width: 900px;
-    font-size: 15px;
-    line-height: 1.7;
-    color: #b7bdc7;
-    margin-bottom: 26px;
-  }
-
-  .cr-stage-principle {
-    padding: 18px 20px;
-    border-radius: 16px;
-    border: 1px solid rgba(255,255,255,0.10);
-    background: rgba(255,255,255,0.045);
-    color: #e8e8ea;
-    font-size: 15px;
-    line-height: 1.65;
-    margin-bottom: 28px;
-  }
-
-  .cr-stage-grid {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 16px;
-    margin-bottom: 30px;
-  }
-
-  .cr-stage-card {
-    border: 1px solid rgba(255,255,255,0.09);
-    border-radius: 18px;
-    padding: 20px;
-    background: rgba(15,15,18,0.72);
-  }
-
-  .cr-stage-card h3 {
-    margin: 0 0 8px;
-    font-size: 16px;
-    color: #ffffff;
-  }
-
-  .cr-stage-card p {
-    margin: 0 0 14px;
-    color: #aeb4bf;
-    font-size: 13px;
-    line-height: 1.55;
-  }
-
-  .cr-chip-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 7px;
-  }
-
-  .cr-chip {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 6px 9px;
-    border-radius: 999px;
-    font-size: 11px;
-    line-height: 1;
-    border: 1px solid rgba(255,255,255,0.10);
-    background: rgba(255,255,255,0.045);
-    color: #d4d8df;
-    white-space: nowrap;
-  }
-
-  .cr-chip.lifecycle { color: #9cc7ff; background: rgba(91,156,246,0.12); }
-  .cr-chip.term { color: #f2ce78; background: rgba(232,184,75,0.12); }
-  .cr-chip.attention { color: #ffaaa0; background: rgba(192,104,88,0.14); }
-  .cr-chip.good { color: #9ce0bd; background: rgba(80,152,106,0.14); }
-
-  .cr-stage-table-wrap {
-    overflow-x: auto;
-    border: 1px solid rgba(255,255,255,0.09);
-    border-radius: 16px;
-    margin: 22px 0 30px;
-  }
-
-  .cr-stage-table {
-    width: 100%;
-    border-collapse: collapse;
-    min-width: 900px;
-    background: rgba(15,15,18,0.72);
-  }
-
-  .cr-stage-table th {
-    text-align: left;
-    padding: 14px 16px;
-    font-size: 12px;
-    color: #8f96a3;
-    font-weight: 600;
-    border-bottom: 1px solid rgba(255,255,255,0.09);
-    background: rgba(255,255,255,0.035);
-  }
-
-  .cr-stage-table td {
-    padding: 15px 16px;
-    font-size: 13px;
-    color: #d6d9df;
-    border-bottom: 1px solid rgba(255,255,255,0.07);
-    vertical-align: top;
-  }
-
-  .cr-stage-table tr:last-child td {
-    border-bottom: none;
-  }
-
-  .cr-stage-note {
-    padding: 20px;
-    border-radius: 16px;
-    background: rgba(91,156,246,0.08);
-    border: 1px solid rgba(91,156,246,0.18);
-    color: #c8dfff;
-    font-size: 14px;
-    line-height: 1.65;
-    margin-bottom: 26px;
-  }
-
-  .cr-stage-two-col {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 18px;
-  }
-
-  .cr-mini-panel {
-    border: 1px solid rgba(255,255,255,0.09);
-    border-radius: 16px;
-    padding: 18px;
-    background: rgba(255,255,255,0.03);
-  }
-
-  .cr-mini-panel h4 {
-    margin: 0 0 10px;
-    color: #ffffff;
-    font-size: 14px;
-  }
-
-  .cr-mini-panel ul {
-    margin: 0;
-    padding-left: 18px;
-    color: #aeb4bf;
-    line-height: 1.7;
-    font-size: 13px;
-  }
-
-  @media (max-width: 900px) {
-    .cr-stage-grid,
-    .cr-stage-two-col {
-      grid-template-columns: 1fr;
-    }
-  }
-</style>
-
-<section id="contract-lifecycle-stage-model" class="cr-stage-section">
-  <div class="cr-stage-eyebrow">Repository foundation</div>
-  <h2 class="cr-stage-title">Contract Lifecycle & Stage Model</h2>
-
-  <p class="cr-stage-intro">
-    In a Contract Repository, stage should not be treated as one flat status field.
-    A contract can be drafted, active, expired, amended, renewal-due, or agent-review-pending at the same time depending on the layer being viewed.
-    The repository must therefore represent stage through three layers:
-    <strong>Lifecycle Stage</strong>, <strong>Term State</strong>, and <strong>Attention State</strong>.
-  </p>
-
-  <div class="cr-stage-principle">
-    <strong>Design principle:</strong>
-    The Contract Page explains one selected contract. The Contract Repository shows lifecycle reality across many records.
-    So the repository must answer not only “what stage is this contract in?” but also
-    “is it currently valid?”, “is it changing?”, “is it ending?”, and “does someone need to act?”
-  </div>
-
-  <div class="cr-stage-grid">
-    <div class="cr-stage-card">
-      <h3>1. Lifecycle Stage</h3>
-      <p>Where the contract is in the CLM process.</p>
-      <div class="cr-chip-row">
-        <span class="cr-chip lifecycle">Request</span>
-        <span class="cr-chip lifecycle">Draft</span>
-        <span class="cr-chip lifecycle">Internal Review</span>
-        <span class="cr-chip lifecycle">External Review</span>
-        <span class="cr-chip lifecycle">Approval</span>
-        <span class="cr-chip lifecycle">Signature</span>
-        <span class="cr-chip lifecycle">Executed</span>
-        <span class="cr-chip lifecycle">Active</span>
-        <span class="cr-chip lifecycle">Amendment in Progress</span>
-        <span class="cr-chip lifecycle">Renewal in Progress</span>
-        <span class="cr-chip lifecycle">Expired</span>
-        <span class="cr-chip lifecycle">Terminated</span>
-        <span class="cr-chip lifecycle">Superseded</span>
-        <span class="cr-chip lifecycle">Archived</span>
-      </div>
-    </div>
-
-    <div class="cr-stage-card">
-      <h3>2. Term State</h3>
-      <p>Whether the contract is valid by date and term logic.</p>
-      <div class="cr-chip-row">
-        <span class="cr-chip term">Not Yet Effective</span>
-        <span class="cr-chip term">Active</span>
-        <span class="cr-chip term">Expiring Soon</span>
-        <span class="cr-chip term">Renewal Notice Due</span>
-        <span class="cr-chip term">Auto-Renewed</span>
-        <span class="cr-chip term">Evergreen</span>
-        <span class="cr-chip term">Expired</span>
-        <span class="cr-chip term">Terminated</span>
-      </div>
-    </div>
-
-    <div class="cr-stage-card">
-      <h3>3. Attention State</h3>
-      <p>Whether the repository needs to bring this record to the user.</p>
-      <div class="cr-chip-row">
-        <span class="cr-chip attention">Needs Review</span>
-        <span class="cr-chip attention">Low Confidence</span>
-        <span class="cr-chip attention">Missing Metadata</span>
-        <span class="cr-chip attention">Relationship Conflict</span>
-        <span class="cr-chip attention">Renewal Action Needed</span>
-        <span class="cr-chip attention">Obligation Overdue</span>
-        <span class="cr-chip attention">SLA Breach Open</span>
-        <span class="cr-chip attention">Amendment Impact Detected</span>
-        <span class="cr-chip attention">Owner Missing</span>
-        <span class="cr-chip attention">Bulk Action Available</span>
-      </div>
-    </div>
-  </div>
-
-  <h3 style="font-size:18px;margin:0 0 12px;color:#fff;">Why this matters for repository design</h3>
-
-  <p class="cr-stage-intro">
-    A single contract family may contain active, expired, draft, and amended documents together.
-    Therefore, the repository should not blindly show a family as only “Active” or “Expired.”
-    It should show a composed family state that reflects the current relationship reality.
-  </p>
-
-  <div class="cr-stage-table-wrap">
-    <table class="cr-stage-table">
-      <thead>
-        <tr>
-          <th>Contract / Family</th>
-          <th>Lifecycle Stage</th>
-          <th>Term State</th>
-          <th>Attention State</th>
-          <th>Repository Meaning</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>TechCorp MSA</td>
-          <td><span class="cr-chip lifecycle">Active</span></td>
-          <td><span class="cr-chip term">Expires in 8 months</span></td>
-          <td><span class="cr-chip good">No urgent action</span></td>
-          <td>Healthy active relationship. Keep visible but not urgent.</td>
-        </tr>
-        <tr>
-          <td>SaaS Renewal 2025</td>
-          <td><span class="cr-chip lifecycle">Active</span></td>
-          <td><span class="cr-chip term">Renewal notice closes in 18 days</span></td>
-          <td><span class="cr-chip attention">Renewal Action Needed</span></td>
-          <td>Needs commercial decision before the notice window closes.</td>
-        </tr>
-        <tr>
-          <td>Amendment 2</td>
-          <td><span class="cr-chip lifecycle">Draft</span></td>
-          <td><span class="cr-chip term">Not Effective</span></td>
-          <td><span class="cr-chip attention">Legal Review Pending</span></td>
-          <td>Change is in progress and should not be treated as current contract truth yet.</td>
-        </tr>
-        <tr>
-          <td>Support SOW</td>
-          <td><span class="cr-chip lifecycle">Executed</span></td>
-          <td><span class="cr-chip term">Not Yet Effective</span></td>
-          <td><span class="cr-chip good">No action</span></td>
-          <td>Signed but not live. Repository should distinguish this from Active.</td>
-        </tr>
-        <tr>
-          <td>Old NDA</td>
-          <td><span class="cr-chip lifecycle">Expired</span></td>
-          <td><span class="cr-chip term">Ended 90 days ago</span></td>
-          <td><span class="cr-chip attention">Archive Candidate</span></td>
-          <td>Historical evidence. Should not pollute active portfolio views.</td>
-        </tr>
-        <tr>
-          <td>Logistics MSA</td>
-          <td><span class="cr-chip lifecycle">Active</span></td>
-          <td><span class="cr-chip term">Evergreen</span></td>
-          <td><span class="cr-chip attention">Low-confidence parent mapping</span></td>
-          <td>Commercially active, but relationship structure needs validation.</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <div class="cr-stage-note">
-    <strong>Family-level rule:</strong>
-    Repository cards should show a composed family state.
-    Example: <strong>Active relationship · Amendment in progress · 1 expired SOW · 2 low-confidence fields</strong>.
-    This is more useful than showing only “Active.”
-  </div>
-
-  <div class="cr-stage-two-col">
-    <div class="cr-mini-panel">
-      <h4>Recommended repository filters</h4>
-      <ul>
-        <li>All</li>
-        <li>Needs Attention</li>
-        <li>Active</li>
-        <li>In Progress</li>
-        <li>Renewal Due</li>
-        <li>Expiring Soon</li>
-        <li>Expired / Ended</li>
-        <li>Low Confidence</li>
-      </ul>
-    </div>
-
-    <div class="cr-mini-panel">
-      <h4>Recommended table/card fields</h4>
-      <ul>
-        <li>Family / Contract</li>
-        <li>Counterparty</li>
-        <li>Lifecycle Stage</li>
-        <li>Next Event</li>
-        <li>Attention State</li>
-        <li>Agent Confidence</li>
-        <li>Primary Action</li>
-      </ul>
-    </div>
-  </div>
-</section>
     <section id="purpose">
       <div class="section-hd">
         <div>
@@ -583,10 +247,180 @@ CONTRACT LIFECYCLE & STAGE MODEL — REPOSITORY SPECIFIC
       </div>
     </section>
 
+
+    <section id="contract-lifecycle-stage-model">
+      <div class="section-hd">
+        <div>
+          <h3>04 · Contract Lifecycle & Stage Model</h3>
+          <p>Repository stage should not be one flat status. A contract can be drafted, active, expired, amended, renewal-due, and agent-review-pending depending on which layer the user is looking at.</p>
+        </div>
+        <span class="pill amber">Lifecycle + term + attention</span>
+      </div>
+
+      <div class="big-quote stage-principle">
+        In the repository, stage should be represented through <strong>Lifecycle Stage + Term State + Attention State</strong>. This helps the page show not only what the contract is, but whether it is valid, changing, ending, or requiring human action.
+      </div>
+
+      <div class="grid-3 stage-layers">
+        <div class="card stage-card">
+          <span class="pill blue">Layer 1</span>
+          <h4>Lifecycle Stage</h4>
+          <p>Where the contract is in the CLM process.</p>
+          <div class="token-row">
+            <span class="token lifecycle">Request</span>
+            <span class="token lifecycle">Draft</span>
+            <span class="token lifecycle">Internal Review</span>
+            <span class="token lifecycle">External Review</span>
+            <span class="token lifecycle">Approval</span>
+            <span class="token lifecycle">Signature</span>
+            <span class="token lifecycle">Executed</span>
+            <span class="token lifecycle">Active</span>
+            <span class="token lifecycle">Amendment in Progress</span>
+            <span class="token lifecycle">Renewal in Progress</span>
+            <span class="token lifecycle">Expired</span>
+            <span class="token lifecycle">Terminated</span>
+            <span class="token lifecycle">Superseded</span>
+            <span class="token lifecycle">Archived</span>
+          </div>
+        </div>
+
+        <div class="card stage-card">
+          <span class="pill amber">Layer 2</span>
+          <h4>Term State</h4>
+          <p>Whether the contract is currently valid by date and term logic.</p>
+          <div class="token-row">
+            <span class="token term">Not Yet Effective</span>
+            <span class="token term">Active</span>
+            <span class="token term">Expiring Soon</span>
+            <span class="token term">Renewal Notice Due</span>
+            <span class="token term">Auto-Renewed</span>
+            <span class="token term">Evergreen</span>
+            <span class="token term">Expired</span>
+            <span class="token term">Terminated</span>
+          </div>
+        </div>
+
+        <div class="card stage-card">
+          <span class="pill red">Layer 3</span>
+          <h4>Attention State</h4>
+          <p>Whether this record needs to be brought forward for human action.</p>
+          <div class="token-row">
+            <span class="token attention">Needs Review</span>
+            <span class="token attention">Low Confidence</span>
+            <span class="token attention">Missing Metadata</span>
+            <span class="token attention">Relationship Conflict</span>
+            <span class="token attention">Renewal Action Needed</span>
+            <span class="token attention">Obligation Overdue</span>
+            <span class="token attention">SLA Breach Open</span>
+            <span class="token attention">Amendment Impact Detected</span>
+            <span class="token attention">Owner Missing</span>
+            <span class="token attention">Bulk Action Available</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-hd" style="margin-top:22px">
+        <div>
+          <h3 style="font-size:20px">Stage examples for repository behavior</h3>
+          <p>A family can contain active, expired, draft, and amended documents together. The repository should show composed family state, not blindly show only “Active” or “Expired”.</p>
+        </div>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Contract / Family</th>
+            <th>Lifecycle Stage</th>
+            <th>Term State</th>
+            <th>Attention State</th>
+            <th>Repository Meaning</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>TechCorp MSA</strong></td>
+            <td><span class="token lifecycle">Active</span></td>
+            <td><span class="token term">Expires in 8 months</span></td>
+            <td><span class="token good">No urgent action</span></td>
+            <td>Healthy active relationship. Keep visible but not urgent.</td>
+          </tr>
+          <tr>
+            <td><strong>SaaS Renewal 2025</strong></td>
+            <td><span class="token lifecycle">Active</span></td>
+            <td><span class="token term">Renewal notice closes in 18 days</span></td>
+            <td><span class="token attention">Renewal Action Needed</span></td>
+            <td>Needs commercial decision before the notice window closes.</td>
+          </tr>
+          <tr>
+            <td><strong>Amendment 2</strong></td>
+            <td><span class="token lifecycle">Draft</span></td>
+            <td><span class="token term">Not Effective</span></td>
+            <td><span class="token attention">Legal Review Pending</span></td>
+            <td>Change is in progress and should not be treated as current contract truth yet.</td>
+          </tr>
+          <tr>
+            <td><strong>Support SOW</strong></td>
+            <td><span class="token lifecycle">Executed</span></td>
+            <td><span class="token term">Not Yet Effective</span></td>
+            <td><span class="token good">No action</span></td>
+            <td>Signed but not live. Repository should distinguish this from Active.</td>
+          </tr>
+          <tr>
+            <td><strong>Old NDA</strong></td>
+            <td><span class="token lifecycle">Expired</span></td>
+            <td><span class="token term">Ended 90 days ago</span></td>
+            <td><span class="token attention">Archive Candidate</span></td>
+            <td>Historical evidence. Should not pollute active portfolio views.</td>
+          </tr>
+          <tr>
+            <td><strong>Logistics MSA</strong></td>
+            <td><span class="token lifecycle">Active</span></td>
+            <td><span class="token term">Evergreen</span></td>
+            <td><span class="token attention">Low-confidence parent mapping</span></td>
+            <td>Commercially active, but relationship structure needs validation.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="stage-note">
+        <strong>Family-level rule:</strong> Repository cards should show a composed family state.
+        Example: <strong>Active relationship · Amendment in progress · 1 expired SOW · 2 low-confidence fields</strong>.
+        This is more useful than showing only “Active.”
+      </div>
+
+      <div class="stage-mini-grid">
+        <div class="card">
+          <h4>Recommended repository filters</h4>
+          <ul>
+            <li>All</li>
+            <li>Needs Attention</li>
+            <li>Active</li>
+            <li>In Progress</li>
+            <li>Renewal Due</li>
+            <li>Expiring Soon</li>
+            <li>Expired / Ended</li>
+            <li>Low Confidence</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h4>Recommended table/card fields</h4>
+          <ul>
+            <li>Family / Contract</li>
+            <li>Counterparty</li>
+            <li>Lifecycle Stage</li>
+            <li>Next Event</li>
+            <li>Attention State</li>
+            <li>Agent Confidence</li>
+            <li>Primary Action</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
     <section id="personas">
       <div class="section-hd">
         <div>
-          <h3>04 · Personas and repository lenses</h3>
+          <h3>05 · Personas and repository lenses</h3>
           <p>Repository cannot be a single universal table. It should support role-based lenses because each persona sees “attention” differently.</p>
         </div>
       </div>
@@ -606,7 +440,7 @@ CONTRACT LIFECYCLE & STAGE MODEL — REPOSITORY SPECIFIC
     <section id="scenarios">
       <div class="section-hd">
         <div>
-          <h3>05 · Must-design repository scenarios</h3>
+          <h3>06 · Must-design repository scenarios</h3>
           <p>These are the scenarios that make this page different from a contract details page.</p>
         </div>
       </div>
@@ -623,7 +457,7 @@ CONTRACT LIFECYCLE & STAGE MODEL — REPOSITORY SPECIFIC
     <section id="data">
       <div class="section-hd">
         <div>
-          <h3>06 · Data needed before design</h3>
+          <h3>07 · Data needed before design</h3>
           <p>This is the minimum object model and datapoint set required to design a credible CO repository.</p>
         </div>
         <span class="pill green">Data shapes UI behavior</span>
@@ -649,7 +483,7 @@ CONTRACT LIFECYCLE & STAGE MODEL — REPOSITORY SPECIFIC
     <section id="ia">
       <div class="section-hd">
         <div>
-          <h3>07 · Recommended page IA</h3>
+          <h3>08 · Recommended page IA</h3>
           <p>The IA should move from broad portfolio context to action-ready exceptions, then to relationship browsing.</p>
         </div>
       </div>
@@ -666,7 +500,7 @@ CONTRACT LIFECYCLE & STAGE MODEL — REPOSITORY SPECIFIC
     <section id="modules">
       <div class="section-hd">
         <div>
-          <h3>08 · UI modules to design</h3>
+          <h3>09 · UI modules to design</h3>
           <p>These are the concrete modules your HTML concept should contain. Each module exists because of repository-specific behavior.</p>
         </div>
       </div>
@@ -765,10 +599,10 @@ CONTRACT LIFECYCLE & STAGE MODEL — REPOSITORY SPECIFIC
       </div>
     </section>
 
-    <section>
+    <section id="example">
       <div class="section-hd">
         <div>
-          <h3>09 · Example concept direction</h3>
+          <h3>10 · Example concept direction</h3>
           <p>A compact wire-style representation of how the repository page can feel after applying the rules above.</p>
         </div>
       </div>
@@ -815,7 +649,7 @@ CONTRACT LIFECYCLE & STAGE MODEL — REPOSITORY SPECIFIC
     <section id="current">
       <div class="section-hd">
         <div>
-          <h3>10 · Current HTML critique and conversion</h3>
+          <h3>11 · Current HTML critique and conversion</h3>
           <p>Your current HTML is a strong starting point because it already has a counterparty/family structure. The main shift is from inventory counts to action signals.</p>
         </div>
       </div>
@@ -836,7 +670,7 @@ CONTRACT LIFECYCLE & STAGE MODEL — REPOSITORY SPECIFIC
     <section id="decisions">
       <div class="section-hd">
         <div>
-          <h3>11 · Decisions needed before final design</h3>
+          <h3>12 · Decisions needed before final design</h3>
           <p>These are the PM/engineering/product questions that decide how far the repository concept can go.</p>
         </div>
       </div>
@@ -855,7 +689,7 @@ CONTRACT LIFECYCLE & STAGE MODEL — REPOSITORY SPECIFIC
     <section id="checklist">
       <div class="section-hd">
         <div>
-          <h3>12 · Final design checklist</h3>
+          <h3>13 · Final design checklist</h3>
           <p>Use this before starting high fidelity. If these are not answered, the design will become generic again.</p>
         </div>
       </div>
