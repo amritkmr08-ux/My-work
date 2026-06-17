@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Reduce Doubt, Not Data — Design Philosophy v3</title>
+<style>
+  :root{
+    --bg:#ffffff; --bg-soft:#f7f7f8; --bg-softer:#fafafb;
+    --line:#ececef; --line-strong:#e2e2e6;
+    --ink:#0d0d0d; --ink-2:#3a3a42; --ink-3:#76767f; --ink-4:#a6a6b0;
+    --green:#2c8159; --green-bg:#e7f2ec;
+    --red:#cf4239; --red-bg:#fbeae8;
+    --blue:#3a63bf; --blue-bg:#e9eefb;
+    --amber:#b97d18; --amber-bg:#f8f0df;
+    --violet:#7048c8; --violet-bg:#efeafb;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;
+    background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.5;
+  }
+  .view{display:none}
+  .view.active{display:block;animation:fade .28s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  /* ===== LANDING ===== */
+  .page{max-width:760px;margin:0 auto;padding:72px 32px 64px}
+  @media(max-width:600px){.page{padding:44px 22px}}
+  .top{display:flex;align-items:center;justify-content:space-between;margin-bottom:46px;gap:12px;flex-wrap:wrap}
+  .eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.13em;color:var(--ink-4);font-weight:700}
+  .readtime{font-size:11.5px;font-weight:600;color:var(--ink-3);border:1px solid var(--line-strong);border-radius:20px;padding:4px 11px}
+  h1{font-size:62px;font-weight:600;letter-spacing:-2.5px;line-height:.96}
+  @media(max-width:600px){h1{font-size:44px;letter-spacing:-1.4px}}
+  h1 .muted{color:var(--ink-4)}
+  .thesis{font-size:20px;color:var(--ink-2);line-height:1.45;margin-top:20px;max-width:580px;font-weight:400}
+  .thesis b{color:var(--ink);font-weight:650}
+  .shift{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin:36px 0 8px;font-size:15px;font-weight:600}
+  .shift .was{color:var(--ink-4);text-decoration:line-through;text-decoration-color:var(--line-strong)}
+  .shift .arrow{color:var(--ink-4)}
+  .shift .is{color:var(--ink)}
+  hr{border:0;border-top:1px solid var(--line);margin:44px 0}
+
+  .lifeframe{margin:34px 0 0}
+  .lifeframe .lf-k{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:3px}
+  .lifeframe .lf-s{font-size:13px;color:var(--ink-4);margin-bottom:14px}
+  .lifecycle{display:grid;grid-template-columns:repeat(5,1fr);gap:2px;background:var(--line);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+  @media(max-width:680px){.lifecycle{grid-template-columns:1fr}}
+  .lc{background:#fff;padding:14px 15px 16px}
+  .lc .stg{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--ink);margin-bottom:7px;display:flex;align-items:center;gap:7px}
+  .lc .num{width:16px;height:16px;border-radius:5px;background:var(--bg-soft);border:1px solid var(--line-strong);font-size:9px;font-weight:700;color:var(--ink-3);display:grid;place-items:center}
+  .lc .qd{font-size:12.5px;color:var(--ink-3);line-height:1.42;font-weight:500}
+
+  .hint{font-size:12.5px;color:var(--ink-4);font-weight:600;margin-bottom:14px;display:flex;align-items:center;gap:7px}
+  .laws{display:grid;grid-template-columns:1fr 1fr;gap:2px;background:var(--line);border:1px solid var(--line);border-radius:18px;overflow:hidden}
+  @media(max-width:600px){.laws{grid-template-columns:1fr}}
+  .law{background:#fff;padding:24px 24px 26px;transition:background .15s;cursor:pointer;position:relative}
+  .law:hover{background:var(--bg-soft)}
+  .law .n{font-size:12px;font-weight:700;color:var(--ink-4);letter-spacing:.04em}
+  .law .m{font-size:19.5px;font-weight:650;letter-spacing:-.4px;line-height:1.2;margin:10px 0 8px;padding-right:14px}
+  .law .c{font-size:14px;color:var(--ink-3);line-height:1.45}
+  .law .c em{font-style:normal;color:var(--ink-2);font-weight:600}
+  .law .go{position:absolute;right:20px;bottom:22px;font-size:13px;font-weight:700;color:var(--ink-4);opacity:0;transform:translateX(-4px);transition:.15s}
+  .law:hover .go{opacity:1;transform:none;color:var(--ink-2)}
+
+  .test{margin:46px 0;border-radius:18px;background:var(--ink);color:#fff;padding:34px 30px;text-align:center}
+  .test .lbl{font-size:12px;text-transform:uppercase;letter-spacing:.13em;color:rgba(255,255,255,.55);font-weight:700}
+  .test .q{font-size:27px;font-weight:600;letter-spacing:-.6px;margin-top:12px;line-height:1.2}
+  @media(max-width:600px){.test .q{font-size:22px}}
+  .test .q .kill{color:#ff8b82}
+  .close{font-size:18px;color:var(--ink-2);line-height:1.5}
+  .close b{color:var(--ink);font-weight:650}
+  .funnel{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:20px;font-size:13px;font-weight:600;color:var(--ink-3)}
+  .funnel .step{color:var(--ink-2)}
+  .funnel .arrow{color:var(--ink-4)}
+  .funnel .tail{color:var(--ink-4);font-weight:500}
+  footer{margin-top:52px;padding-top:22px;border-top:1px solid var(--line);font-size:12.5px;color:var(--ink-4)}
+
+  /* ===== DETAIL ===== */
+  .dpage{max-width:720px;margin:0 auto;padding:30px 32px 80px}
+  @media(max-width:600px){.dpage{padding:24px 22px 64px}}
+  .back{display:inline-flex;align-items:center;gap:8px;font-size:13.5px;font-weight:600;color:var(--ink-3);cursor:pointer;border:0;background:transparent;padding:8px 0;margin-bottom:28px}
+  .back:hover{color:var(--ink)}
+  .d-eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.12em;color:var(--ink-4);font-weight:700}
+  .dpage h2{font-size:40px;font-weight:600;letter-spacing:-1.2px;line-height:1.08;margin:10px 0 14px}
+  @media(max-width:600px){.dpage h2{font-size:30px;letter-spacing:-.8px}}
+  .d-lede{font-size:19px;color:var(--ink-2);line-height:1.5;max-width:600px}
+  .d-lede b{color:var(--ink);font-weight:650}
+  .dpage h3{font-size:14px;font-weight:700;letter-spacing:.02em;text-transform:uppercase;color:var(--ink-3);margin:44px 0 14px}
+  .dpage p{font-size:16px;color:var(--ink-2);line-height:1.62;margin-bottom:15px}
+  .dpage p b{color:var(--ink);font-weight:650}
+  .em{font-style:italic}
+  .pullquote{border-left:3px solid var(--ink);padding:4px 0 4px 20px;margin:26px 0;font-size:21px;font-weight:600;letter-spacing:-.4px;line-height:1.35;color:var(--ink)}
+
+  /* doubt sizing formula */
+  .formula{display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;border:1px solid var(--line);border-radius:14px;padding:20px;background:var(--bg-softer);margin:6px 0}
+  .formula .term{text-align:center}
+  .formula .term b{font-size:14px;font-weight:700;display:block}
+  .formula .term span{font-size:11.5px;color:var(--ink-4)}
+  .formula .op{font-size:18px;color:var(--ink-4);font-weight:600}
+  .formula .eq{font-size:13px;font-weight:700;color:var(--ink-3)}
+
+  .reframe{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:6px 0}
+  .reframe .old{font-size:14px;font-weight:600;color:var(--ink-4);text-decoration:line-through;text-decoration-color:var(--line-strong)}
+  .reframe .arr{color:var(--ink-4)}
+  .reframe .new{font-size:14px;font-weight:700;color:var(--ink);background:var(--bg-soft);border:1px solid var(--line-strong);border-radius:20px;padding:5px 13px}
+
+  /* three doubts */
+  .doubts{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:8px 0}
+  @media(max-width:680px){.doubts{grid-template-columns:1fr}}
+  .doubt{border:1px solid var(--line);border-radius:15px;padding:18px;background:#fff}
+  .doubt .w{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-4);margin-bottom:7px}
+  .doubt .q{font-size:18px;font-weight:650;letter-spacing:-.3px;margin-bottom:8px}
+  .doubt p{font-size:13.5px;color:var(--ink-3);margin:0;line-height:1.5}
+  .doubt p b{color:var(--ink-2)}
+  .doubt.t{border-top:3px solid var(--violet)} .doubt.mt{border-top:3px solid var(--amber)} .doubt.s{border-top:3px solid var(--blue)}
+
+  /* anatomy spine */
+  .spine{position:relative;margin:10px 0 4px;padding-left:6px}
+  .spine::before{content:"";position:absolute;left:13px;top:18px;bottom:24px;width:2px;background:var(--line-strong)}
+  .srow{display:flex;align-items:center;gap:16px;padding:10px 0}
+  .srow .dotc{width:12px;height:12px;border-radius:50%;border:2px solid var(--ink);background:#fff;flex:none;position:relative;z-index:1}
+  .srow .st b{font-size:15.5px;font-weight:650;letter-spacing:-.2px}
+  .srow .st span{font-size:13.5px;color:var(--ink-3);margin-left:8px}
+  .srow .uniq{margin-left:auto;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--violet);background:var(--violet-bg);padding:2px 8px;border-radius:20px}
+  .spine-cap{font-size:13.5px;color:var(--ink-3);margin-top:8px;padding-left:30px;line-height:1.5}
+
+  /* freshness / decay */
+  .fresh{border:1px solid var(--line);border-radius:14px;padding:18px 20px;background:var(--bg-softer);margin:8px 0}
+  .fresh .bar{height:12px;border-radius:8px;overflow:hidden;display:flex;margin:4px 0 10px}
+  .fresh .bar .ok{background:var(--green)} .fresh .bar .stale{background:var(--amber)}
+  .fresh .row{display:flex;justify-content:space-between;font-size:12.5px;font-weight:600}
+  .fresh .row .g{color:var(--green)} .fresh .row .a{color:var(--amber)}
+  .fresh .note{font-size:13.5px;color:var(--ink-3);margin-top:11px;line-height:1.5}
+  .halflife{border:1px solid var(--line);border-radius:14px;overflow:hidden;margin:8px 0}
+  .hl{display:flex;align-items:center;gap:12px;padding:12px 16px;border-top:1px solid var(--line);font-size:14px}
+  .hl:first-child{border-top:0}
+  .hl .f{font-weight:650;color:var(--ink);width:150px;flex:none}
+  .hl .d{color:var(--ink-3);flex:1}
+  .hl .t{font-weight:700;font-size:12px;padding:2px 9px;border-radius:20px;white-space:nowrap}
+  .hl .t.fast{color:var(--red);background:var(--red-bg)} .hl .t.med{color:var(--amber);background:var(--amber-bg)} .hl .t.slow{color:var(--green);background:var(--green-bg)}
+
+  /* rings + gate */
+  .rings{display:flex;gap:12px;margin:8px 0}
+  @media(max-width:520px){.rings{flex-direction:column}}
+  .ring-card{flex:1;border:1px solid var(--line);border-radius:15px;padding:18px;display:flex;align-items:center;gap:15px}
+  .ring{width:52px;height:52px;border-radius:50%;flex:none;display:grid;place-items:center;font-size:13px;font-weight:700}
+  .ring span{width:38px;height:38px;border-radius:50%;background:#fff;display:grid;place-items:center}
+  .ring.v{background:conic-gradient(var(--violet) 67%,#e8e8ea 0);color:var(--violet)}
+  .ring.g{background:conic-gradient(var(--green) 94%,#e8e8ea 0);color:var(--green)}
+  .ring-card .rt b{font-size:14.5px;font-weight:650;display:block}
+  .ring-card .rt span{font-size:12.5px;color:var(--ink-3)}
+
+  .dd{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:6px 0 4px}
+  @media(max-width:600px){.dd{grid-template-columns:1fr}}
+  .dd .card{border:1px solid var(--line);border-radius:13px;padding:16px 18px}
+  .dd .do{background:var(--green-bg);border-color:#d4eade}
+  .dd .dont{background:var(--red-bg);border-color:#f3d8d4}
+  .dd .tag{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:7px}
+  .dd .do .tag{color:var(--green)} .dd .dont .tag{color:var(--red)}
+  .dd p{font-size:14px;margin:0;color:var(--ink-2);line-height:1.45}
+
+  .qlist{border:1px solid var(--line);border-radius:14px;overflow:hidden;margin:4px 0}
+  .qlist .qi{padding:14px 18px;border-top:1px solid var(--line);font-size:15px;color:var(--ink-2)}
+  .qlist .qi:first-child{border-top:0}
+  .qlist .qi b{color:var(--ink);font-weight:650}
+
+  /* silence stat */
+  .silence{display:flex;align-items:stretch;gap:12px;margin:8px 0}
+  @media(max-width:520px){.silence{flex-direction:column}}
+  .silence .big-stat{border:1px solid var(--line);border-radius:15px;padding:20px;text-align:center;flex:1;background:var(--bg-softer)}
+  .silence .big-stat .v{font-size:30px;font-weight:700;letter-spacing:-1px}
+  .silence .big-stat .v.q{color:var(--ink-4)}
+  .silence .big-stat .k{font-size:12.5px;color:var(--ink-3);font-weight:600;margin-top:2px}
+
+  .inprod{border:1px solid var(--line);border-left:3px solid var(--blue);border-radius:13px;background:var(--blue-bg);padding:18px 20px;margin:6px 0}
+  .inprod b{color:var(--ink);font-weight:700}
+  .inprod p{margin:0;font-size:15px;color:var(--ink-2);line-height:1.55}
+
+  .rules{counter-reset:r;margin:4px 0}
+  .rule{counter-increment:r;display:flex;gap:14px;padding:13px 0;border-top:1px solid var(--line);font-size:15.5px;color:var(--ink-2);align-items:baseline}
+  .rule:first-child{border-top:0}
+  .rule::before{content:counter(r);font-size:11px;font-weight:700;color:var(--ink-4);border:1px solid var(--line-strong);border-radius:7px;width:22px;height:22px;display:grid;place-items:center;flex:none;position:relative;top:3px}
+  .rule b{color:var(--ink);font-weight:650}
+
+  .nextrow{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:40px;padding-top:22px;border-top:1px solid var(--line)}
+  .nextrow .nx{font-size:13.5px;font-weight:600;color:var(--ink-3);cursor:pointer;border:1px solid var(--line-strong);border-radius:11px;padding:10px 15px;background:#fff;text-align:left}
+  .nextrow .nx:hover{background:var(--bg-soft);color:var(--ink)}
+  .nextrow .nx.next{color:var(--ink)}
+</style>
+</head>
+<body>
+
+<!-- ===================== LANDING ===================== -->
+<main class="view active" id="landing">
+  <div class="page">
+    <div class="top">
+      <span class="eyebrow">Design philosophy · v3 · the CLM lens</span>
+      <span class="readtime">Certainty, not information</span>
+    </div>
+
+    <h1>Reduce doubt,<br/><span class="muted">not</span> data.</h1>
+    <p class="thesis">Contracts don't have an information problem. From first draft through negotiation, signature, and live performance, the documents and data already exist. They have a <b>certainty</b> problem — at every stage, knowing where you stand and whether it's safe to act. The system's job is to <b>retire doubt</b>, not surface data.</p>
+
+    <div class="shift">
+      <span class="was">find the contract</span><span class="arrow">→</span><span class="is">settle the question</span>
+    </div>
+
+    <div class="lifeframe">
+      <div class="lf-k">Doubt runs the whole lifecycle.</div>
+      <div class="lf-s">Not a post-signature problem — its shape just changes by stage.</div>
+      <div class="lifecycle">
+        <div class="lc"><div class="stg"><span class="num">1</span>Draft</div><div class="qd">Does our language protect us — and match our standard?</div></div>
+        <div class="lc"><div class="stg"><span class="num">2</span>Negotiate</div><div class="qd">Where do their redlines expose us, and what's it worth to hold?</div></div>
+        <div class="lc"><div class="stg"><span class="num">3</span>Sign</div><div class="qd">Is this the final, governing version everyone agreed?</div></div>
+        <div class="lc"><div class="stg"><span class="num">4</span>Operate</div><div class="qd">Are we getting what we agreed — and is it still true?</div></div>
+        <div class="lc"><div class="stg"><span class="num">5</span>Renew</div><div class="qd">Stay, renegotiate, or exit — on what terms?</div></div>
+      </div>
+    </div>
+
+    <hr/>
+
+    <div class="hint">↘ Tap any law to unfold the CLM thinking, examples &amp; how it lives in the product</div>
+    <div class="laws" id="laws">
+      <div class="law" data-id="1">
+        <div class="n">01</div>
+        <div class="m">Doubt is the unit of work.</div>
+        <div class="c">Rank open questions by consequence — not documents by date.</div>
+        <div class="go">Read →</div>
+      </div>
+      <div class="law" data-id="2">
+        <div class="n">02</div>
+        <div class="m">Answer the three doubts.</div>
+        <div class="c"><em>Is it true? Does it matter? Is it still true?</em></div>
+        <div class="go">Read →</div>
+      </div>
+      <div class="law" data-id="3">
+        <div class="n">03</div>
+        <div class="m">Certainty has an anatomy.</div>
+        <div class="c">Clause → reality → math → lineage → precedent → authority.</div>
+        <div class="go">Read →</div>
+      </div>
+      <div class="law" data-id="4">
+        <div class="n">04</div>
+        <div class="m">Certainty is perishable.</div>
+        <div class="c">What was true last quarter quietly expired.</div>
+        <div class="go">Read →</div>
+      </div>
+      <div class="law" data-id="5">
+        <div class="n">05</div>
+        <div class="m">Never fake confidence.</div>
+        <div class="c">67% asks. 94% acts. You can't undo a signature.</div>
+        <div class="go">Read →</div>
+      </div>
+      <div class="law" data-id="6">
+        <div class="n">06</div>
+        <div class="m">Silence is a feature.</div>
+        <div class="c">The contracts that are fine should say nothing.</div>
+        <div class="go">Read →</div>
+      </div>
+    </div>
+
+    <div class="test">
+      <div class="lbl">The one test that rules them all</div>
+      <div class="q">Does this retire a doubt?<br/>If not, <span class="kill">delete it.</span></div>
+    </div>
+
+    <p class="close"><b>We don't help people find contracts.</b> We help them stop wondering. The pile of documents becomes a short list of settled questions.</p>
+
+    <div class="funnel">
+      <span class="step">Surface the doubt</span><span class="arrow">→</span><span class="step">Show the proof</span><span class="arrow">→</span><span class="step">Retire it</span>
+      <span class="tail">· then go quiet.</span>
+    </div>
+
+    <footer>Contract Universe · Design Philosophy v3 · the certainty thesis · in the v2 unfold format</footer>
+  </div>
+</main>
+
+<!-- ===================== DETAIL ===================== -->
+<main class="view" id="detail">
+  <div class="dpage" id="detail-body"><!-- injected --></div>
+</main>
+
+<script>
+function nav(prev,next){
+  const p = prev==='home'
+    ? '<button class="nx" onclick="goHome()">← All laws</button>'
+    : '<button class="nx" onclick="openDetail('+prev.id+')">← '+prev.label+'</button>';
+  const n = next==='home'
+    ? '<button class="nx next" onclick="goHome()">All laws →</button>'
+    : '<button class="nx next" onclick="openDetail('+next.id+')">Next · '+next.label+' →</button>';
+  return '<div class="nextrow">'+p+n+'</div>';
+}
+const CH = {};
+
+/* ===== 01 ===== */
+CH['1'] = `
+  <button class="back" onclick="goHome()">← All laws</button>
+  <div class="d-eyebrow">Law 01 · the right object</div>
+  <h2>Doubt is the unit of work.</h2>
+  <p class="d-lede">Most CLM tools organize around the <b>document</b> or the <b>task</b>. Both are the wrong object. The thing that actually blocks a person is a <b>doubt</b> — an open question they can't act past.</p>
+
+  <h3>Why document and task both fail</h3>
+  <p>A document is an artifact — it just sits there, equally "present" whether it's a ticking time-bomb or a renewed-for-years non-event. A task is busywork the system invented ("review contract", "fix metadata"). Neither maps to what a person is actually trying to resolve. What blocks them is a question with a consequence attached:</p>
+  <p style="color:var(--ink-3);font-size:15px">"Will this renew at a price we never intended?" · "Are we owed a credit we haven't claimed?" · "If I change this price, does it reach the right child contracts?"</p>
+  <div class="reframe"><span class="old">a list of contracts</span><span class="arr">→</span><span class="old">a list of tasks</span><span class="arr">→</span><span class="new">a list of doubts</span></div>
+
+  <h3>Doubt runs the whole lifecycle</h3>
+  <p>This is what the "L" in CLM actually means. A contract isn't doubt-free until it's signed and then suddenly risky — <b>doubt is present at every stage</b>, it just changes shape. Drafting and negotiation are nothing but doubt being raised and resolved; the live contract is doubt that has gone perishable. The job is identical throughout: surface the open question, retire it, move on.</p>
+  <div class="qlist">
+    <div class="qi"><b>Draft</b> — does our language protect us, and match our playbook?</div>
+    <div class="qi"><b>Negotiate</b> — where do their redlines expose us, and what's it worth to hold the line?</div>
+    <div class="qi"><b>Sign</b> — is this the final, executed, governing version?</div>
+    <div class="qi"><b>Operate</b> — are we getting what we agreed, and is it still true?</div>
+    <div class="qi"><b>Renew</b> — stay, renegotiate, or exit — on what terms?</div>
+  </div>
+
+  <h3>Size a doubt by its consequence</h3>
+  <p>Not every open question deserves attention. A doubt earns its rank by what's at stake if it stays unanswered — a function unique to contracts, where money, time, and reversibility all bite:</p>
+  <div class="formula">
+    <div class="term"><b>Value</b><span>₹ at stake</span></div>
+    <div class="op">×</div>
+    <div class="term"><b>Time pressure</b><span>days to the window</span></div>
+    <div class="op">×</div>
+    <div class="term"><b>Irreversibility</b><span>can it be undone?</span></div>
+    <div class="eq">= rank</div>
+  </div>
+  <p>A ₹1.2Cr auto-renewal with an 18-day notice window that locks for 12 months outranks a ₹40k clause cleanup with no deadline — every time, automatically.</p>
+
+  <h3>How this lives in Contract Universe</h3>
+  <div class="inprod"><p><b>"Today" is a doubt queue, not a contract list.</b> It surfaces the handful of open questions whose consequence is real and whose window is closing — ranked, not alphabetized — and ignores the 197 agreements that raise no doubt at all. You work the questions, not the filing cabinet.</p></div>
+
+  <h3>The rules</h3>
+  <div class="rules">
+    <div class="rule"><span>Make the <b>open question</b> the object — not the file, not the chore.</span></div>
+    <div class="rule"><span>Rank by <b>value × time pressure × irreversibility</b>.</span></div>
+    <div class="rule"><span>Never surface a doubt that carries <b>no consequence</b>.</span></div>
+  </div>
+` + nav('home',{id:'2',label:'Answer the three doubts'});
+
+/* ===== 02 ===== */
+CH['2'] = `
+  <button class="back" onclick="goHome()">← All laws</button>
+  <div class="d-eyebrow">Law 02 · the diagnostic</div>
+  <h2>Answer the three doubts.</h2>
+  <p class="d-lede">Whatever the contract question, it collapses into three. A screen earns its existence by retiring at least one of them — and <b>"high risk" answers none.</b></p>
+
+  <div class="doubts">
+    <div class="doubt t"><div class="w">Provenance</div><div class="q">Is it true?</div><p>Right version, right extraction, right mapping. <b>Apex rolls up to its MSA at only 67% confidence.</b></p></div>
+    <div class="doubt mt"><div class="w">Consequence</div><div class="q">Does it matter?</div><p>A ₹1.2Cr 12-month lock, or a rounding error? <b>Surface the first; never spend a glance on the second.</b></p></div>
+    <div class="doubt s"><div class="w">Freshness</div><div class="q">Is it still true?</div><p>You were comfortable last quarter. <b>Usage fell 23%, an amendment landed, a window opened.</b></p></div>
+  </div>
+
+  <h3>Why these three, and not "risk"</h3>
+  <p>A label like "high risk" is a category the reader must still unpack into all three of these before they can act. The three doubts are the actual questions underneath every risk flag — so answer them directly. <b>Is it true</b> is provenance: in CLM that means the executed version, the latest amendment, and whether the agent read the clause correctly. <b>Does it matter</b> is materiality: stake, threshold, single-source exposure, reversibility. <b>Is it still true</b> is drift: the gap that opens between the paper and reality over time.</p>
+
+  <div class="pullquote">"Auto-renews at +11.8% in 18 days · ₹1.2Cr · 94% confidence" answers all three in one line. That's the bar.</div>
+
+  <h3>How this lives in Contract Universe</h3>
+  <div class="inprod"><p><b>Every decision line is built to clear the three.</b> The consequence phrasing answers <em>does it matter</em>; the confidence ring answers <em>is it true</em>; the freshness of the underlying data answers <em>is it still true</em>. If a card can't speak to at least one, it doesn't belong on the surface.</p></div>
+
+  <h3>The rules</h3>
+  <div class="rules">
+    <div class="rule"><span>Make every surfaced item answer <b>is it true / does it matter / is it still true</b>.</span></div>
+    <div class="rule"><span>Replace category labels ("high risk") with the <b>three answers</b>.</span></div>
+    <div class="rule"><span>If it answers none, it's noise — <b>cut it</b>.</span></div>
+  </div>
+` + nav({id:'1',label:'Doubt is the unit of work'},{id:'3',label:'Certainty has an anatomy'});
+
+/* ===== 03 ===== */
+CH['3'] = `
+  <button class="back" onclick="goHome()">← All laws</button>
+  <div class="d-eyebrow">Law 03 · the structure of confidence</div>
+  <h2>Certainty has an anatomy.</h2>
+  <p class="d-lede">You can't ask someone to act under legal and financial consequence on a feeling. Confidence about a contract claim is <b>assembled</b> from a fixed chain — and each link is a place doubt can hide.</p>
+
+  <h3>The chain that turns doubt into certainty</h3>
+  <div class="spine">
+    <div class="srow"><span class="dotc"></span><div class="st"><b>Clause</b><span>what was agreed — MSA §6.1</span></div></div>
+    <div class="srow"><span class="dotc"></span><div class="st"><b>Reality</b><span>what's actually happening — usage ↓23%</span></div><span class="uniq">CLM-specific</span></div>
+    <div class="srow"><span class="dotc"></span><div class="st"><b>Math</b><span>what it's worth — ₹1.2Cr exposure</span></div></div>
+    <div class="srow"><span class="dotc"></span><div class="st"><b>Lineage</b><span>which version governs — latest amendment</span></div><span class="uniq">CLM-specific</span></div>
+    <div class="srow"><span class="dotc"></span><div class="st"><b>Precedent</b><span>what we did before — Helix counter, 2045</span></div></div>
+    <div class="srow"><span class="dotc"></span><div class="st"><b>Authority</b><span>who may decide — Procurement Lead</span></div></div>
+  </div>
+  <div class="spine-cap">Complete the chain and doubt collapses into confidence. The spine isn't a transparency add-on — it <em>is</em> the certainty.</div>
+
+  <h3>The two links generic AI products miss</h3>
+  <p><b>Lineage</b> and <b>reality</b> are where contracts differ from any other document. <em>Lineage</em> asks which version actually governs — the original, or the third amendment that superseded clause 6? Get this wrong and a confident answer is confidently wrong. <em>Reality</em> is the gap between the paper and performance: the clause promises 99.9% uptime, but is the vendor delivering it? A contract platform that only reads the document — and never checks it against what's happening — can only ever resolve half the doubt.</p>
+
+  <h3>How this lives in Contract Universe</h3>
+  <div class="inprod"><p><b>The evidence spine is this chain, made one click deep.</b> The surface shows a single confident line; tap once and the full anatomy opens — clause, the live performance data, the money, the governing amendment, the precedent, the approver. The user trusts the conclusion because the proof is assembled, not asserted.</p></div>
+
+  <h3>The rules</h3>
+  <div class="rules">
+    <div class="rule"><span>Assemble confidence from the <b>full chain</b>, not a single signal.</span></div>
+    <div class="rule"><span>Always resolve <b>lineage</b> — which version governs — before answering.</span></div>
+    <div class="rule"><span>Check the clause against <b>reality</b>, not just the page.</span></div>
+    <div class="rule"><span>Show the conclusion; keep the anatomy <b>one click beneath</b>.</span></div>
+  </div>
+` + nav({id:'2',label:'Answer the three doubts'},{id:'4',label:'Certainty is perishable'});
+
+/* ===== 04 ===== */
+CH['4'] = `
+  <button class="back" onclick="goHome()">← All laws</button>
+  <div class="d-eyebrow">Law 04 · why monitoring is the point</div>
+  <h2>Certainty is perishable.</h2>
+  <p class="d-lede">A contract is a <b>claim about the future</b> — so the truth about it decays. What you knew last quarter can quietly stop being true while you look away. Certainty must be re-earned, not filed.</p>
+
+  <h3>What expires, and how fast</h3>
+  <p>Different facts have different shelf lives. A signature is near-permanent; a price benchmark goes stale in weeks; vendor performance can turn in a single month. A system that reduces doubt has to track <em>which</em> certainties are decaying and re-verify the perishable ones:</p>
+  <div class="halflife">
+    <div class="hl"><span class="f">Benchmark price</span><span class="d">market moves; "above benchmark" rots fast</span><span class="t fast">weeks</span></div>
+    <div class="hl"><span class="f">Vendor performance</span><span class="d">SLAs slip; a good vendor turns</span><span class="t med">months</span></div>
+    <div class="hl"><span class="f">Hierarchy validity</span><span class="d">an amendment can re-parent SOWs overnight</span><span class="t med">per amendment</span></div>
+    <div class="hl"><span class="f">The signature</span><span class="d">what was executed stays executed</span><span class="t slow">durable</span></div>
+  </div>
+
+  <h3>Stale isn't broken — it's expired certainty</h3>
+  <p>This reframes "data quality." A contract with pricing untouched for 90 days isn't an <em>error</em> — its certainty has simply <b>expired</b>. Fourteen amendments not yet validated aren't a backlog of mistakes; they're fourteen places we can no longer claim to be sure. Naming it this way tells the user exactly what to do: re-verify, don't repair.</p>
+  <div class="fresh">
+    <div class="bar"><div class="ok" style="width:92%"></div><div class="stale" style="width:8%"></div></div>
+    <div class="row"><span class="g">92% still verified</span><span class="a">8% expired — re-verify</span></div>
+    <div class="note"><b>Operating confidence</b> is a freshness gauge, not a vanity score: how much of what we believe about this book is still true <em>today</em>.</div>
+  </div>
+
+  <h3>How this lives in Contract Universe</h3>
+  <div class="inprod"><p><b>The system re-earns certainty continuously.</b> It doesn't just store the contract; it watches usage, performance, and amendments, and flags the moment a once-settled fact drifts. "Operating confidence 92%" and "stale pricing &gt; 90 days" are the same idea: a live measure of expired certainty, surfaced as doubt to re-retire.</p></div>
+
+  <h3>The rules</h3>
+  <div class="rules">
+    <div class="rule"><span>Treat certainty as <b>perishable</b>; re-earn it, never file it.</span></div>
+    <div class="rule"><span>Track the <b>shelf life</b> of each fact; re-verify the fast-decaying ones.</span></div>
+    <div class="rule"><span>Call stale data <b>expired certainty</b> — re-verify, don't repair.</span></div>
+  </div>
+` + nav({id:'3',label:'Certainty has an anatomy'},{id:'5',label:'Never fake confidence'});
+
+/* ===== 05 ===== */
+CH['5'] = `
+  <button class="back" onclick="goHome()">← All laws</button>
+  <div class="d-eyebrow">Law 05 · honesty over polish</div>
+  <h2>Never fake confidence.</h2>
+  <p class="d-lede">In most software a wrong suggestion costs a click. In a contract it can lock you for twelve months, lose a claim window, or push a price error across fourteen SOWs. <b>You can't undo a signature</b> — so confidence can't be cosmetic.</p>
+
+  <h3>Confidence must change what's allowed</h3>
+  <p>Because contract actions are time-bound and often irreversible, the confidence score can't just decorate a card — it has to <b>gate the action</b>. Below the bar, the system asks. Above it, the system acts. Same engine, different authority.</p>
+  <div class="rings">
+    <div class="ring-card"><div class="ring v"><span>67%</span></div><div class="rt"><b>Asks you to confirm</b><span>Below threshold — a human verifies before anything moves.</span></div></div>
+    <div class="ring-card"><div class="ring g"><span>94%</span></div><div class="rt"><b>Ready to fire</b><span>Deterministic, fully evidenced — prepared, waiting on approval.</span></div></div>
+  </div>
+
+  <h3>Honest doubt beats false confidence</h3>
+  <p>A system that rounds 67% up to a reassuring green check is more dangerous than one that says "I'm not sure — confirm this." In a domain where mistakes are irreversible, <b>admitting uncertainty is a safety feature</b>. Show the number, and show <em>why</em> (the anatomy) — never a confidence you haven't earned.</p>
+  <div class="dd">
+    <div class="card do"><div class="tag">✓ Honest</div><p>"67% — two SOWs cite a superseded MSA. Confirm the mapping before we propagate."</p></div>
+    <div class="card dont"><div class="tag">⨯ False polish</div><p>A green "Validated ✓" on a mapping the system is actually unsure about.</p></div>
+  </div>
+
+  <h3>How this lives in Contract Universe</h3>
+  <div class="inprod"><p><b>Confidence is wired to autonomy.</b> A 67% hierarchy shows violet and routes to a human to confirm; a 94% SLA-credit claim shows green and sits ready to file. The score isn't a badge — it decides whether the system is allowed to act alone, ask first, or merely inform.</p></div>
+
+  <h3>The rules</h3>
+  <div class="rules">
+    <div class="rule"><span>Let confidence <b>gate the action</b> — ask below the bar, act above it.</span></div>
+    <div class="rule"><span>Never round uncertainty up to a <b>false green</b>.</span></div>
+    <div class="rule"><span>Show the number <b>and the reason</b> behind it.</span></div>
+    <div class="rule"><span>Treat <b>admitting doubt</b> as a safety feature, not a weakness.</span></div>
+  </div>
+` + nav({id:'4',label:'Certainty is perishable'},{id:'6',label:'Silence is a feature'});
+
+/* ===== 06 ===== */
+CH['6'] = `
+  <button class="back" onclick="goHome()">← All laws</button>
+  <div class="d-eyebrow">Law 06 · the discipline of restraint</div>
+  <h2>Silence is a feature.</h2>
+  <p class="d-lede">A system built to reduce doubt must also know when there is <b>no doubt to raise</b> — and say nothing. Attention is spent only where certainty is missing <em>and</em> consequence is real.</p>
+
+  <h3>Most of the book should be quiet</h3>
+  <p>On any given day the vast majority of a contract portfolio is operating exactly as agreed. Those agreements shouldn't compete for a second of attention. A platform that flashes all 214 contracts at you has simply moved the doubt back onto you — to figure out which ones actually matter.</p>
+  <div class="silence">
+    <div class="big-stat"><div class="v q">197</div><div class="k">within terms · stay silent</div></div>
+    <div class="big-stat"><div class="v">17</div><div class="k">carry live doubt · surfaced</div></div>
+  </div>
+
+  <h3>The north star is time-to-certainty</h3>
+  <p>Engagement is the wrong goal for a contract system — the opposite, in fact. The right measure is how fast a consequential doubt goes from <b>raised to retired</b>. The tool succeeds when you spend <em>less</em> time in it, not more — which means it must retire doubts and then get out of the way, never farm open loops to keep you scrolling.</p>
+
+  <div class="pullquote">The loudest, most valuable thing a contract platform can say is: this one's fine — you can ignore it.</div>
+
+  <h3>How this lives in Contract Universe</h3>
+  <div class="inprod"><p><b>Only live doubt surfaces; everything settled goes quiet.</b> "Today" shows the few questions that need you and ends in "all caught up." The 197 stable agreements are never paraded — their silence <em>is</em> the signal that they're fine.</p></div>
+
+  <h3>The rules</h3>
+  <div class="rules">
+    <div class="rule"><span>Surface a contract only when it carries <b>live, consequential doubt</b>.</span></div>
+    <div class="rule"><span>Let "fine" be <b>silent</b> — silence is the all-clear.</span></div>
+    <div class="rule"><span>Optimize <b>time-to-certainty</b>, never time-on-page.</span></div>
+    <div class="rule"><span>Never engineer <b>open loops</b> to hold attention.</span></div>
+  </div>
+` + nav({id:'5',label:'Never fake confidence'},'home');
+
+/* -------- nav -------- */
+function openDetail(id){
+  document.getElementById('detail-body').innerHTML = CH[id] || CH['1'];
+  document.getElementById('landing').classList.remove('active');
+  document.getElementById('detail').classList.add('active');
+  window.scrollTo({top:0});
+}
+function goHome(){
+  document.getElementById('detail').classList.remove('active');
+  document.getElementById('landing').classList.add('active');
+  window.scrollTo({top:0});
+}
+document.getElementById('laws').addEventListener('click',e=>{
+  const card=e.target.closest('.law'); if(card) openDetail(card.dataset.id);
+});
+</script>
+</body>
+</html>
